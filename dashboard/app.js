@@ -19,6 +19,7 @@ const elements = {
   chapterFilter: document.getElementById("chapterFilter"),
   statusFilter: document.getElementById("statusFilter"),
   difficultyFilter: document.getElementById("difficultyFilter"),
+  starFilter: document.getElementById("starFilter"),
   resultCount: document.getElementById("resultCount"),
   lastSync: document.getElementById("lastSync"),
   panelCount: document.getElementById("panelCount"),
@@ -133,6 +134,7 @@ const VIEW_STATE_DEFAULT = {
     chapter: "all",
     status: "all",
     difficulty: "all",
+    star: "all",
     query: "",
   },
 };
@@ -598,6 +600,7 @@ function getFilterState() {
     chapter: elements.chapterFilter.value || "all",
     status: elements.statusFilter.value || "all",
     difficulty: elements.difficultyFilter ? elements.difficultyFilter.value : "all",
+    star: elements.starFilter ? elements.starFilter.value : "all",
     query: elements.searchInput.value.trim(),
   };
 }
@@ -631,6 +634,13 @@ function applyViewState(viewState) {
     elements.difficultyFilter.value = desired;
     if (elements.difficultyFilter.value !== desired) {
       elements.difficultyFilter.value = "all";
+    }
+  }
+  if (elements.starFilter) {
+    const desired = filters.star || "all";
+    elements.starFilter.value = desired;
+    if (elements.starFilter.value !== desired) {
+      elements.starFilter.value = "all";
     }
   }
   state.openUnits = new Set(Array.isArray(viewState.openUnits) ? viewState.openUnits : []);
@@ -678,6 +688,7 @@ function applyFilters() {
   const chapterFilter = elements.chapterFilter.value;
   const status = elements.statusFilter.value;
   const difficultyFilter = elements.difficultyFilter ? elements.difficultyFilter.value : "all";
+  const starFilter = elements.starFilter ? elements.starFilter.value : "all";
 
   state.filtered = state.questions.filter((q) => {
     const unit = q.unit || q.step;
@@ -690,6 +701,8 @@ function applyFilters() {
       const diff = normalizeDifficulty(q.difficulty);
       if (diff !== difficultyFilter) return false;
     }
+    if (starFilter === "starred" && !q.starred) return false;
+    if (starFilter === "unstarred" && q.starred) return false;
     if (query) {
       const inTitle = q.title.toLowerCase().includes(query);
       const inId = q.id.includes(query);
@@ -701,19 +714,27 @@ function applyFilters() {
   state.filtered.sort((a, b) => (a.order || 10 ** 9) - (b.order || 10 ** 9));
 
   renderList();
-  updateCounts({ unitFilter, chapterFilter, status, query, difficultyFilter });
-  updatePanelHeader(unitFilter, chapterFilter, status, query, difficultyFilter);
-  updateFilterActions({ unitFilter, chapterFilter, status, query, difficultyFilter });
+  updateCounts({ unitFilter, chapterFilter, status, query, difficultyFilter, starFilter });
+  updatePanelHeader(unitFilter, chapterFilter, status, query, difficultyFilter, starFilter);
+  updateFilterActions({ unitFilter, chapterFilter, status, query, difficultyFilter, starFilter });
   updateListProgress();
   scheduleFilterSave();
 }
 
-function updateFilterActions({ unitFilter, chapterFilter, status, query, difficultyFilter }) {
+function updateFilterActions({
+  unitFilter,
+  chapterFilter,
+  status,
+  query,
+  difficultyFilter,
+  starFilter,
+}) {
   const active =
     (unitFilter !== "all" ? 1 : 0) +
     (chapterFilter !== "all" ? 1 : 0) +
     (status !== "all" ? 1 : 0) +
     (difficultyFilter !== "all" ? 1 : 0) +
+    (starFilter !== "all" ? 1 : 0) +
     (query ? 1 : 0);
   if (elements.activeFilterCount) {
     elements.activeFilterCount.textContent = active ? `${active} active` : "All";
@@ -724,7 +745,7 @@ function updateFilterActions({ unitFilter, chapterFilter, status, query, difficu
   }
 }
 
-function updateCounts({ unitFilter, chapterFilter, status, query, difficultyFilter }) {
+function updateCounts({ unitFilter, chapterFilter, status, query, difficultyFilter, starFilter }) {
   const total = state.questions.length;
   const visible = state.filtered.length;
   const hasFilter =
@@ -732,6 +753,7 @@ function updateCounts({ unitFilter, chapterFilter, status, query, difficultyFilt
     chapterFilter !== "all" ||
     status !== "all" ||
     difficultyFilter !== "all" ||
+    starFilter !== "all" ||
     query;
 
   if (hasFilter) {
@@ -743,7 +765,7 @@ function updateCounts({ unitFilter, chapterFilter, status, query, difficultyFilt
   }
 }
 
-function updatePanelHeader(unitFilter, chapterFilter, status, query, difficultyFilter) {
+function updatePanelHeader(unitFilter, chapterFilter, status, query, difficultyFilter, starFilter) {
   if (!elements.panelTitle || !elements.panelSubtitle) return;
 
   const itemLabel = getItemLabel();
@@ -780,6 +802,12 @@ function updatePanelHeader(unitFilter, chapterFilter, status, query, difficultyF
 
   if (difficultyFilter !== "all") {
     subtitleParts.push(`Difficulty ${difficultyFilter}`);
+  }
+  if (starFilter === "starred") {
+    subtitleParts.push("Starred only");
+  }
+  if (starFilter === "unstarred") {
+    subtitleParts.push("Not starred");
   }
 
   elements.panelTitle.textContent = title;
@@ -851,11 +879,13 @@ function renderList() {
   const chapterFilter = elements.chapterFilter.value;
   const status = elements.statusFilter.value;
   const difficultyFilter = elements.difficultyFilter ? elements.difficultyFilter.value : "all";
+  const starFilter = elements.starFilter ? elements.starFilter.value : "all";
   const hasActiveFilter =
     unitFilter !== "all" ||
     chapterFilter !== "all" ||
     status !== "all" ||
     difficultyFilter !== "all" ||
+    starFilter !== "all" ||
     query;
   const hasStoredOpenUnits = state.openUnits.size > 0;
   const shouldExpand = hasActiveFilter && !hasStoredOpenUnits;
@@ -1407,6 +1437,9 @@ function bindEvents() {
   if (elements.difficultyFilter) {
     elements.difficultyFilter.addEventListener("change", applyFilters);
   }
+  if (elements.starFilter) {
+    elements.starFilter.addEventListener("change", applyFilters);
+  }
 
   if (elements.clearFiltersBtn) {
     elements.clearFiltersBtn.addEventListener("click", () => {
@@ -1417,6 +1450,9 @@ function bindEvents() {
       elements.statusFilter.value = "all";
       if (elements.difficultyFilter) {
         elements.difficultyFilter.value = "all";
+      }
+      if (elements.starFilter) {
+        elements.starFilter.value = "all";
       }
       applyFilters();
     });
