@@ -134,6 +134,7 @@ Column order:
 4) LeetCode link (optional)
 5) YouTube link (optional)
 6) Default note (optional)
+7) Difficulty (optional: Easy/Medium/Hard)
 
 Only columns 1-3 are required.
 
