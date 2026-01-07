@@ -354,6 +354,27 @@ def create_app():
             }
         )
 
+    @app.post("/api/questions/<path:qid>/star")
+    def api_star(qid):
+        sheet_id = get_sheet_id()
+        state = read_state(sheet_id)
+        question = find_question_by_id(state["questions"], qid)
+        if not question:
+            return jsonify({"error": "Question not found"}), 404
+
+        payload = request.get_json(silent=True) or {}
+        if "starred" not in payload:
+            return jsonify({"error": "Invalid payload"}), 400
+
+        question["starred"] = bool(payload["starred"])
+        save_state(state, sheet_id)
+        return jsonify(
+            {
+                "question": question,
+                "stats": compute_stats(state["questions"]),
+            }
+        )
+
     @app.post("/api/units/<path:unit>/done")
     def api_unit_done(unit):
         sheet_id = get_sheet_id()
@@ -443,6 +464,7 @@ def create_app():
             "Default Note",
             "Difficulty",
             "Done",
+            "Starred",
         ]
         output = []
         output.append(header)
@@ -457,6 +479,7 @@ def create_app():
                     q.get("notes") or "",
                     q.get("difficulty") or "",
                     "yes" if q.get("done") else "no",
+                    "yes" if q.get("starred") else "no",
                 ]
             )
         csv_buffer = io.StringIO()

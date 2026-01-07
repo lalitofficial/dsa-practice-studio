@@ -77,6 +77,7 @@ def build_items_from_lessons(lessons):
                 "resource_url": lesson.get("resource_url", ""),
                 "difficulty": lesson.get("difficulty", ""),
                 "notes": lesson.get("notes", ""),
+                "starred": bool(lesson.get("starred", False)),
                 "order": lesson.get("order", 0),
             }
         )
@@ -118,6 +119,7 @@ def sync_state(state, sheet_id=DEFAULT_SHEET_ID):
                 "difficulty": item.get("difficulty", prev.get("difficulty", "")),
                 "notes": prev_notes if prev_notes else item.get("notes", ""),
                 "last_done_at": prev.get("last_done_at", ""),
+                "starred": bool(prev.get("starred", item.get("starred", False))),
             }
         )
     state["questions"] = merged

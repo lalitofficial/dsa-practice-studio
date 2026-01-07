@@ -135,6 +135,7 @@ Column order:
 5) YouTube link (optional)
 6) Default note (optional)
 7) Difficulty (optional: Easy/Medium/Hard)
+8) Starred (optional: yes/no)
 
 Only columns 1-3 are required.
 

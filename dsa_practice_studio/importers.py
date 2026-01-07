@@ -16,6 +16,11 @@ def _looks_like_header(row):
     return has_unit and has_chapter and has_title
 
 
+def _parse_bool(value):
+    text = str(value or "").strip().lower()
+    return text in {"1", "true", "yes", "y", "star", "starred", "important", "x"}
+
+
 def parse_tabular_rows(rows, default_unit=None, default_chapter=None, has_header=None):
     lessons = []
     order = 1
@@ -27,7 +32,7 @@ def parse_tabular_rows(rows, default_unit=None, default_chapter=None, has_header
         row = _normalize_row(row)
         if not row or all(not cell for cell in row):
             continue
-        while len(row) < 7:
+        while len(row) < 8:
             row.append("")
 
         unit = row[0] or default_unit or "Imported"
@@ -39,6 +44,7 @@ def parse_tabular_rows(rows, default_unit=None, default_chapter=None, has_header
         youtube_url = row[4].strip()
         note = row[5].strip()
         difficulty = row[6].strip()
+        starred = _parse_bool(row[7]) if len(row) > 7 else False
 
         lesson_id = f"sheet-{slugify(unit)}-{slugify(chapter)}-{slugify(title)}"
         lessons.append(
@@ -54,6 +60,7 @@ def parse_tabular_rows(rows, default_unit=None, default_chapter=None, has_header
                 "resource_url": "",
                 "difficulty": difficulty,
                 "notes": note,
+                "starred": starred,
                 "order": order,
             }
         )

@@ -918,6 +918,7 @@ function renderList() {
     thead.innerHTML = `
       <tr>
         <th data-col="done">Done</th>
+        <th data-col="star">Star</th>
         <th data-col="sr">SR</th>
         <th>${itemLabel}</th>
         <th data-col="difficulty">Difficulty</th>
@@ -932,7 +933,7 @@ function renderList() {
       const chapterRow = document.createElement("tr");
       chapterRow.className = "chapter-row";
       const chapterCell = document.createElement("td");
-      chapterCell.colSpan = 6;
+      chapterCell.colSpan = 7;
       chapterCell.textContent = chapter;
       chapterRow.appendChild(chapterCell);
       tbody.appendChild(chapterRow);
@@ -964,6 +965,19 @@ function buildQuestionRow(q) {
   check.addEventListener("click", (event) => event.stopPropagation());
   check.addEventListener("change", () => updateDone(q.id, check.checked));
   doneCell.appendChild(check);
+
+  const starCell = document.createElement("td");
+  starCell.dataset.col = "star";
+  const starBtn = document.createElement("button");
+  starBtn.type = "button";
+  starBtn.className = "star-btn" + (q.starred ? " starred" : "");
+  starBtn.textContent = q.starred ? "★" : "☆";
+  starBtn.setAttribute("aria-label", q.starred ? "Unstar question" : "Star question");
+  starBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    updateStar(q.id, !q.starred);
+  });
+  starCell.appendChild(starBtn);
 
   const srCell = document.createElement("td");
   srCell.dataset.col = "sr";
@@ -1015,6 +1029,7 @@ function buildQuestionRow(q) {
   noteCell.appendChild(noteBtn);
 
   row.appendChild(doneCell);
+  row.appendChild(starCell);
   row.appendChild(srCell);
   row.appendChild(titleCell);
   row.appendChild(diffCell);
@@ -1305,6 +1320,17 @@ async function updateDone(id, done) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ done }),
+  });
+  if (!response.ok) return;
+  const data = await response.json();
+  applyUpdate(data);
+}
+
+async function updateStar(id, starred) {
+  const response = await fetch(withSheet(`/api/questions/${encodeURIComponent(id)}/star`), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ starred }),
   });
   if (!response.ok) return;
   const data = await response.json();
