@@ -36,6 +36,7 @@ const elements = {
   closeNotesBtn: document.getElementById("closeNotesBtn"),
   syncBtn: document.getElementById("syncBtn"),
   randomBtn: document.getElementById("randomBtn"),
+  adminBtn: document.getElementById("adminBtn"),
   importBtn: document.getElementById("importBtn"),
   exportBtn: document.getElementById("exportBtn"),
   importModal: document.getElementById("importModal"),
@@ -75,6 +76,33 @@ const defaultSettings = {
   showSr: true,
   showDifficulty: true,
   zebra: false,
+  header: {
+    showSync: true,
+    showRandom: true,
+    showImport: true,
+    showExport: true,
+    showSettings: true,
+    showAdmin: true,
+    showSheets: true,
+    showSearch: true,
+    showFilters: true,
+    showLastSync: true,
+  },
+  theme: {
+    accent: "",
+    accentWarm: "",
+    surface: "",
+    background: "",
+  },
+  linkFallback: {
+    enabled: false,
+    leetcode: false,
+    youtube: false,
+    web: false,
+    leetcodeSuffix: "leetcode",
+    youtubeSuffix: "dsa leetcode",
+    webSuffix: "dsa",
+  },
 };
 
 let uiSettings = loadSettings();
@@ -115,6 +143,25 @@ function saveSheetList(list) {
   localStorage.setItem(SHEET_LIST_KEY, JSON.stringify(list));
 }
 
+async function fetchSheetList() {
+  try {
+    const response = await fetch("/api/sheets");
+    if (!response.ok) {
+      return loadSheetList();
+    }
+    const data = await response.json();
+    const sheets = Array.isArray(data.sheets) ? data.sheets : [];
+    const list = sheets.map((sheet) => ({
+      id: sheet.id,
+      label: sheet.label || sheet.id,
+    }));
+    saveSheetList(list);
+    return list.length ? list : loadSheetList();
+  } catch (error) {
+    return loadSheetList();
+  }
+}
+
 function getSheetLabel(sheetId) {
   const sheet = state.sheetList.find((item) => item.id === sheetId);
   return sheet ? sheet.label : sheetId;
@@ -141,6 +188,11 @@ function getDefaultSheetId() {
 }
 
 function loadActiveSheet() {
+  const params = new URLSearchParams(window.location.search);
+  const urlSheet = params.get("sheet");
+  if (urlSheet) {
+    return slugifySheet(urlSheet);
+  }
   const saved = localStorage.getItem(SHEET_STORAGE_KEY);
   return saved || getDefaultSheetId();
 }
@@ -157,6 +209,30 @@ function renderSheetTabs() {
     button.addEventListener("click", () => setActiveSheet(sheet.id));
     elements.sheetTabs.appendChild(button);
   });
+}
+
+async function createSheet(name) {
+  const response = await fetch("/api/sheets", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name }),
+  });
+  if (!response.ok) {
+    return null;
+  }
+  const entry = await response.json();
+  if (!entry || !entry.id) {
+    return null;
+  }
+  const existing = state.sheetList.find((item) => item.id === entry.id);
+  if (!existing) {
+    state.sheetList.push({ id: entry.id, label: entry.label || entry.id });
+  } else if (entry.label) {
+    existing.label = entry.label;
+  }
+  saveSheetList(state.sheetList);
+  renderSheetTabs();
+  return entry;
 }
 
 function setActiveSheet(sheetId, options = {}) {
@@ -200,7 +276,13 @@ function loadSettings() {
     if (parsed.showNotes !== undefined && parsed.showNotesColumn === undefined) {
       parsed.showNotesColumn = parsed.showNotes;
     }
-    return { ...defaultSettings, ...parsed };
+    return {
+      ...defaultSettings,
+      ...parsed,
+      header: { ...defaultSettings.header, ...(parsed.header || {}) },
+      theme: { ...defaultSettings.theme, ...(parsed.theme || {}) },
+      linkFallback: { ...defaultSettings.linkFallback, ...(parsed.linkFallback || {}) },
+    };
   } catch (error) {
     return { ...defaultSettings };
   }
@@ -208,6 +290,24 @@ function loadSettings() {
 
 function saveSettings() {
   localStorage.setItem("a2z_settings", JSON.stringify(uiSettings));
+}
+
+function applyTheme() {
+  const root = document.documentElement;
+  const theme = uiSettings.theme || {};
+  const mappings = {
+    "--accent": theme.accent,
+    "--accent-warm": theme.accentWarm,
+    "--surface": theme.surface,
+    "--bg": theme.background,
+  };
+  Object.entries(mappings).forEach(([key, value]) => {
+    if (value && value.trim()) {
+      root.style.setProperty(key, value.trim());
+    } else {
+      root.style.removeProperty(key);
+    }
+  });
 }
 
 function applySettings() {
@@ -218,6 +318,17 @@ function applySettings() {
   document.body.classList.toggle("hide-sr", !uiSettings.showSr);
   document.body.classList.toggle("hide-difficulty", !uiSettings.showDifficulty);
   document.body.classList.toggle("zebra-rows", uiSettings.zebra);
+  const header = uiSettings.header || {};
+  document.body.classList.toggle("hide-sync", !header.showSync);
+  document.body.classList.toggle("hide-random", !header.showRandom);
+  document.body.classList.toggle("hide-import", !header.showImport);
+  document.body.classList.toggle("hide-export", !header.showExport);
+  document.body.classList.toggle("hide-settings", !header.showSettings);
+  document.body.classList.toggle("hide-admin", !header.showAdmin);
+  document.body.classList.toggle("hide-sheets", !header.showSheets);
+  document.body.classList.toggle("hide-search", !header.showSearch);
+  document.body.classList.toggle("hide-filters", !header.showFilters);
+  document.body.classList.toggle("hide-last-sync", !header.showLastSync);
   if (elements.toggleCompact) elements.toggleCompact.checked = uiSettings.compact;
   if (elements.toggleUnits) elements.toggleUnits.checked = uiSettings.showUnits;
   if (elements.toggleNotes) elements.toggleNotes.checked = uiSettings.showNotesColumn;
@@ -226,6 +337,7 @@ function applySettings() {
   if (elements.toggleDifficulty) elements.toggleDifficulty.checked = uiSettings.showDifficulty;
   if (elements.toggleZebra) elements.toggleZebra.checked = uiSettings.zebra;
   if (!uiSettings.showNotesColumn) closeNotes();
+  applyTheme();
 }
 
 function setLoadingMessage(message) {
@@ -585,8 +697,15 @@ function buildQuestionRow(q) {
   const linksCell = document.createElement("td");
   const links = document.createElement("div");
   links.className = "link-icons";
-  links.appendChild(makeLink("LC", q.leetcode_url || q.url || ""));
-  links.appendChild(makeLink("YT", q.youtube_url || ""));
+  const leetUrl = q.leetcode_url || q.url || "";
+  const ytUrl = q.youtube_url || "";
+  const webUrl = q.resource_url || "";
+  const leetFallback = getFallbackLink(q, "leetcode");
+  const ytFallback = getFallbackLink(q, "youtube");
+  const webFallback = getFallbackLink(q, "web");
+  links.appendChild(makeLink("LC", leetUrl || leetFallback, { fallback: !leetUrl && !!leetFallback }));
+  links.appendChild(makeLink("YT", ytUrl || ytFallback, { fallback: !ytUrl && !!ytFallback }));
+  links.appendChild(makeLink("WB", webUrl || webFallback, { fallback: !webUrl && !!webFallback }));
   linksCell.appendChild(links);
 
   const noteCell = document.createElement("td");
@@ -610,7 +729,24 @@ function buildQuestionRow(q) {
   return row;
 }
 
-function makeLink(label, href) {
+function getFallbackLink(question, type) {
+  const fallback = uiSettings.linkFallback || {};
+  if (!fallback.enabled || !fallback[type]) return "";
+  const suffixKey = `${type}Suffix`;
+  const suffix = fallback[suffixKey] ? ` ${fallback[suffixKey].trim()}` : "";
+  const query = `${question.title || ""}${suffix}`.trim();
+  if (!query) return "";
+  const encoded = encodeURIComponent(query);
+  const templates = {
+    leetcode: "https://leetcode.com/problemset/all/?search={query}",
+    youtube: "https://www.youtube.com/results?search_query={query}",
+    web: "https://www.google.com/search?q={query}",
+  };
+  const template = templates[type] || templates.web;
+  return template.replace("{query}", encoded);
+}
+
+function makeLink(label, href, options = {}) {
   if (!href) {
     const span = document.createElement("span");
     span.className = "link-icon disabled";
@@ -619,6 +755,10 @@ function makeLink(label, href) {
   }
   const link = document.createElement("a");
   link.className = "link-icon";
+  if (options.fallback) {
+    link.classList.add("link-fallback");
+    link.title = "Search link";
+  }
   link.textContent = label;
   link.href = href;
   link.target = "_blank";
@@ -783,11 +923,12 @@ async function handleImport() {
       setImportStatus("Enter a sheet name for the new sheet.", true);
       return;
     }
-    targetSheet = ensureSheet(nameValue, nameValue);
-    if (!targetSheet) {
-      setImportStatus("Invalid sheet name.", true);
+    const created = await createSheet(nameValue);
+    if (!created) {
+      setImportStatus("Could not create the sheet.", true);
       return;
     }
+    targetSheet = created.id;
   }
   if (!elements.importFile || !elements.importFile.files.length) {
     setImportStatus("Select a CSV or Excel file to import.", true);
@@ -1102,8 +1243,15 @@ function bindEvents() {
   }
 }
 
-state.sheetList = loadSheetList();
-renderSheetTabs();
-state.sheetId = loadActiveSheet();
-setActiveSheet(state.sheetId, { keepFilters: true });
-bindEvents();
+async function initApp() {
+  state.sheetList = await fetchSheetList();
+  renderSheetTabs();
+  state.sheetId = loadActiveSheet();
+  if (!state.sheetList.find((sheet) => sheet.id === state.sheetId)) {
+    state.sheetId = getDefaultSheetId();
+  }
+  setActiveSheet(state.sheetId, { keepFilters: true });
+  bindEvents();
+}
+
+initApp();
