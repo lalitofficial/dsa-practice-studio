@@ -139,6 +139,69 @@
                     </table>
                   </div>
                 </div>
+
+                <div class="admin-card">
+                  <h3>Import Sheet</h3>
+                  <p>Import CSV or Excel into a new or existing sheet.</p>
+                  <form id="sheetImportForm" class="admin-form">
+                    <label class="admin-field">
+                      <span class="admin-note">Sheet name</span>
+                      <input
+                        id="sheetImportName"
+                        class="admin-input"
+                        type="text"
+                        list="sheetNameList"
+                        placeholder="e.g. My Sheet"
+                      />
+                      <datalist id="sheetNameList"></datalist>
+                    </label>
+                    <div class="admin-row">
+                      <select id="sheetImportFormat" class="admin-select">
+                        <option value="auto" selected>Auto format</option>
+                        <option value="csv">CSV</option>
+                        <option value="excel">Excel</option>
+                      </select>
+                      <input
+                        id="sheetImportFile"
+                        class="admin-input"
+                        type="file"
+                        accept=".csv,.xlsx,.xlsm"
+                      />
+                    </div>
+                    <div class="admin-row">
+                      <input
+                        id="sheetImportDelimiter"
+                        class="admin-input"
+                        type="text"
+                        maxlength="2"
+                        placeholder="Delimiter ,"
+                      />
+                      <select id="sheetImportHeader" class="admin-select">
+                        <option value="auto" selected>Auto header</option>
+                        <option value="true">Has header</option>
+                        <option value="false">No header</option>
+                      </select>
+                      <button class="btn ghost" type="button" id="sheetImportBtn">Import</button>
+                    </div>
+                    <div class="admin-note" id="sheetImportStatus"></div>
+                  </form>
+                </div>
+
+                <div class="admin-card">
+                  <h3>Export Sheet</h3>
+                  <p>Download a sheet in CSV or JSON format.</p>
+                  <form id="sheetExportForm" class="admin-form">
+                    <select id="sheetExportSelect" class="admin-select"></select>
+                    <div class="admin-row">
+                      <select id="sheetExportFormat" class="admin-select">
+                        <option value="csv" selected>CSV</option>
+                        <option value="json">JSON</option>
+                      </select>
+                      <button class="btn ghost" type="button" id="sheetExportBtn">Export</button>
+                    </div>
+                    <div class="admin-note" id="sheetExportStatus"></div>
+                  </form>
+                </div>
               </div>
             </section>
 
@@ -230,6 +293,28 @@
                     </div>
                     <div class="admin-note">Changes apply when you reopen the dashboard.</div>
                   </form>
+                </div>
+
+                <div class="admin-card">
+                  <h3>Settings Transfer</h3>
+                  <p>Export or import UI preferences as JSON.</p>
+                  <div class="admin-form">
+                    <div class="admin-row">
+                      <button class="btn ghost" type="button" id="settingsExportBtn">
+                        Export Settings
+                      </button>
+                      <input
+                        id="settingsImportFile"
+                        class="admin-input"
+                        type="file"
+                        accept=".json"
+                      />
+                      <button class="btn ghost" type="button" id="settingsImportBtn">
+                        Import Settings
+                      </button>
+                    </div>
+                    <div class="admin-note" id="settingsStatus"></div>
+                  </div>
                 </div>
               </div>
             </section>

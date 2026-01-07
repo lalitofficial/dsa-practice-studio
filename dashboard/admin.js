@@ -9,6 +9,30 @@ const elements = {
   newSheetName: document.getElementById("newSheetName"),
   sheetStatus: document.getElementById("sheetStatus"),
   sheetTableBody: document.getElementById("sheetTableBody"),
+  sheetImportForm: document.getElementById("sheetImportForm"),
+  sheetImportName: document.getElementById("sheetImportName"),
+  sheetNameList: document.getElementById("sheetNameList"),
+  sheetImportFormat: document.getElementById("sheetImportFormat"),
+  sheetImportFile: document.getElementById("sheetImportFile"),
+  sheetImportDelimiter: document.getElementById("sheetImportDelimiter"),
+  sheetImportHeader: document.getElementById("sheetImportHeader"),
+  sheetImportBtn: document.getElementById("sheetImportBtn"),
+  sheetImportStatus: document.getElementById("sheetImportStatus"),
+  sheetExportForm: document.getElementById("sheetExportForm"),
+  sheetExportSelect: document.getElementById("sheetExportSelect"),
+  sheetExportFormat: document.getElementById("sheetExportFormat"),
+  sheetExportBtn: document.getElementById("sheetExportBtn"),
+  sheetExportStatus: document.getElementById("sheetExportStatus"),
+  summaryTotalSheets: document.getElementById("summaryTotalSheets"),
+  summarySampleSheets: document.getElementById("summarySampleSheets"),
+  summaryCustomSheets: document.getElementById("summaryCustomSheets"),
+  summaryTotalQuestions: document.getElementById("summaryTotalQuestions"),
+  summaryDoneQuestions: document.getElementById("summaryDoneQuestions"),
+  summaryCompletion: document.getElementById("summaryCompletion"),
+  summaryCompletionMeta: document.getElementById("summaryCompletionMeta"),
+  summaryProgress: document.getElementById("summaryProgress"),
+  summaryDifficultyBar: document.getElementById("summaryDifficultyBar"),
+  summaryDifficultyLegend: document.getElementById("summaryDifficultyLegend"),
   renameForm: document.getElementById("renameForm"),
   renameSheet: document.getElementById("renameSheet"),
   renameScope: document.getElementById("renameScope"),
@@ -25,6 +49,10 @@ const elements = {
   labelItem: document.getElementById("labelItem"),
   labelUnit: document.getElementById("labelUnit"),
   labelChapter: document.getElementById("labelChapter"),
+  settingsExportBtn: document.getElementById("settingsExportBtn"),
+  settingsImportFile: document.getElementById("settingsImportFile"),
+  settingsImportBtn: document.getElementById("settingsImportBtn"),
+  settingsStatus: document.getElementById("settingsStatus"),
   toggleHeaderSync: document.getElementById("toggleHeaderSync"),
   toggleHeaderRandom: document.getElementById("toggleHeaderRandom"),
   toggleHeaderImport: document.getElementById("toggleHeaderImport"),
@@ -191,6 +219,10 @@ function syncAppearanceForm() {
   if (elements.labelUnit) elements.labelUnit.value = uiSettings.labels.unit || "";
   if (elements.labelChapter) elements.labelChapter.value = uiSettings.labels.chapter || "";
 
+  if (elements.sheetImportDelimiter) {
+    elements.sheetImportDelimiter.value = ",";
+  }
+
   applyTheme();
 }
 
@@ -213,6 +245,29 @@ function setRenameStatus(message, isError = false) {
   if (!elements.renameStatus) return;
   elements.renameStatus.textContent = message;
   elements.renameStatus.style.color = isError ? "#ff7b7b" : "";
+}
+
+function setSheetImportStatus(message, isError = false) {
+  if (!elements.sheetImportStatus) return;
+  elements.sheetImportStatus.textContent = message;
+  elements.sheetImportStatus.style.color = isError ? "#ff7b7b" : "";
+}
+
+function setSheetExportStatus(message, isError = false) {
+  if (!elements.sheetExportStatus) return;
+  elements.sheetExportStatus.textContent = message;
+  elements.sheetExportStatus.style.color = isError ? "#ff7b7b" : "";
+}
+
+function setSettingsStatus(message, isError = false) {
+  if (!elements.settingsStatus) return;
+  elements.settingsStatus.textContent = message;
+  elements.settingsStatus.style.color = isError ? "#ff7b7b" : "";
+}
+
+function confirmTwice(message) {
+  if (!confirm(message)) return false;
+  return confirm("Please confirm once more to continue.");
 }
 
 function setDifficultyStatus(message, isError = false) {
@@ -302,7 +357,7 @@ function renderSheetTable() {
     resetBtn.type = "button";
     resetBtn.textContent = "Reset Progress";
     resetBtn.addEventListener("click", async () => {
-      if (!confirm(`Reset progress for ${sheet.label || sheet.id}?`)) return;
+      if (!confirmTwice(`Reset progress for ${sheet.label || sheet.id}?`)) return;
       await fetch(`/api/sheets/${encodeURIComponent(sheet.id)}/reset`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -316,7 +371,7 @@ function renderSheetTable() {
     clearNotesBtn.type = "button";
     clearNotesBtn.textContent = "Clear Notes";
     clearNotesBtn.addEventListener("click", async () => {
-      if (!confirm(`Clear notes for ${sheet.label || sheet.id}?`)) return;
+      if (!confirmTwice(`Clear notes for ${sheet.label || sheet.id}?`)) return;
       await fetch(`/api/sheets/${encodeURIComponent(sheet.id)}/reset`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -331,7 +386,7 @@ function renderSheetTable() {
     regenBtn.textContent = "Regenerate";
     regenBtn.disabled = sheet.source !== "sample";
     regenBtn.addEventListener("click", async () => {
-      if (!confirm(`Rebuild ${sheet.label || sheet.id} from HTML?`)) return;
+      if (!confirmTwice(`Rebuild ${sheet.label || sheet.id} from HTML?`)) return;
       await fetch(`/api/sheets/${encodeURIComponent(sheet.id)}/regenerate`, { method: "POST" });
       await refreshSheets();
     });
@@ -342,7 +397,7 @@ function renderSheetTable() {
     deleteBtn.textContent = "Delete";
     deleteBtn.disabled = sheet.source === "sample";
     deleteBtn.addEventListener("click", async () => {
-      if (!confirm(`Delete ${sheet.label || sheet.id}? This cannot be undone.`)) return;
+      if (!confirmTwice(`Delete ${sheet.label || sheet.id}? This cannot be undone.`)) return;
       await fetch(`/api/sheets/${encodeURIComponent(sheet.id)}`, { method: "DELETE" });
       await refreshSheets();
     });
@@ -365,8 +420,92 @@ function renderSheetTable() {
   });
 }
 
+function renderSummary() {
+  const totalSheets = state.sheets.length;
+  const sampleSheets = state.sheets.filter((sheet) => sheet.source === "sample").length;
+  const customSheets = totalSheets - sampleSheets;
+  const totalQuestions = state.sheets.reduce(
+    (acc, sheet) => acc + (sheet.stats?.total || 0),
+    0
+  );
+  const doneQuestions = state.sheets.reduce(
+    (acc, sheet) => acc + (sheet.stats?.done || 0),
+    0
+  );
+  const completion = totalQuestions ? Math.round((doneQuestions / totalQuestions) * 100) : 0;
+  const difficulty = { Easy: 0, Medium: 0, Hard: 0, Unknown: 0 };
+  state.sheets.forEach((sheet) => {
+    const diff = sheet.stats?.difficulty || {};
+    difficulty.Easy += diff.Easy || 0;
+    difficulty.Medium += diff.Medium || 0;
+    difficulty.Hard += diff.Hard || 0;
+    difficulty.Unknown += diff.Unknown || 0;
+  });
+
+  if (elements.summaryTotalSheets) elements.summaryTotalSheets.textContent = totalSheets;
+  if (elements.summarySampleSheets) {
+    elements.summarySampleSheets.textContent = `${sampleSheets} samples`;
+  }
+  if (elements.summaryCustomSheets) {
+    elements.summaryCustomSheets.textContent = `${customSheets} custom`;
+  }
+  if (elements.summaryTotalQuestions) {
+    elements.summaryTotalQuestions.textContent = totalQuestions;
+  }
+  if (elements.summaryDoneQuestions) {
+    elements.summaryDoneQuestions.textContent = `${doneQuestions} done`;
+  }
+  if (elements.summaryCompletion) {
+    elements.summaryCompletion.textContent = `${completion}%`;
+  }
+  if (elements.summaryCompletionMeta) {
+    elements.summaryCompletionMeta.textContent = `${doneQuestions} of ${totalQuestions}`;
+  }
+  if (elements.summaryProgress) {
+    elements.summaryProgress.style.width = `${completion}%`;
+  }
+
+  if (elements.summaryDifficultyBar) {
+    const totalDiff =
+      difficulty.Easy + difficulty.Medium + difficulty.Hard + difficulty.Unknown;
+    const segments = [
+      { key: "Easy", className: "diff-easy" },
+      { key: "Medium", className: "diff-medium" },
+      { key: "Hard", className: "diff-hard" },
+      { key: "Unknown", className: "diff-unknown" },
+    ];
+    segments.forEach((segment) => {
+      const span = elements.summaryDifficultyBar.querySelector(`.${segment.className}`);
+      if (!span) return;
+      const value = difficulty[segment.key] || 0;
+      const width = totalDiff ? (value / totalDiff) * 100 : 0;
+      span.style.width = `${width}%`;
+      span.title = `${segment.key}: ${value}`;
+    });
+  }
+
+  if (elements.summaryDifficultyLegend) {
+    elements.summaryDifficultyLegend.innerHTML = "";
+    [
+      ["Easy", difficulty.Easy, "diff-easy"],
+      ["Medium", difficulty.Medium, "diff-medium"],
+      ["Hard", difficulty.Hard, "diff-hard"],
+      ["Unknown", difficulty.Unknown, "diff-unknown"],
+    ].forEach(([label, value, className]) => {
+      const item = document.createElement("span");
+      item.className = `difficulty-pill ${className}`;
+      item.textContent = `${label}: ${value}`;
+      elements.summaryDifficultyLegend.appendChild(item);
+    });
+  }
+}
+
 function renderSheetSelects() {
-  const selects = [elements.renameSheet, elements.difficultySheet].filter(Boolean);
+  const selects = [
+    elements.renameSheet,
+    elements.difficultySheet,
+    elements.sheetExportSelect,
+  ].filter(Boolean);
   selects.forEach((select) => {
     select.innerHTML = "";
     state.sheets.forEach((sheet) => {
@@ -378,10 +517,129 @@ function renderSheetSelects() {
   });
 }
 
+function renderSheetNameList() {
+  if (!elements.sheetNameList) return;
+  elements.sheetNameList.innerHTML = "";
+  state.sheets.forEach((sheet) => {
+    const option = document.createElement("option");
+    option.value = sheet.label || sheet.id;
+    elements.sheetNameList.appendChild(option);
+  });
+}
+
+function normalizeDelimiter(value) {
+  const trimmed = String(value || "").trim();
+  if (!trimmed) return ",";
+  if (trimmed === "\\t" || trimmed.toLowerCase() === "tab") return "\t";
+  return trimmed;
+}
+
+async function handleSheetImport() {
+  if (!elements.sheetImportName || !elements.sheetImportFile) return;
+  const nameValue = elements.sheetImportName.value.trim();
+  if (!nameValue) {
+    setSheetImportStatus("Enter a sheet name to import into.", true);
+    return;
+  }
+  let sheetId = null;
+  const match = state.sheets.find(
+    (sheet) =>
+      sheet.id.toLowerCase() === nameValue.toLowerCase() ||
+      (sheet.label || "").toLowerCase() === nameValue.toLowerCase()
+  );
+  if (match) {
+    sheetId = match.id;
+    if (!confirmTwice(`Import into existing sheet ${match.label || match.id}?`)) {
+      return;
+    }
+  } else {
+    const response = await fetch("/api/sheets", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: nameValue }),
+    });
+    if (!response.ok) {
+      setSheetImportStatus("Could not create the sheet.", true);
+      return;
+    }
+    const entry = await response.json();
+    sheetId = entry.id;
+  }
+
+  const files = elements.sheetImportFile.files;
+  if (!files || !files.length) {
+    setSheetImportStatus("Choose a CSV or Excel file.", true);
+    return;
+  }
+  const formatChoice = elements.sheetImportFormat ? elements.sheetImportFormat.value : "auto";
+  const filename = files[0].name.toLowerCase();
+  let warning = "";
+  if (
+    formatChoice === "csv" &&
+    !filename.endsWith(".csv") &&
+    !filename.endsWith(".tsv")
+  ) {
+    warning = "Format set to CSV but file is not .csv.";
+  }
+  if (
+    formatChoice === "excel" &&
+    !filename.endsWith(".xlsx") &&
+    !filename.endsWith(".xlsm")
+  ) {
+    warning = "Format set to Excel but file is not .xlsx.";
+  }
+  const formData = new FormData();
+  formData.append("file", files[0]);
+  if (elements.sheetImportDelimiter) {
+    formData.append("delimiter", normalizeDelimiter(elements.sheetImportDelimiter.value));
+  }
+  if (elements.sheetImportHeader) {
+    formData.append("header", elements.sheetImportHeader.value);
+  }
+  setSheetImportStatus("Importing...");
+  const response = await fetch(`/api/import-table?sheet=${encodeURIComponent(sheetId)}`, {
+    method: "POST",
+    body: formData,
+  });
+  if (!response.ok) {
+    setSheetImportStatus("Import failed.", true);
+    return;
+  }
+  setSheetImportStatus(warning ? `Import complete. ${warning}` : "Import complete.");
+  if (elements.sheetImportFile) elements.sheetImportFile.value = "";
+  await refreshSheets();
+}
+
+async function downloadSheetExport(formatOverride) {
+  if (!elements.sheetExportSelect) return;
+  const sheetId = elements.sheetExportSelect.value;
+  if (!sheetId) return;
+  const format =
+    formatOverride ||
+    (elements.sheetExportFormat ? elements.sheetExportFormat.value : "csv");
+  const response = await fetch(`/api/export?format=${format}&sheet=${encodeURIComponent(sheetId)}`);
+  if (!response.ok) return;
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const sheet = state.sheets.find((item) => item.id === sheetId);
+  const label = sheet?.label || sheetId;
+  const fileBase = label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  link.href = url;
+  link.download = `${fileBase}-export.${format}`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  setSheetExportStatus(`Exported ${label}.`);
+}
+
 async function refreshSheets() {
   state.sheets = await fetchSheets();
   renderSheetTable();
   renderSheetSelects();
+  renderSheetNameList();
+  renderSummary();
 }
 
 function bindEvents() {
@@ -459,6 +717,16 @@ function bindEvents() {
       }
       setDifficultyStatus("Difficulty updated.");
       await refreshSheets();
+    });
+  }
+
+  if (elements.sheetImportBtn) {
+    elements.sheetImportBtn.addEventListener("click", handleSheetImport);
+  }
+
+  if (elements.sheetExportBtn) {
+    elements.sheetExportBtn.addEventListener("click", () => {
+      downloadSheetExport();
     });
   }
 
@@ -608,6 +876,62 @@ function bindEvents() {
       setActivePanel(button.dataset.panel, panelButtons, panels);
     });
   });
+
+  document.querySelectorAll("[data-panel-jump]").forEach((button) => {
+    button.addEventListener("click", () => {
+      setActivePanel(button.dataset.panelJump, panelButtons, panels);
+    });
+  });
+
+  if (elements.settingsExportBtn) {
+    elements.settingsExportBtn.addEventListener("click", () => {
+      const payload = JSON.stringify(uiSettings, null, 2);
+      const blob = new Blob([payload], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "dsa-practice-settings.json";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      setSettingsStatus("Settings exported.");
+    });
+  }
+
+  if (elements.settingsImportBtn) {
+    elements.settingsImportBtn.addEventListener("click", () => {
+      if (elements.settingsImportFile) {
+        elements.settingsImportFile.click();
+      }
+    });
+  }
+
+  if (elements.settingsImportFile) {
+    elements.settingsImportFile.addEventListener("change", async () => {
+      const file = elements.settingsImportFile.files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+        uiSettings = {
+          ...defaultSettings,
+          ...parsed,
+          header: { ...defaultSettings.header, ...(parsed.header || {}) },
+          theme: { ...defaultSettings.theme, ...(parsed.theme || {}) },
+          linkFallback: { ...defaultSettings.linkFallback, ...(parsed.linkFallback || {}) },
+          labels: { ...defaultSettings.labels, ...(parsed.labels || {}) },
+        };
+        saveSettings(uiSettings);
+        syncAppearanceForm();
+        setSettingsStatus("Settings imported.");
+      } catch (error) {
+        setSettingsStatus("Invalid settings file.", true);
+      } finally {
+        elements.settingsImportFile.value = "";
+      }
+    });
+  }
 }
 
 function setActivePanel(panelId, buttons, panels) {
