@@ -848,8 +848,15 @@ function renderList() {
   const unitFilter = elements.stepFilter.value;
   const chapterFilter = elements.chapterFilter.value;
   const status = elements.statusFilter.value;
-  const shouldExpand =
-    unitFilter !== "all" || chapterFilter !== "all" || status !== "all" || query;
+  const difficultyFilter = elements.difficultyFilter ? elements.difficultyFilter.value : "all";
+  const hasActiveFilter =
+    unitFilter !== "all" ||
+    chapterFilter !== "all" ||
+    status !== "all" ||
+    difficultyFilter !== "all" ||
+    query;
+  const hasStoredOpenUnits = state.openUnits.size > 0;
+  const shouldExpand = hasActiveFilter && !hasStoredOpenUnits;
 
   orderedUnits.forEach((unit) => {
     const group = unitMap.get(unit);
@@ -1557,6 +1564,12 @@ function bindEvents() {
 
   window.addEventListener("beforeunload", () => {
     persistCurrentViewState();
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
+      persistCurrentViewState();
+    }
   });
 }
 
