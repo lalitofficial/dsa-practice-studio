@@ -1,2 +1,15 @@
-.striver_tracker
-./leetcode-striver   
+.striver_tracker/
+__pycache__/
+*.pyc
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.venv/
+.env
+.DS_Store
+leetcode-striver/
+
+# One-time import sources (provide your own locally)
+*_ref*.html
+*_ref*.txt
+ref_file.html
