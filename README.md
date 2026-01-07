@@ -23,6 +23,7 @@
 - Multi-sheet support with a quick switch in the header.
 - Unit and chapter grouping with a focused practice flow.
 - Progress tracking, notes, and difficulty visibility.
+- Star important questions and filter starred-only.
 - CSV/Excel import plus JSON/CSV export (UI and CLI).
 - Local storage only: data stays on your machine.
 
