@@ -8,6 +8,7 @@ const state = {
   unitIndex: { units: [], map: new Map() },
   notesOpen: false,
   sheetId: "",
+  sheetList: [],
 };
 
 const elements = {
@@ -35,6 +36,26 @@ const elements = {
   closeNotesBtn: document.getElementById("closeNotesBtn"),
   syncBtn: document.getElementById("syncBtn"),
   randomBtn: document.getElementById("randomBtn"),
+  importBtn: document.getElementById("importBtn"),
+  exportBtn: document.getElementById("exportBtn"),
+  importModal: document.getElementById("importModal"),
+  importBackdrop: document.getElementById("importBackdrop"),
+  closeImportBtn: document.getElementById("closeImportBtn"),
+  importSheetSelect: document.getElementById("importSheetSelect"),
+  importSheetNameWrap: document.getElementById("importSheetNameWrap"),
+  importSheetName: document.getElementById("importSheetName"),
+  importFile: document.getElementById("importFile"),
+  importDelimiter: document.getElementById("importDelimiter"),
+  importHeaderMode: document.getElementById("importHeaderMode"),
+  importSubmitBtn: document.getElementById("importSubmitBtn"),
+  importStatus: document.getElementById("importStatus"),
+  exportModal: document.getElementById("exportModal"),
+  exportBackdrop: document.getElementById("exportBackdrop"),
+  closeExportBtn: document.getElementById("closeExportBtn"),
+  exportSheetSelect: document.getElementById("exportSheetSelect"),
+  exportCsvSubmit: document.getElementById("exportCsvSubmit"),
+  exportJsonSubmit: document.getElementById("exportJsonSubmit"),
+  sheetTabs: document.getElementById("sheetTabs"),
   settingsBtn: document.getElementById("settingsBtn"),
   settingsPanel: document.getElementById("settingsPanel"),
   toggleCompact: document.getElementById("toggleCompact"),
@@ -60,10 +81,63 @@ let uiSettings = loadSettings();
 applySettings();
 
 const SHEET_STORAGE_KEY = "a2z_sheet";
+const SHEET_LIST_KEY = "a2z_sheet_list";
+const DEFAULT_SHEETS = [
+  { id: "striver", label: "Sample: Striver" },
+  { id: "algomaster", label: "Sample: AlgoMaster" },
+];
+
+function slugifySheet(value) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function loadSheetList() {
+  try {
+    const raw = localStorage.getItem(SHEET_LIST_KEY);
+    if (!raw) return [...DEFAULT_SHEETS];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [...DEFAULT_SHEETS];
+    const byId = new Map(parsed.map((item) => [item.id, item]));
+    DEFAULT_SHEETS.forEach((sheet) => {
+      if (!byId.has(sheet.id)) byId.set(sheet.id, sheet);
+    });
+    return Array.from(byId.values());
+  } catch (error) {
+    return [...DEFAULT_SHEETS];
+  }
+}
+
+function saveSheetList(list) {
+  localStorage.setItem(SHEET_LIST_KEY, JSON.stringify(list));
+}
+
+function getSheetLabel(sheetId) {
+  const sheet = state.sheetList.find((item) => item.id === sheetId);
+  return sheet ? sheet.label : sheetId;
+}
+
+function ensureSheet(sheetId, label) {
+  const id = slugifySheet(sheetId || "");
+  if (!id) return null;
+  const existing = state.sheetList.find((item) => item.id === id);
+  if (!existing) {
+    state.sheetList.push({ id, label: label || sheetId || id });
+    saveSheetList(state.sheetList);
+    renderSheetTabs();
+  } else if (label && label.trim() && existing.label !== label) {
+    existing.label = label;
+    saveSheetList(state.sheetList);
+    renderSheetTabs();
+  }
+  return id;
+}
 
 function getDefaultSheetId() {
-  const first = document.querySelector(".sheet-tab");
-  return first ? first.dataset.sheet : "striver";
+  return state.sheetList.length ? state.sheetList[0].id : "striver";
 }
 
 function loadActiveSheet() {
@@ -71,20 +145,32 @@ function loadActiveSheet() {
   return saved || getDefaultSheetId();
 }
 
+function renderSheetTabs() {
+  if (!elements.sheetTabs) return;
+  elements.sheetTabs.innerHTML = "";
+  state.sheetList.forEach((sheet) => {
+    const button = document.createElement("button");
+    button.className = "sheet-tab" + (sheet.id === state.sheetId ? " active" : "");
+    button.type = "button";
+    button.dataset.sheet = sheet.id;
+    button.textContent = sheet.label;
+    button.addEventListener("click", () => setActiveSheet(sheet.id));
+    elements.sheetTabs.appendChild(button);
+  });
+}
+
 function setActiveSheet(sheetId, options = {}) {
   if (!sheetId) return;
-  const tab = document.querySelector(`.sheet-tab[data-sheet="${sheetId}"]`);
-  if (!tab) {
-    sheetId = getDefaultSheetId();
-  }
+  const normalized = slugifySheet(sheetId);
+  if (!normalized) return;
+  sheetId = normalized;
+  ensureSheet(sheetId);
   if (state.notesOpen) {
     closeNotes();
   }
   state.sheetId = sheetId;
   localStorage.setItem(SHEET_STORAGE_KEY, sheetId);
-  document.querySelectorAll(".sheet-tab").forEach((tab) => {
-    tab.classList.toggle("active", tab.dataset.sheet === sheetId);
-  });
+  renderSheetTabs();
   if (!options.keepFilters) {
     elements.stepFilter.value = "all";
     elements.chapterFilter.value = "all";
@@ -92,10 +178,11 @@ function setActiveSheet(sheetId, options = {}) {
   fetchQuestions();
 }
 
-function withSheet(url) {
-  if (!state.sheetId) return url;
+function withSheet(url, sheetIdOverride) {
+  const sheetId = sheetIdOverride || state.sheetId;
+  if (!sheetId) return url;
   const separator = url.includes("?") ? "&" : "?";
-  return `${url}${separator}sheet=${encodeURIComponent(state.sheetId)}`;
+  return `${url}${separator}sheet=${encodeURIComponent(sheetId)}`;
 }
 
 function formatDate(value) {
@@ -175,14 +262,7 @@ function getChapterList(questions, unitFilter) {
 }
 
 function indexToLetters(index) {
-  let value = index;
-  let letters = "";
-  while (value > 0) {
-    value -= 1;
-    letters = String.fromCharCode(65 + (value % 26)) + letters;
-    value = Math.floor(value / 26);
-  }
-  return letters;
+  return String(index);
 }
 
 function buildUnitIndex(questions) {
@@ -280,10 +360,24 @@ function applyFilters() {
   state.filtered.sort((a, b) => (a.order || 10 ** 9) - (b.order || 10 ** 9));
 
   renderList();
-  elements.resultCount.textContent = `${state.filtered.length} results`;
-  elements.panelCount.textContent = String(state.filtered.length);
+  updateCounts({ unitFilter, chapterFilter, status, query });
   updatePanelHeader(unitFilter, chapterFilter, status, query);
   updateListProgress();
+}
+
+function updateCounts({ unitFilter, chapterFilter, status, query }) {
+  const total = state.questions.length;
+  const visible = state.filtered.length;
+  const hasFilter =
+    unitFilter !== "all" || chapterFilter !== "all" || status !== "all" || query;
+
+  if (hasFilter) {
+    elements.resultCount.textContent = `${visible} of ${total} results`;
+    elements.panelCount.textContent = `${visible}/${total}`;
+  } else {
+    elements.resultCount.textContent = `${total} results`;
+    elements.panelCount.textContent = String(total);
+  }
 }
 
 function updatePanelHeader(unitFilter, chapterFilter, status, query) {
@@ -627,6 +721,137 @@ function updateNotesModal(question) {
     : "Difficulty: -";
 }
 
+function openImportModal() {
+  if (!elements.importModal) return;
+  elements.importModal.classList.remove("hidden");
+  if (elements.importStatus) {
+    elements.importStatus.textContent = "";
+  }
+  renderSheetSelect(elements.importSheetSelect, true);
+  if (elements.importSheetSelect) {
+    elements.importSheetSelect.value = "__new__";
+  }
+  if (elements.importSheetNameWrap) {
+    elements.importSheetNameWrap.classList.remove("hidden");
+  }
+  if (elements.importSheetName) {
+    elements.importSheetName.focus();
+  }
+}
+
+function closeImportModal() {
+  if (!elements.importModal) return;
+  elements.importModal.classList.add("hidden");
+  if (elements.importFile) {
+    elements.importFile.value = "";
+  }
+  if (elements.importSheetName) {
+    elements.importSheetName.value = "";
+  }
+}
+
+function openExportModal() {
+  if (!elements.exportModal) return;
+  elements.exportModal.classList.remove("hidden");
+  renderSheetSelect(elements.exportSheetSelect, false);
+}
+
+function closeExportModal() {
+  if (!elements.exportModal) return;
+  elements.exportModal.classList.add("hidden");
+}
+
+function setImportStatus(message, isError = false) {
+  if (!elements.importStatus) return;
+  elements.importStatus.textContent = message;
+  elements.importStatus.style.color = isError ? "#ff7b7b" : "";
+}
+
+function normalizeDelimiter(value) {
+  const trimmed = value.trim();
+  if (!trimmed) return ",";
+  if (trimmed === "\\t" || trimmed.toLowerCase() === "tab") return "\t";
+  return trimmed;
+}
+
+async function handleImport() {
+  if (!elements.importSheetSelect) return;
+  let targetSheet = elements.importSheetSelect.value;
+  if (targetSheet === "__new__") {
+    const nameValue = elements.importSheetName ? elements.importSheetName.value.trim() : "";
+    if (!nameValue) {
+      setImportStatus("Enter a sheet name for the new sheet.", true);
+      return;
+    }
+    targetSheet = ensureSheet(nameValue, nameValue);
+    if (!targetSheet) {
+      setImportStatus("Invalid sheet name.", true);
+      return;
+    }
+  }
+  if (!elements.importFile || !elements.importFile.files.length) {
+    setImportStatus("Select a CSV or Excel file to import.", true);
+    return;
+  }
+  const file = elements.importFile.files[0];
+  const formData = new FormData();
+  formData.append("file", file);
+  if (elements.importDelimiter) {
+    formData.append("delimiter", normalizeDelimiter(elements.importDelimiter.value));
+  }
+  if (elements.importHeaderMode) {
+    formData.append("header", elements.importHeaderMode.value);
+  }
+  setImportStatus("Importing...");
+  const response = await fetch(withSheet("/api/import-table", targetSheet), {
+    method: "POST",
+    body: formData,
+  });
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({}));
+    setImportStatus(payload.error || "Import failed.", true);
+    return;
+  }
+  setImportStatus("Import complete.");
+  setActiveSheet(targetSheet, { keepFilters: true });
+  closeImportModal();
+}
+
+function renderSheetSelect(selectEl, includeNew) {
+  if (!selectEl) return;
+  selectEl.innerHTML = "";
+  state.sheetList.forEach((sheet) => {
+    const option = document.createElement("option");
+    option.value = sheet.id;
+    option.textContent = sheet.label;
+    if (sheet.id === state.sheetId) option.selected = true;
+    selectEl.appendChild(option);
+  });
+  if (includeNew) {
+    const option = document.createElement("option");
+    option.value = "__new__";
+    option.textContent = "Create new sheet...";
+    selectEl.appendChild(option);
+  }
+}
+
+async function downloadExport(format, sheetIdOverride) {
+  const response = await fetch(withSheet(`/api/export?format=${format}`, sheetIdOverride));
+  if (!response.ok) return;
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const label = getSheetLabel(sheetIdOverride || state.sheetId);
+  const rawName = label || sheetIdOverride || state.sheetId;
+  const fileBase = rawName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  link.href = url;
+  link.download = `${fileBase}-export.${format}`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
 function updateLastSync() {
   elements.lastSync.textContent = state.updatedAt
     ? `Last sync: ${formatDate(state.updatedAt)}`
@@ -708,12 +933,6 @@ async function syncData() {
 }
 
 function bindEvents() {
-  document.querySelectorAll(".sheet-tab").forEach((tab) => {
-    tab.addEventListener("click", () => {
-      setActiveSheet(tab.dataset.sheet);
-    });
-  });
-
   elements.searchInput.addEventListener("input", applyFilters);
   elements.stepFilter.addEventListener("change", () => {
     buildChapterOptions();
@@ -737,9 +956,76 @@ function bindEvents() {
     elements.notesBackdrop.addEventListener("click", closeNotes);
   }
 
+  if (elements.importBtn) {
+    elements.importBtn.addEventListener("click", () => {
+      openImportModal();
+    });
+  }
+
+  if (elements.closeImportBtn) {
+    elements.closeImportBtn.addEventListener("click", closeImportModal);
+  }
+
+  if (elements.importBackdrop) {
+    elements.importBackdrop.addEventListener("click", closeImportModal);
+  }
+
+  if (elements.importSubmitBtn) {
+    elements.importSubmitBtn.addEventListener("click", handleImport);
+  }
+
+  if (elements.importSheetSelect) {
+    elements.importSheetSelect.addEventListener("change", () => {
+      if (!elements.importSheetNameWrap) return;
+      if (elements.importSheetSelect.value === "__new__") {
+        elements.importSheetNameWrap.classList.remove("hidden");
+      } else {
+        elements.importSheetNameWrap.classList.add("hidden");
+      }
+    });
+  }
+
+  if (elements.exportBtn) {
+    elements.exportBtn.addEventListener("click", () => {
+      openExportModal();
+    });
+  }
+
+  if (elements.closeExportBtn) {
+    elements.closeExportBtn.addEventListener("click", closeExportModal);
+  }
+
+  if (elements.exportBackdrop) {
+    elements.exportBackdrop.addEventListener("click", closeExportModal);
+  }
+
+  if (elements.exportCsvSubmit) {
+    elements.exportCsvSubmit.addEventListener("click", () => {
+      if (!elements.exportSheetSelect) return;
+      const sheetId = elements.exportSheetSelect.value;
+      downloadExport("csv", sheetId);
+      closeExportModal();
+    });
+  }
+
+  if (elements.exportJsonSubmit) {
+    elements.exportJsonSubmit.addEventListener("click", () => {
+      if (!elements.exportSheetSelect) return;
+      const sheetId = elements.exportSheetSelect.value;
+      downloadExport("json", sheetId);
+      closeExportModal();
+    });
+  }
+
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && state.notesOpen) {
-      closeNotes();
+    if (event.key === "Escape") {
+      if (state.notesOpen) closeNotes();
+      if (elements.importModal && !elements.importModal.classList.contains("hidden")) {
+        closeImportModal();
+      }
+      if (elements.exportModal && !elements.exportModal.classList.contains("hidden")) {
+        closeExportModal();
+      }
     }
   });
 
@@ -816,6 +1102,8 @@ function bindEvents() {
   }
 }
 
-bindEvents();
+state.sheetList = loadSheetList();
+renderSheetTabs();
 state.sheetId = loadActiveSheet();
 setActiveSheet(state.sheetId, { keepFilters: true });
+bindEvents();

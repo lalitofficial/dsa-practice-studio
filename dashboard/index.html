@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Striver A2Z Dashboard</title>
+  <title>DSA Practice Studio</title>
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
@@ -15,21 +15,10 @@
         <div class="brand">
           <div class="logo">DSA</div>
           <div class="brand-text">
-            <h1>Practice Studio</h1>
+          <h1>DSA Practice Studio</h1>
             <div class="sheet-switch">
-              <!-- <span class="sheet-label">DSA</span> -->
-              <div class="sheet-tabs">
-                <button
-                  class="sheet-tab active"
-                  data-sheet="striver"
-                  type="button"
-                >
-                  Striver A2Z
-                </button>
-                <button class="sheet-tab" data-sheet="algomaster" type="button">
-                  AlgoMaster
-                </button>
-              </div>
+              <span class="sheet-label">Sheets</span>
+              <div class="sheet-tabs" id="sheetTabs"></div>
             </div>
           </div>
         </div>
@@ -38,6 +27,8 @@
           <button id="randomBtn" class="btn primary" type="button">
             Pick Random
           </button>
+          <button id="importBtn" class="btn ghost" type="button">Import</button>
+          <button id="exportBtn" class="btn ghost" type="button">Export</button>
           <button
             id="settingsBtn"
             class="btn icon-btn"
@@ -153,7 +144,7 @@
       </div>
     </div>
 
-    <div id="notesModal" class="modal hidden" role="dialog" aria-label="Notes">
+  <div id="notesModal" class="modal hidden" role="dialog" aria-label="Notes">
       <div class="modal-backdrop" id="notesBackdrop"></div>
       <div class="modal-dialog" role="document">
         <div class="modal-header">
@@ -191,8 +182,84 @@
           </div>
         </div>
       </div>
-    </div>
+  </div>
 
-    <script src="/static/app.js"></script>
-  </body>
+  <div id="importModal" class="modal hidden" role="dialog" aria-label="Import">
+    <div class="modal-backdrop" id="importBackdrop"></div>
+    <div class="modal-dialog" role="document">
+      <div class="modal-header">
+        <div>
+          <p class="detail-kicker">Import sheet</p>
+          <h3>Upload CSV or Excel</h3>
+          <p class="panel-subtitle">Pick a sheet or name a new one.</p>
+        </div>
+        <button class="btn icon-btn modal-close" type="button" id="closeImportBtn" aria-label="Close import">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6l-12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="detail-field">
+          <label for="importSheetSelect">Sheet</label>
+          <select id="importSheetSelect"></select>
+        </div>
+        <div class="detail-field hidden" id="importSheetNameWrap">
+          <label for="importSheetName">New sheet name</label>
+          <input id="importSheetName" type="text" placeholder="e.g. My DSA Sheet" />
+        </div>
+        <div class="detail-field">
+          <label for="importFile">File (.csv, .xlsx)</label>
+          <input id="importFile" type="file" accept=".csv,.xlsx,.xlsm" />
+        </div>
+        <div class="import-options">
+          <div class="detail-field">
+            <label for="importDelimiter">CSV delimiter</label>
+            <input id="importDelimiter" type="text" value="," maxlength="2" />
+          </div>
+          <div class="detail-field">
+            <label for="importHeaderMode">Header row</label>
+            <select id="importHeaderMode">
+              <option value="auto" selected>Auto detect</option>
+              <option value="true">Has header</option>
+              <option value="false">No header</option>
+            </select>
+          </div>
+        </div>
+        <button id="importSubmitBtn" class="btn primary" type="button">Import</button>
+        <p id="importStatus" class="panel-subtitle"></p>
+      </div>
+    </div>
+  </div>
+
+  <div id="exportModal" class="modal hidden" role="dialog" aria-label="Export">
+    <div class="modal-backdrop" id="exportBackdrop"></div>
+    <div class="modal-dialog" role="document">
+      <div class="modal-header">
+        <div>
+          <p class="detail-kicker">Export sheet</p>
+          <h3>Download your data</h3>
+          <p class="panel-subtitle">Choose a sheet to export.</p>
+        </div>
+        <button class="btn icon-btn modal-close" type="button" id="closeExportBtn" aria-label="Close export">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6l-12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="detail-field">
+          <label for="exportSheetSelect">Sheet</label>
+          <select id="exportSheetSelect"></select>
+        </div>
+        <div class="export-actions">
+          <button id="exportCsvSubmit" class="btn ghost" type="button">Download CSV</button>
+          <button id="exportJsonSubmit" class="btn ghost" type="button">Download JSON</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
 </html>

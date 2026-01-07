@@ -222,6 +222,12 @@ h1 {
   position: relative;
 }
 
+.export-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .btn {
   border: 1px solid transparent;
   border-radius: 999px;
@@ -814,6 +820,12 @@ h1 {
 
 .modal-body {
   display: grid;
+  gap: 12px;
+}
+
+.import-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 12px;
 }
 
