@@ -7,6 +7,7 @@ const state = {
   unitStatus: {},
   unitIndex: { units: [], map: new Map() },
   notesOpen: false,
+  sheetId: "",
 };
 
 const elements = {
@@ -39,6 +40,7 @@ const elements = {
   toggleCompact: document.getElementById("toggleCompact"),
   toggleUnits: document.getElementById("toggleUnits"),
   toggleNotes: document.getElementById("toggleNotes"),
+  toggleDifficulty: document.getElementById("toggleDifficulty"),
   toggleProgress: document.getElementById("toggleProgress"),
   toggleSr: document.getElementById("toggleSr"),
   toggleZebra: document.getElementById("toggleZebra"),
@@ -50,11 +52,51 @@ const defaultSettings = {
   showNotesColumn: true,
   showProgress: true,
   showSr: true,
+  showDifficulty: true,
   zebra: false,
 };
 
 let uiSettings = loadSettings();
 applySettings();
+
+const SHEET_STORAGE_KEY = "a2z_sheet";
+
+function getDefaultSheetId() {
+  const first = document.querySelector(".sheet-tab");
+  return first ? first.dataset.sheet : "striver";
+}
+
+function loadActiveSheet() {
+  const saved = localStorage.getItem(SHEET_STORAGE_KEY);
+  return saved || getDefaultSheetId();
+}
+
+function setActiveSheet(sheetId, options = {}) {
+  if (!sheetId) return;
+  const tab = document.querySelector(`.sheet-tab[data-sheet="${sheetId}"]`);
+  if (!tab) {
+    sheetId = getDefaultSheetId();
+  }
+  if (state.notesOpen) {
+    closeNotes();
+  }
+  state.sheetId = sheetId;
+  localStorage.setItem(SHEET_STORAGE_KEY, sheetId);
+  document.querySelectorAll(".sheet-tab").forEach((tab) => {
+    tab.classList.toggle("active", tab.dataset.sheet === sheetId);
+  });
+  if (!options.keepFilters) {
+    elements.stepFilter.value = "all";
+    elements.chapterFilter.value = "all";
+  }
+  fetchQuestions();
+}
+
+function withSheet(url) {
+  if (!state.sheetId) return url;
+  const separator = url.includes("?") ? "&" : "?";
+  return `${url}${separator}sheet=${encodeURIComponent(state.sheetId)}`;
+}
 
 function formatDate(value) {
   if (!value) return "-";
@@ -87,12 +129,14 @@ function applySettings() {
   document.body.classList.toggle("hide-notes", !uiSettings.showNotesColumn);
   document.body.classList.toggle("hide-progress", !uiSettings.showProgress);
   document.body.classList.toggle("hide-sr", !uiSettings.showSr);
+  document.body.classList.toggle("hide-difficulty", !uiSettings.showDifficulty);
   document.body.classList.toggle("zebra-rows", uiSettings.zebra);
   if (elements.toggleCompact) elements.toggleCompact.checked = uiSettings.compact;
   if (elements.toggleUnits) elements.toggleUnits.checked = uiSettings.showUnits;
   if (elements.toggleNotes) elements.toggleNotes.checked = uiSettings.showNotesColumn;
   if (elements.toggleProgress) elements.toggleProgress.checked = uiSettings.showProgress;
   if (elements.toggleSr) elements.toggleSr.checked = uiSettings.showSr;
+  if (elements.toggleDifficulty) elements.toggleDifficulty.checked = uiSettings.showDifficulty;
   if (elements.toggleZebra) elements.toggleZebra.checked = uiSettings.zebra;
   if (!uiSettings.showNotesColumn) closeNotes();
 }
@@ -159,7 +203,7 @@ function getUnitBadge(unit) {
 
 async function fetchQuestions() {
   setLoadingMessage("Loading questions...");
-  const response = await fetch("/api/questions");
+  const response = await fetch(withSheet("/api/questions"));
   if (!response.ok) {
     setLoadingMessage("Failed to load data.");
     return;
@@ -376,6 +420,7 @@ function renderList() {
         <th data-col="done">Done</th>
         <th data-col="sr">SR</th>
         <th>Question</th>
+        <th data-col="difficulty">Difficulty</th>
         <th>Links</th>
         <th data-col="notes">Notes</th>
       </tr>
@@ -387,7 +432,7 @@ function renderList() {
       const chapterRow = document.createElement("tr");
       chapterRow.className = "chapter-row";
       const chapterCell = document.createElement("td");
-      chapterCell.colSpan = 5;
+      chapterCell.colSpan = 6;
       chapterCell.textContent = chapter;
       chapterRow.appendChild(chapterCell);
       tbody.appendChild(chapterRow);
@@ -426,6 +471,23 @@ function buildQuestionRow(q) {
   const titleCell = document.createElement("td");
   titleCell.textContent = q.title;
 
+  const diffCell = document.createElement("td");
+  diffCell.dataset.col = "difficulty";
+  const diffValue = (q.difficulty || "").trim();
+  if (diffValue) {
+    let diffClass = diffValue.toLowerCase();
+    if (diffClass.includes("easy")) diffClass = "easy";
+    else if (diffClass.includes("medium")) diffClass = "medium";
+    else if (diffClass.includes("hard")) diffClass = "hard";
+    else diffClass = "unknown";
+    const badge = document.createElement("span");
+    badge.className = `difficulty-badge difficulty-${diffClass}`;
+    badge.textContent = diffValue;
+    diffCell.appendChild(badge);
+  } else {
+    diffCell.textContent = "-";
+  }
+
   const linksCell = document.createElement("td");
   const links = document.createElement("div");
   links.className = "link-icons";
@@ -447,6 +509,7 @@ function buildQuestionRow(q) {
   row.appendChild(doneCell);
   row.appendChild(srCell);
   row.appendChild(titleCell);
+  row.appendChild(diffCell);
   row.appendChild(linksCell);
   row.appendChild(noteCell);
 
@@ -575,7 +638,7 @@ function renderStats() {
 }
 
 async function updateDone(id, done) {
-  const response = await fetch(`/api/questions/${encodeURIComponent(id)}/done`, {
+  const response = await fetch(withSheet(`/api/questions/${encodeURIComponent(id)}/done`), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ done }),
@@ -586,7 +649,7 @@ async function updateDone(id, done) {
 }
 
 async function updateUnitStatus(unit, done) {
-  const response = await fetch(`/api/units/${encodeURIComponent(unit)}/done`, {
+  const response = await fetch(withSheet(`/api/units/${encodeURIComponent(unit)}/done`), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ done }),
@@ -597,7 +660,7 @@ async function updateUnitStatus(unit, done) {
 }
 
 async function updateNote(id, note) {
-  const response = await fetch(`/api/questions/${encodeURIComponent(id)}/note`, {
+  const response = await fetch(withSheet(`/api/questions/${encodeURIComponent(id)}/note`), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ note }),
@@ -639,12 +702,18 @@ function pickRandomTodo() {
 }
 
 async function syncData() {
-  const response = await fetch("/api/sync", { method: "POST" });
+  const response = await fetch(withSheet("/api/sync"), { method: "POST" });
   if (!response.ok) return;
   await fetchQuestions();
 }
 
 function bindEvents() {
+  document.querySelectorAll(".sheet-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      setActiveSheet(tab.dataset.sheet);
+    });
+  });
+
   elements.searchInput.addEventListener("input", applyFilters);
   elements.stepFilter.addEventListener("change", () => {
     buildChapterOptions();
@@ -730,6 +799,14 @@ function bindEvents() {
     });
   }
 
+  if (elements.toggleDifficulty) {
+    elements.toggleDifficulty.addEventListener("change", () => {
+      uiSettings.showDifficulty = elements.toggleDifficulty.checked;
+      saveSettings();
+      applySettings();
+    });
+  }
+
   if (elements.toggleZebra) {
     elements.toggleZebra.addEventListener("change", () => {
       uiSettings.zebra = elements.toggleZebra.checked;
@@ -740,4 +817,5 @@ function bindEvents() {
 }
 
 bindEvents();
-fetchQuestions();
+state.sheetId = loadActiveSheet();
+setActiveSheet(state.sheetId, { keepFilters: true });

@@ -1,4 +1,2 @@
-state.json
-lessons.json
-tracker.db
-leetcode-striver    
+.striver_tracker
+./leetcode-striver   

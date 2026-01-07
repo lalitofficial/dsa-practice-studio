@@ -100,6 +100,13 @@ body::before {
   align-items: center;
 }
 
+.brand-text {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 .logo {
   width: 38px;
   height: 38px;
@@ -126,6 +133,43 @@ h1 {
   margin: 0;
   font-family: "Sora", sans-serif;
   font-size: 18px;
+}
+
+.sheet-switch {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sheet-label {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.sheet-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sheet-tab {
+  border: 1px solid rgba(231, 238, 246, 0.2);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.sheet-tab.active {
+  background: rgba(50, 209, 197, 0.18);
+  border-color: rgba(50, 209, 197, 0.4);
+  color: var(--accent);
 }
 
 .subtitle {
@@ -557,7 +601,7 @@ h1 {
 .question-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 900px;
+  min-width: 980px;
 }
 
 .question-table thead {
@@ -615,6 +659,34 @@ h1 {
 .sr-badge {
   font-weight: 700;
   color: var(--accent);
+}
+
+.difficulty-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid rgba(231, 238, 246, 0.18);
+  background: rgba(18, 24, 33, 0.6);
+  color: var(--ink);
+}
+
+.difficulty-easy {
+  color: #6fe3a2;
+  border-color: rgba(111, 227, 162, 0.4);
+}
+
+.difficulty-medium {
+  color: #ffb366;
+  border-color: rgba(255, 179, 102, 0.45);
+}
+
+.difficulty-hard {
+  color: #ff7b7b;
+  border-color: rgba(255, 123, 123, 0.45);
 }
 
 .link-icons {
@@ -754,6 +826,10 @@ h1 {
 }
 
 .hide-sr [data-col="sr"] {
+  display: none;
+}
+
+.hide-difficulty [data-col="difficulty"] {
   display: none;
 }
 

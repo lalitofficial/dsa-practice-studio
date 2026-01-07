@@ -18,6 +18,12 @@ UNIT_DB_PATH = DATA_DIR / "tracker.db"
 
 QUESTION_EXTS = {".py", ".ipynb"}
 
+DEFAULT_SHEET_ID = "striver"
+SHEETS = {
+    "striver": {"name": "Striver A2Z", "html": BASE_DIR / "striver_ref_file.html"},
+    "algomaster": {"name": "AlgoMaster", "html": BASE_DIR / "algomaster_ref.html"},
+}
+
 
 def now_iso():
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -27,6 +33,41 @@ def slugify(value):
     value = value.lower()
     value = re.sub(r"[^a-z0-9]+", "-", value)
     return value.strip("-")
+
+
+def resolve_sheet_id(sheet_id):
+    if not sheet_id:
+        return DEFAULT_SHEET_ID
+    if sheet_id in SHEETS:
+        return sheet_id
+    return DEFAULT_SHEET_ID
+
+
+def get_state_path(sheet_id):
+    sheet_id = resolve_sheet_id(sheet_id)
+    if sheet_id == DEFAULT_SHEET_ID:
+        return STATE_PATH
+    return DATA_DIR / f"state_{slugify(sheet_id)}.json"
+
+
+def get_lessons_path(sheet_id):
+    sheet_id = resolve_sheet_id(sheet_id)
+    if sheet_id == DEFAULT_SHEET_ID:
+        return LESSONS_PATH
+    return DATA_DIR / f"lessons_{slugify(sheet_id)}.json"
+
+
+def get_sheet_html_path(sheet_id):
+    sheet_id = resolve_sheet_id(sheet_id)
+    sheet = SHEETS.get(sheet_id, {})
+    html_path = sheet.get("html")
+    if html_path and Path(html_path).exists():
+        return html_path
+    if sheet_id == "striver":
+        fallback = BASE_DIR / "ref_file.html"
+        if fallback.exists():
+            return fallback
+    return html_path
 
 
 def pretty_title(stem):
@@ -59,35 +100,108 @@ def clean_heading_text(value):
     return cleaned
 
 
-def load_lessons():
-    if LESSONS_PATH.exists():
-        with LESSONS_PATH.open("r", encoding="utf-8") as handle:
-            return json.load(handle)
+def _needs_reparse(sheet_id, lessons):
+    if sheet_id == DEFAULT_SHEET_ID:
+        return False
+    if not lessons:
+        return False
+    units = {str(lesson.get("unit", "")).strip().lower() for lesson in lessons}
+    if len(units) <= 1:
+        only = next(iter(units)) if units else ""
+        if only in {"", "imported", "general"}:
+            return True
+    return False
+
+
+def load_lessons(sheet_id=DEFAULT_SHEET_ID):
+    path = get_lessons_path(sheet_id)
+    if path.exists():
+        with path.open("r", encoding="utf-8") as handle:
+            lessons = json.load(handle)
+        cleaned = [
+            lesson
+            for lesson in lessons
+            if not (
+                str(lesson.get("title", "")).strip().lower() in {"problem", "difficulty"}
+                and not lesson.get("leetcode_url")
+                and not lesson.get("youtube_url")
+                and not lesson.get("resource_url")
+            )
+        ]
+        if len(cleaned) != len(lessons):
+            save_lessons(cleaned, sheet_id)
+        if _needs_reparse(sheet_id, cleaned):
+            html_path = get_sheet_html_path(sheet_id)
+            if html_path and Path(html_path).exists():
+                html_text = Path(html_path).read_text(encoding="utf-8")
+                parsed = parse_html_lessons(html_text, None, None)
+                if parsed:
+                    save_lessons(parsed, sheet_id)
+                    return parsed
+        return cleaned
+
+    html_path = get_sheet_html_path(sheet_id)
+    if html_path and Path(html_path).exists():
+        html_text = Path(html_path).read_text(encoding="utf-8")
+        lessons = parse_html_lessons(html_text, None, None)
+        if lessons:
+            save_lessons(lessons, sheet_id)
+            return lessons
     return []
 
 
-def save_lessons(lessons):
+def save_lessons(lessons, sheet_id=DEFAULT_SHEET_ID):
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    with LESSONS_PATH.open("w", encoding="utf-8") as handle:
+    path = get_lessons_path(sheet_id)
+    with path.open("w", encoding="utf-8") as handle:
         json.dump(lessons, handle, indent=2, sort_keys=False)
 
 
 def _open_unit_db():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(UNIT_DB_PATH)
-    conn.execute(
-        "CREATE TABLE IF NOT EXISTS unit_status ("
-        "unit TEXT PRIMARY KEY, "
-        "done INTEGER NOT NULL, "
-        "updated_at TEXT NOT NULL)"
-    )
-    conn.commit()
+    columns = [
+        row[1] for row in conn.execute("PRAGMA table_info(unit_status)").fetchall()
+    ]
+    if not columns:
+        conn.execute(
+            "CREATE TABLE unit_status ("
+            "sheet TEXT NOT NULL, "
+            "unit TEXT NOT NULL, "
+            "done INTEGER NOT NULL, "
+            "updated_at TEXT NOT NULL, "
+            "PRIMARY KEY (sheet, unit))"
+        )
+        conn.commit()
+        return conn
+
+    if "sheet" not in columns:
+        rows = conn.execute("SELECT unit, done, updated_at FROM unit_status").fetchall()
+        conn.execute("ALTER TABLE unit_status RENAME TO unit_status_old")
+        conn.execute(
+            "CREATE TABLE unit_status ("
+            "sheet TEXT NOT NULL, "
+            "unit TEXT NOT NULL, "
+            "done INTEGER NOT NULL, "
+            "updated_at TEXT NOT NULL, "
+            "PRIMARY KEY (sheet, unit))"
+        )
+        conn.executemany(
+            "INSERT INTO unit_status (sheet, unit, done, updated_at) VALUES (?, ?, ?, ?)",
+            [(DEFAULT_SHEET_ID, unit, done, updated_at) for unit, done, updated_at in rows],
+        )
+        conn.execute("DROP TABLE unit_status_old")
+        conn.commit()
     return conn
 
 
-def load_unit_status():
+def load_unit_status(sheet_id=DEFAULT_SHEET_ID):
+    sheet_id = resolve_sheet_id(sheet_id)
     conn = _open_unit_db()
-    rows = conn.execute("SELECT unit, done, updated_at FROM unit_status").fetchall()
+    rows = conn.execute(
+        "SELECT unit, done, updated_at FROM unit_status WHERE sheet = ?",
+        (sheet_id,),
+    ).fetchall()
     conn.close()
     status = {}
     for unit, done, updated_at in rows:
@@ -95,12 +209,13 @@ def load_unit_status():
     return status
 
 
-def set_unit_status(unit, done):
+def set_unit_status(sheet_id, unit, done):
+    sheet_id = resolve_sheet_id(sheet_id)
     conn = _open_unit_db()
     conn.execute(
-        "INSERT INTO unit_status (unit, done, updated_at) VALUES (?, ?, ?) "
-        "ON CONFLICT(unit) DO UPDATE SET done=excluded.done, updated_at=excluded.updated_at",
-        (unit, int(bool(done)), now_iso()),
+        "INSERT INTO unit_status (sheet, unit, done, updated_at) VALUES (?, ?, ?, ?) "
+        "ON CONFLICT(sheet, unit) DO UPDATE SET done=excluded.done, updated_at=excluded.updated_at",
+        (sheet_id, unit, int(bool(done)), now_iso()),
     )
     conn.commit()
     conn.close()
@@ -120,6 +235,10 @@ class SheetHTMLExtractor(HTMLParser):
         self._capture_chapter_tag = ""
         self._capture_unit_text = []
         self._capture_chapter_text = []
+        self._capture_paragraph = False
+        self._paragraph_text = []
+        self._pending_unit = ""
+        self._in_table = False
         self._in_tr = False
         self._in_cell = False
         self._in_a = False
@@ -135,6 +254,12 @@ class SheetHTMLExtractor(HTMLParser):
             self._heading_text = []
             self._heading_has_unit = False
             self._heading_has_chapter = False
+        if tag == "table":
+            self._in_table = True
+            if self._pending_unit:
+                self.current_unit = self._pending_unit
+                self.current_chapter = ""
+                self._pending_unit = ""
         if tag == "tr":
             self._in_tr = True
             self._cells = []
@@ -142,6 +267,9 @@ class SheetHTMLExtractor(HTMLParser):
             self._in_cell = True
             self._cell_text = []
             self._cell_links = []
+        if tag == "p" and not self._in_table and not self._in_tr and not self._in_cell:
+            self._capture_paragraph = True
+            self._paragraph_text = []
         if self._in_cell and tag == "a":
             self._in_a = True
             self._anchor_text = []
@@ -157,6 +285,9 @@ class SheetHTMLExtractor(HTMLParser):
             self._capture_chapter_text = []
 
     def handle_data(self, data):
+        if self._capture_paragraph:
+            self._paragraph_text.append(data)
+            return
         if self._capture_unit_tag:
             self._capture_unit_text.append(data)
             return
@@ -172,6 +303,15 @@ class SheetHTMLExtractor(HTMLParser):
             self._cell_text.append(data)
 
     def handle_endtag(self, tag):
+        if tag == "table":
+            self._in_table = False
+        if tag == "p" and self._capture_paragraph:
+            heading = " ".join(part.strip() for part in self._paragraph_text if part.strip())
+            heading = clean_heading_text(heading)
+            if heading:
+                self._pending_unit = heading
+            self._capture_paragraph = False
+            self._paragraph_text = []
         if tag == self._capture_unit_tag and self._capture_unit_tag:
             heading = " ".join(part.strip() for part in self._capture_unit_text if part.strip())
             heading = clean_heading_text(heading)
@@ -246,7 +386,9 @@ def parse_html_lessons(html_text, default_unit=None, default_chapter=None):
     for row in parser.rows:
         cells = row["cells"]
         header_text = " ".join(cell["text"] for cell in cells).lower()
-        if "problem" in header_text and "status" in header_text:
+        if ("problem" in header_text and "status" in header_text) or (
+            "problem" in header_text and "difficulty" in header_text
+        ):
             continue
 
         all_links = []
@@ -327,10 +469,14 @@ def merge_lessons(existing, incoming):
     return merged
 
 
-def scan_questions():
-    lessons = load_lessons()
+def scan_questions(sheet_id=DEFAULT_SHEET_ID):
+    sheet_id = resolve_sheet_id(sheet_id)
+    lessons = load_lessons(sheet_id)
     if lessons:
         return build_items_from_lessons(lessons)
+
+    if sheet_id != DEFAULT_SHEET_ID:
+        return []
 
     if not SHEET_DIR.exists():
         print(f"Missing sheet directory: {SHEET_DIR}", file=sys.stderr)
@@ -400,26 +546,39 @@ def build_items_from_lessons(lessons):
     return items
 
 
-def load_state():
-    if STATE_PATH.exists():
-        with STATE_PATH.open("r", encoding="utf-8") as handle:
+def load_state(sheet_id=DEFAULT_SHEET_ID):
+    path = get_state_path(sheet_id)
+    if path.exists():
+        with path.open("r", encoding="utf-8") as handle:
             return json.load(handle)
     return {"version": 1, "updated_at": "", "questions": []}
 
 
-def save_state(state):
+def save_state(state, sheet_id=DEFAULT_SHEET_ID):
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     state["updated_at"] = now_iso()
-    with STATE_PATH.open("w", encoding="utf-8") as handle:
+    path = get_state_path(sheet_id)
+    with path.open("w", encoding="utf-8") as handle:
         json.dump(state, handle, indent=2, sort_keys=False)
 
 
-def sync_state(state):
-    scanned = scan_questions()
+def sync_state(state, sheet_id=DEFAULT_SHEET_ID):
+    scanned = scan_questions(sheet_id)
     existing = {q["id"]: q for q in state.get("questions", [])}
+    title_index = {}
+    for q in state.get("questions", []):
+        key = normalize_title(q.get("title", ""))
+        title_index.setdefault(key, []).append(q)
     merged = []
     for item in scanned:
-        prev = existing.get(item["id"], {})
+        prev = existing.get(item["id"])
+        if prev is None:
+            key = normalize_title(item.get("title", ""))
+            matches = title_index.get(key, [])
+            if len(matches) == 1:
+                prev = matches[0]
+        if prev is None:
+            prev = {}
         leetcode_url = (
             prev.get("leetcode_url")
             or prev.get("url")
@@ -443,9 +602,10 @@ def sync_state(state):
     return state
 
 
-def load_and_sync_state():
-    state = load_state()
-    return sync_state(state)
+def load_and_sync_state(sheet_id=DEFAULT_SHEET_ID):
+    sheet_id = resolve_sheet_id(sheet_id)
+    state = load_state(sheet_id)
+    return sync_state(state, sheet_id)
 
 
 def compute_stats(questions):
@@ -725,6 +885,7 @@ def apply_import_urls(questions, lessons, overwrite=False):
 
 
 def cmd_import_html(state, args):
+    sheet_id = resolve_sheet_id(getattr(args, "sheet", None))
     if args.path == "-":
         html_text = sys.stdin.read()
     else:
@@ -736,13 +897,13 @@ def cmd_import_html(state, args):
         print("No lessons found in HTML.")
         return state
 
-    merged = merge_lessons(load_lessons(), lessons)
-    save_lessons(merged)
-    state = sync_state(state)
+    merged = merge_lessons(load_lessons(sheet_id), lessons)
+    save_lessons(merged, sheet_id)
+    state = sync_state(state, sheet_id)
 
     label_unit = args.unit or "auto"
     print(f"Imported lessons: {len(lessons)} (unit: {label_unit})")
-    if not load_lessons():
+    if not load_lessons(sheet_id):
         updated, skipped, missing, ambiguous = apply_import_urls(
             state["questions"], lessons, overwrite=args.overwrite
         )
@@ -762,7 +923,11 @@ def build_parser():
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
+    def add_sheet_arg(target):
+        target.add_argument("--sheet", help="Sheet id (striver or algomaster)")
+
     list_cmd = sub.add_parser("list", help="List questions")
+    add_sheet_arg(list_cmd)
     list_cmd.add_argument("--unit", help="Filter by unit name")
     list_cmd.add_argument("--chapter", help="Filter by chapter name")
     list_cmd.add_argument("--lesson", help="(Deprecated) Filter by chapter name")
@@ -773,32 +938,41 @@ def build_parser():
     list_cmd.add_argument("--urls", action="store_true", help="Show urls")
 
     stats_cmd = sub.add_parser("stats", help="Show progress stats")
+    add_sheet_arg(stats_cmd)
 
     show_cmd = sub.add_parser("show", help="Show details for one question")
+    add_sheet_arg(show_cmd)
     show_cmd.add_argument("query", help="Index, id, or title substring")
 
     done_cmd = sub.add_parser("done", help="Mark a question as done")
+    add_sheet_arg(done_cmd)
     done_cmd.add_argument("query", help="Index, id, or title substring")
 
     todo_cmd = sub.add_parser("todo", help="Mark a question as todo")
+    add_sheet_arg(todo_cmd)
     todo_cmd.add_argument("query", help="Index, id, or title substring")
 
     toggle_cmd = sub.add_parser("toggle", help="Toggle done/todo")
+    add_sheet_arg(toggle_cmd)
     toggle_cmd.add_argument("query", help="Index, id, or title substring")
 
     url_cmd = sub.add_parser("url", help="Show or set a LeetCode URL")
+    add_sheet_arg(url_cmd)
     url_cmd.add_argument("query", help="Index, id, or title substring")
     url_cmd.add_argument("url", nargs="?", help="LeetCode URL")
 
     youtube_cmd = sub.add_parser("youtube", help="Show or set a YouTube solution URL")
+    add_sheet_arg(youtube_cmd)
     youtube_cmd.add_argument("query", help="Index, id, or title substring")
     youtube_cmd.add_argument("url", nargs="?", help="YouTube URL")
 
     note_cmd = sub.add_parser("note", help="Show or set a note")
+    add_sheet_arg(note_cmd)
     note_cmd.add_argument("query", help="Index, id, or title substring")
     note_cmd.add_argument("note", nargs="?", help="Note text")
 
     next_cmd = sub.add_parser("next", help="Suggest the next question")
+    add_sheet_arg(next_cmd)
     next_cmd.add_argument("--unit", help="Filter by unit name")
     next_cmd.add_argument("--chapter", help="Filter by chapter name")
     next_cmd.add_argument("--lesson", help="(Deprecated) Filter by chapter name")
@@ -807,7 +981,9 @@ def build_parser():
     next_cmd.add_argument("--random", action="store_true", help="Pick a random question")
 
     sync_cmd = sub.add_parser("sync", help="Sync questions with filesystem")
+    add_sheet_arg(sync_cmd)
     import_cmd = sub.add_parser("import-html", help="Import lessons and URLs from sheet HTML")
+    add_sheet_arg(import_cmd)
     import_cmd.add_argument("path", help="HTML file path or '-' for stdin")
     import_cmd.add_argument("--unit", help="Default unit name when HTML has no headings")
     import_cmd.add_argument(
@@ -827,8 +1003,9 @@ def main():
     parser = build_parser()
     args = parser.parse_args()
 
-    state = load_state()
-    state = sync_state(state)
+    sheet_id = resolve_sheet_id(getattr(args, "sheet", None))
+    state = load_state(sheet_id)
+    state = sync_state(state, sheet_id)
 
     try:
         if args.command == "list":
@@ -862,7 +1039,7 @@ def main():
         print(str(exc), file=sys.stderr)
         return 2
     finally:
-        save_state(state)
+        save_state(state, sheet_id)
 
     return 0
 
