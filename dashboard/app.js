@@ -7,6 +7,7 @@ const state = {
   unitStatus: {},
   unitIndex: { units: [], map: new Map() },
   notesOpen: false,
+  openUnits: new Set(),
   sheetId: "",
   sheetList: [],
 };
@@ -243,6 +244,7 @@ function setActiveSheet(sheetId, options = {}) {
   if (!normalized) return;
   sheetId = normalized;
   ensureSheet(sheetId);
+  state.openUnits = new Set();
   if (state.notesOpen) {
     closeNotes();
   }
@@ -590,7 +592,19 @@ function updateListProgress() {
   elements.listProgressBar.style.width = `${percent}%`;
 }
 
+function captureOpenUnits() {
+  const openUnits = new Set();
+  document.querySelectorAll(".unit-group").forEach((details) => {
+    if (details.open) {
+      const unit = details.dataset.unit || "";
+      if (unit) openUnits.add(unit);
+    }
+  });
+  state.openUnits = openUnits;
+}
+
 function renderList() {
+  captureOpenUnits();
   elements.questionList.innerHTML = "";
 
   if (!state.filtered.length) {
@@ -635,7 +649,16 @@ function renderList() {
     if (!group) return;
     const details = document.createElement("details");
     details.className = "unit-group";
-    details.open = shouldExpand || orderedUnits.length === 1;
+    details.dataset.unit = unit;
+    details.open =
+      shouldExpand || state.openUnits.has(unit) || orderedUnits.length === 1;
+    details.addEventListener("toggle", () => {
+      if (details.open) {
+        state.openUnits.add(unit);
+      } else {
+        state.openUnits.delete(unit);
+      }
+    });
 
     const summary = document.createElement("summary");
     summary.className = "unit-summary";
