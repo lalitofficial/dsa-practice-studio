@@ -308,7 +308,9 @@ function setActiveSheet(sheetId, options = {}) {
   const normalized = slugifySheet(sheetId);
   if (!normalized) return;
   sheetId = normalized;
-  persistCurrentViewState();
+  if (state.sheetId && state.sheetId !== sheetId) {
+    persistCurrentViewState();
+  }
   ensureSheet(sheetId);
   const viewState = loadViewState(sheetId);
   state.openUnits = new Set(viewState.openUnits || []);
