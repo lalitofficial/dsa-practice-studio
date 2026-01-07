@@ -10,6 +10,7 @@ const state = {
   openUnits: new Set(),
   sheetId: "",
   sheetList: [],
+  lastRenderedSheetId: "",
 };
 
 const elements = {
@@ -123,6 +124,18 @@ applySettings();
 
 const SHEET_STORAGE_KEY = "a2z_sheet";
 const SHEET_LIST_KEY = "a2z_sheet_list";
+const VIEW_STATE_KEY = "a2z_view_state_v1";
+const VIEW_STATE_DEFAULT = {
+  openUnits: [],
+  scrollY: 0,
+  filters: {
+    unit: "all",
+    chapter: "all",
+    status: "all",
+    difficulty: "all",
+    query: "",
+  },
+};
 const DEFAULT_SHEETS = [
   { id: "striver", label: "Sample: Striver" },
   { id: "algomaster", label: "Sample: AlgoMaster" },
@@ -154,6 +167,48 @@ function loadSheetList() {
 
 function saveSheetList(list) {
   localStorage.setItem(SHEET_LIST_KEY, JSON.stringify(list));
+}
+
+function loadViewStateStore() {
+  try {
+    const raw = localStorage.getItem(VIEW_STATE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch (error) {
+    return {};
+  }
+}
+
+function loadViewState(sheetId) {
+  if (!sheetId) return { ...VIEW_STATE_DEFAULT };
+  const store = loadViewStateStore();
+  const entry = store[sheetId];
+  if (!entry || typeof entry !== "object") return { ...VIEW_STATE_DEFAULT };
+  return {
+    ...VIEW_STATE_DEFAULT,
+    ...entry,
+    filters: {
+      ...VIEW_STATE_DEFAULT.filters,
+      ...(entry.filters || {}),
+    },
+  };
+}
+
+function saveViewState(sheetId, patch) {
+  if (!sheetId) return;
+  const store = loadViewStateStore();
+  const current = loadViewState(sheetId);
+  const next = {
+    ...current,
+    ...(patch || {}),
+    filters: {
+      ...current.filters,
+      ...((patch && patch.filters) || {}),
+    },
+  };
+  store[sheetId] = next;
+  localStorage.setItem(VIEW_STATE_KEY, JSON.stringify(store));
 }
 
 async function fetchSheetList() {
@@ -253,8 +308,10 @@ function setActiveSheet(sheetId, options = {}) {
   const normalized = slugifySheet(sheetId);
   if (!normalized) return;
   sheetId = normalized;
+  persistCurrentViewState();
   ensureSheet(sheetId);
-  state.openUnits = new Set();
+  const viewState = loadViewState(sheetId);
+  state.openUnits = new Set(viewState.openUnits || []);
   if (state.notesOpen) {
     closeNotes();
   }
@@ -450,12 +507,14 @@ async function fetchQuestions() {
   state.unitStatus = data.unit_status || {};
   state.unitIndex = buildUnitIndex(state.questions);
   buildUnitOptions();
-  buildChapterOptions();
   buildDifficultyOptions();
+  const viewState = loadViewState(state.sheetId);
+  applyViewState(viewState);
   applyFilters();
   renderStats();
   renderUnits();
   updateLastSync();
+  restoreScrollPosition(viewState.scrollY);
 }
 
 function buildUnitOptions() {
@@ -531,6 +590,86 @@ function buildDifficultyOptions() {
   }
 }
 
+function getFilterState() {
+  return {
+    unit: elements.stepFilter.value || "all",
+    chapter: elements.chapterFilter.value || "all",
+    status: elements.statusFilter.value || "all",
+    difficulty: elements.difficultyFilter ? elements.difficultyFilter.value : "all",
+    query: elements.searchInput.value.trim(),
+  };
+}
+
+function applyViewState(viewState) {
+  if (!viewState) return;
+  const filters = viewState.filters || {};
+  if (elements.searchInput) {
+    elements.searchInput.value = filters.query || "";
+  }
+  if (elements.stepFilter) {
+    const desired = filters.unit || "all";
+    elements.stepFilter.value = desired;
+    if (elements.stepFilter.value !== desired) {
+      elements.stepFilter.value = "all";
+    }
+  }
+  buildChapterOptions();
+  if (elements.chapterFilter) {
+    const desired = filters.chapter || "all";
+    elements.chapterFilter.value = desired;
+    if (elements.chapterFilter.value !== desired) {
+      elements.chapterFilter.value = "all";
+    }
+  }
+  if (elements.statusFilter) {
+    elements.statusFilter.value = filters.status || "all";
+  }
+  if (elements.difficultyFilter) {
+    const desired = filters.difficulty || "all";
+    elements.difficultyFilter.value = desired;
+    if (elements.difficultyFilter.value !== desired) {
+      elements.difficultyFilter.value = "all";
+    }
+  }
+  state.openUnits = new Set(Array.isArray(viewState.openUnits) ? viewState.openUnits : []);
+}
+
+let filterSaveTimer = null;
+function scheduleFilterSave() {
+  if (!state.sheetId) return;
+  if (filterSaveTimer) clearTimeout(filterSaveTimer);
+  filterSaveTimer = setTimeout(() => {
+    saveViewState(state.sheetId, { filters: getFilterState() });
+  }, 200);
+}
+
+let scrollSaveTimer = null;
+function scheduleScrollSave() {
+  if (!state.sheetId) return;
+  if (scrollSaveTimer) clearTimeout(scrollSaveTimer);
+  scrollSaveTimer = setTimeout(() => {
+    saveViewState(state.sheetId, { scrollY: window.scrollY || 0 });
+  }, 200);
+}
+
+function persistCurrentViewState() {
+  if (!state.sheetId) return;
+  saveViewState(state.sheetId, {
+    openUnits: Array.from(state.openUnits),
+    scrollY: window.scrollY || 0,
+    filters: getFilterState(),
+  });
+}
+
+function restoreScrollPosition(scrollY) {
+  const value = Number(scrollY);
+  if (!Number.isFinite(value) || value <= 0) return;
+  requestAnimationFrame(() => {
+    const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    window.scrollTo({ top: Math.min(value, maxScroll), behavior: "auto" });
+  });
+}
+
 function applyFilters() {
   const query = elements.searchInput.value.trim().toLowerCase();
   const unitFilter = elements.stepFilter.value;
@@ -564,6 +703,7 @@ function applyFilters() {
   updatePanelHeader(unitFilter, chapterFilter, status, query, difficultyFilter);
   updateFilterActions({ unitFilter, chapterFilter, status, query, difficultyFilter });
   updateListProgress();
+  scheduleFilterSave();
 }
 
 function updateFilterActions({ unitFilter, chapterFilter, status, query, difficultyFilter }) {
@@ -655,8 +795,10 @@ function updateListProgress() {
 }
 
 function captureOpenUnits() {
+  const groups = document.querySelectorAll(".unit-group");
+  if (!groups.length) return;
   const openUnits = new Set();
-  document.querySelectorAll(".unit-group").forEach((details) => {
+  groups.forEach((details) => {
     if (details.open) {
       const unit = details.dataset.unit || "";
       if (unit) openUnits.add(unit);
@@ -666,12 +808,15 @@ function captureOpenUnits() {
 }
 
 function renderList() {
-  captureOpenUnits();
+  if (state.lastRenderedSheetId === state.sheetId) {
+    captureOpenUnits();
+  }
   elements.questionList.innerHTML = "";
 
   if (!state.filtered.length) {
     elements.questionList.innerHTML =
       '<div class="detail-empty">No questions match your filters.</div>';
+    state.lastRenderedSheetId = state.sheetId;
     return;
   }
 
@@ -720,6 +865,7 @@ function renderList() {
       } else {
         state.openUnits.delete(unit);
       }
+      saveViewState(state.sheetId, { openUnits: Array.from(state.openUnits) });
     });
 
     const summary = document.createElement("summary");
@@ -792,6 +938,7 @@ function renderList() {
 
     elements.questionList.appendChild(details);
   });
+  state.lastRenderedSheetId = state.sheetId;
 }
 
 function buildQuestionRow(q) {
@@ -1399,6 +1546,18 @@ function bindEvents() {
       applySettings();
     });
   }
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      scheduleScrollSave();
+    },
+    { passive: true }
+  );
+
+  window.addEventListener("beforeunload", () => {
+    persistCurrentViewState();
+  });
 }
 
 async function initApp() {
