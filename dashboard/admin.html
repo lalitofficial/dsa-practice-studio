@@ -48,6 +48,7 @@
                     <th>Sheet</th>
                     <th>Questions</th>
                     <th>Progress</th>
+                    <th>Difficulty</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -71,6 +72,32 @@
               </div>
               <button class="btn ghost" type="submit">Apply Rename</button>
               <div class="admin-note" id="renameStatus"></div>
+            </form>
+          </div>
+
+          <div class="admin-card">
+            <h2>Bulk Difficulty</h2>
+            <p>Set difficulty for a unit, chapter, or entire sheet.</p>
+            <form id="difficultyForm" class="admin-form">
+              <select id="difficultySheet" class="admin-select"></select>
+              <div class="admin-row">
+                <input id="difficultyUnit" class="admin-input" type="text" placeholder="Unit (optional)" />
+                <input id="difficultyChapter" class="admin-input" type="text" placeholder="Chapter (optional)" />
+              </div>
+              <div class="admin-row">
+                <select id="difficultyValue" class="admin-select">
+                  <option value="Easy">Easy</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Hard">Hard</option>
+                  <option value="Unknown">Unknown</option>
+                </select>
+                <label class="setting-row">
+                  <span>Only fill missing</span>
+                  <input type="checkbox" id="difficultyOnlyMissing" />
+                </label>
+                <button class="btn ghost" type="submit">Apply Difficulty</button>
+              </div>
+              <div class="admin-note" id="difficultyStatus"></div>
             </form>
           </div>
 
@@ -179,6 +206,10 @@
               <label class="setting-row">
                 <span>Enable search links</span>
                 <input type="checkbox" id="toggleLinkFallback" />
+              </label>
+              <label class="setting-row">
+                <span>Include difficulty in search</span>
+                <input type="checkbox" id="toggleLinkDifficulty" />
               </label>
               <div class="admin-row">
                 <label class="setting-row">

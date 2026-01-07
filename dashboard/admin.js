@@ -15,6 +15,13 @@ const elements = {
   renameFrom: document.getElementById("renameFrom"),
   renameTo: document.getElementById("renameTo"),
   renameStatus: document.getElementById("renameStatus"),
+  difficultyForm: document.getElementById("difficultyForm"),
+  difficultySheet: document.getElementById("difficultySheet"),
+  difficultyUnit: document.getElementById("difficultyUnit"),
+  difficultyChapter: document.getElementById("difficultyChapter"),
+  difficultyValue: document.getElementById("difficultyValue"),
+  difficultyOnlyMissing: document.getElementById("difficultyOnlyMissing"),
+  difficultyStatus: document.getElementById("difficultyStatus"),
   toggleHeaderSync: document.getElementById("toggleHeaderSync"),
   toggleHeaderRandom: document.getElementById("toggleHeaderRandom"),
   toggleHeaderImport: document.getElementById("toggleHeaderImport"),
@@ -38,6 +45,7 @@ const elements = {
   themeBackground: document.getElementById("themeBackground"),
   resetTheme: document.getElementById("resetTheme"),
   toggleLinkFallback: document.getElementById("toggleLinkFallback"),
+  toggleLinkDifficulty: document.getElementById("toggleLinkDifficulty"),
   toggleLinkLeet: document.getElementById("toggleLinkLeet"),
   toggleLinkYT: document.getElementById("toggleLinkYT"),
   toggleLinkWeb: document.getElementById("toggleLinkWeb"),
@@ -77,6 +85,7 @@ const defaultSettings = {
     leetcode: false,
     youtube: false,
     web: false,
+    includeDifficulty: false,
     leetcodeSuffix: "leetcode",
     youtubeSuffix: "dsa leetcode",
     webSuffix: "dsa",
@@ -160,6 +169,8 @@ function syncAppearanceForm() {
     elements.themeBackground.value = uiSettings.theme.background || getCssVar("--bg");
 
   if (elements.toggleLinkFallback) elements.toggleLinkFallback.checked = uiSettings.linkFallback.enabled;
+  if (elements.toggleLinkDifficulty)
+    elements.toggleLinkDifficulty.checked = uiSettings.linkFallback.includeDifficulty;
   if (elements.toggleLinkLeet) elements.toggleLinkLeet.checked = uiSettings.linkFallback.leetcode;
   if (elements.toggleLinkYT) elements.toggleLinkYT.checked = uiSettings.linkFallback.youtube;
   if (elements.toggleLinkWeb) elements.toggleLinkWeb.checked = uiSettings.linkFallback.web;
@@ -191,6 +202,12 @@ function setRenameStatus(message, isError = false) {
   elements.renameStatus.style.color = isError ? "#ff7b7b" : "";
 }
 
+function setDifficultyStatus(message, isError = false) {
+  if (!elements.difficultyStatus) return;
+  elements.difficultyStatus.textContent = message;
+  elements.difficultyStatus.style.color = isError ? "#ff7b7b" : "";
+}
+
 function renderSheetTable() {
   if (!elements.sheetTableBody) return;
   elements.sheetTableBody.innerHTML = "";
@@ -217,6 +234,14 @@ function renderSheetTable() {
     const done = sheet.stats ? sheet.stats.done : 0;
     const total = sheet.stats ? sheet.stats.total : 0;
     progressCell.textContent = total ? `${done}/${total}` : "0";
+
+    const difficultyCell = document.createElement("td");
+    const diff = sheet.stats ? sheet.stats.difficulty || {} : {};
+    const easy = diff.Easy || 0;
+    const medium = diff.Medium || 0;
+    const hard = diff.Hard || 0;
+    const unknown = diff.Unknown || 0;
+    difficultyCell.textContent = `E:${easy} M:${medium} H:${hard} U:${unknown}`;
 
     const actionsCell = document.createElement("td");
     const actions = document.createElement("div");
@@ -321,26 +346,29 @@ function renderSheetTable() {
     row.appendChild(nameCell);
     row.appendChild(countCell);
     row.appendChild(progressCell);
+    row.appendChild(difficultyCell);
     row.appendChild(actionsCell);
     elements.sheetTableBody.appendChild(row);
   });
 }
 
-function renderSheetSelect() {
-  if (!elements.renameSheet) return;
-  elements.renameSheet.innerHTML = "";
-  state.sheets.forEach((sheet) => {
-    const option = document.createElement("option");
-    option.value = sheet.id;
-    option.textContent = sheet.label || sheet.id;
-    elements.renameSheet.appendChild(option);
+function renderSheetSelects() {
+  const selects = [elements.renameSheet, elements.difficultySheet].filter(Boolean);
+  selects.forEach((select) => {
+    select.innerHTML = "";
+    state.sheets.forEach((sheet) => {
+      const option = document.createElement("option");
+      option.value = sheet.id;
+      option.textContent = sheet.label || sheet.id;
+      select.appendChild(option);
+    });
   });
 }
 
 async function refreshSheets() {
   state.sheets = await fetchSheets();
   renderSheetTable();
-  renderSheetSelect();
+  renderSheetSelects();
 }
 
 function bindEvents() {
@@ -390,6 +418,34 @@ function bindEvents() {
       setRenameStatus("Rename applied.");
       if (elements.renameFrom) elements.renameFrom.value = "";
       if (elements.renameTo) elements.renameTo.value = "";
+    });
+  }
+
+  if (elements.difficultyForm) {
+    elements.difficultyForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const sheet = elements.difficultySheet ? elements.difficultySheet.value : "";
+      const unit = elements.difficultyUnit ? elements.difficultyUnit.value.trim() : "";
+      const chapter = elements.difficultyChapter ? elements.difficultyChapter.value.trim() : "";
+      const difficulty = elements.difficultyValue ? elements.difficultyValue.value : "";
+      const onlyMissing = elements.difficultyOnlyMissing
+        ? elements.difficultyOnlyMissing.checked
+        : false;
+      if (!difficulty) {
+        setDifficultyStatus("Select a difficulty.", true);
+        return;
+      }
+      const response = await fetch("/api/refactor/difficulty", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sheet, unit, chapter, difficulty, only_missing: onlyMissing }),
+      });
+      if (!response.ok) {
+        setDifficultyStatus("Difficulty update failed.", true);
+        return;
+      }
+      setDifficultyStatus("Difficulty updated.");
+      await refreshSheets();
     });
   }
 
@@ -462,6 +518,13 @@ function bindEvents() {
   if (elements.toggleLinkFallback) {
     elements.toggleLinkFallback.addEventListener("change", () => {
       uiSettings.linkFallback.enabled = elements.toggleLinkFallback.checked;
+      saveSettings(uiSettings);
+    });
+  }
+
+  if (elements.toggleLinkDifficulty) {
+    elements.toggleLinkDifficulty.addEventListener("change", () => {
+      uiSettings.linkFallback.includeDifficulty = elements.toggleLinkDifficulty.checked;
       saveSettings(uiSettings);
     });
   }
