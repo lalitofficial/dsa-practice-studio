@@ -68,6 +68,9 @@ const elements = {
   toggleProgress: document.getElementById("toggleProgress"),
   toggleSr: document.getElementById("toggleSr"),
   toggleZebra: document.getElementById("toggleZebra"),
+  unitFilterLabel: document.getElementById("unitFilterLabel"),
+  chapterFilterLabel: document.getElementById("chapterFilterLabel"),
+  difficultyFilterLabel: document.getElementById("difficultyFilterLabel"),
 };
 
 const defaultSettings = {
@@ -105,6 +108,11 @@ const defaultSettings = {
     leetcodeSuffix: "leetcode",
     youtubeSuffix: "dsa leetcode",
     webSuffix: "dsa",
+  },
+  labels: {
+    item: "Question",
+    unit: "Unit",
+    chapter: "Chapter",
   },
 };
 
@@ -286,6 +294,7 @@ function loadSettings() {
       header: { ...defaultSettings.header, ...(parsed.header || {}) },
       theme: { ...defaultSettings.theme, ...(parsed.theme || {}) },
       linkFallback: { ...defaultSettings.linkFallback, ...(parsed.linkFallback || {}) },
+      labels: { ...defaultSettings.labels, ...(parsed.labels || {}) },
     };
   } catch (error) {
     return { ...defaultSettings };
@@ -342,6 +351,34 @@ function applySettings() {
   if (elements.toggleZebra) elements.toggleZebra.checked = uiSettings.zebra;
   if (!uiSettings.showNotesColumn) closeNotes();
   applyTheme();
+  applyLabels();
+}
+
+function getLabel(key, fallback) {
+  const labels = uiSettings.labels || {};
+  const value = String(labels[key] || "").trim();
+  return value || fallback;
+}
+
+function pluralizeLabel(value) {
+  if (!value) return value;
+  return value.endsWith("s") ? value : `${value}s`;
+}
+
+function getItemLabel() {
+  return getLabel("item", "Question");
+}
+
+function applyLabels() {
+  if (elements.unitFilterLabel) {
+    elements.unitFilterLabel.textContent = getLabel("unit", "Unit");
+  }
+  if (elements.chapterFilterLabel) {
+    elements.chapterFilterLabel.textContent = getLabel("chapter", "Chapter");
+  }
+  if (elements.difficultyFilterLabel) {
+    elements.difficultyFilterLabel.textContent = "Difficulty";
+  }
 }
 
 function setLoadingMessage(message) {
@@ -422,7 +459,8 @@ async function fetchQuestions() {
 function buildUnitOptions() {
   const units = state.unitIndex.units;
   const current = elements.stepFilter.value || "all";
-  elements.stepFilter.innerHTML = '<option value="all">All units</option>';
+  const unitLabel = pluralizeLabel(getLabel("unit", "Unit"));
+  elements.stepFilter.innerHTML = `<option value="all">All ${unitLabel}</option>`;
   units.forEach((unit) => {
     const badge = getUnitBadge(unit);
     const option = document.createElement("option");
@@ -439,7 +477,8 @@ function buildChapterOptions() {
   const selectedUnit = elements.stepFilter.value;
   const chapters = getChapterList(state.questions, selectedUnit);
   const current = elements.chapterFilter.value || "all";
-  elements.chapterFilter.innerHTML = '<option value="all">All chapters</option>';
+  const chapterLabel = pluralizeLabel(getLabel("chapter", "Chapter"));
+  elements.chapterFilter.innerHTML = `<option value="all">All ${chapterLabel}</option>`;
   chapters.forEach((chapter) => {
     const option = document.createElement("option");
     option.value = chapter;
@@ -546,7 +585,11 @@ function updateCounts({ unitFilter, chapterFilter, status, query, difficultyFilt
 function updatePanelHeader(unitFilter, chapterFilter, status, query, difficultyFilter) {
   if (!elements.panelTitle || !elements.panelSubtitle) return;
 
-  let title = "Questions";
+  const itemLabel = getItemLabel();
+  const itemPlural = pluralizeLabel(itemLabel);
+  const unitLabel = getLabel("unit", "Unit");
+  const chapterLabel = getLabel("chapter", "Chapter");
+  let title = itemPlural;
   const subtitleParts = [];
 
   if (query) {
@@ -556,8 +599,8 @@ function updatePanelHeader(unitFilter, chapterFilter, status, query, difficultyF
 
   if (unitFilter !== "all") {
     const badge = getUnitBadge(unitFilter);
-    const unitLabel = badge ? `Unit ${badge}` : "Unit";
-    title = `Questions in ${unitLabel} · ${unitFilter}`;
+    const unitBadge = badge ? `${unitLabel} ${badge}` : unitLabel;
+    title = `${itemPlural} in ${unitBadge} · ${unitFilter}`;
     subtitleParts.push(unitLabel);
   }
 
@@ -565,9 +608,9 @@ function updatePanelHeader(unitFilter, chapterFilter, status, query, difficultyF
     if (unitFilter !== "all") {
       title = `${title} / ${chapterFilter}`;
     } else {
-      title = `Questions in Chapter ${chapterFilter}`;
+      title = `${itemPlural} in ${chapterLabel} ${chapterFilter}`;
     }
-    subtitleParts.push(`Chapter ${chapterFilter}`);
+    subtitleParts.push(`${chapterLabel} ${chapterFilter}`);
   }
 
   if (status !== "all") {
@@ -581,7 +624,7 @@ function updatePanelHeader(unitFilter, chapterFilter, status, query, difficultyF
   elements.panelTitle.textContent = title;
   elements.panelSubtitle.textContent = subtitleParts.length
     ? subtitleParts.join(" · ")
-    : "All questions from the sheet.";
+    : `All ${itemPlural.toLowerCase()} from the sheet.`;
 }
 
 function updateListProgress() {
@@ -697,11 +740,12 @@ function renderList() {
     table.className = "question-table";
 
     const thead = document.createElement("thead");
+    const itemLabel = getItemLabel();
     thead.innerHTML = `
       <tr>
         <th data-col="done">Done</th>
         <th data-col="sr">SR</th>
-        <th>Question</th>
+        <th>${itemLabel}</th>
         <th data-col="difficulty">Difficulty</th>
         <th>Links</th>
         <th data-col="notes">Notes</th>

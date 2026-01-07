@@ -22,6 +22,9 @@ const elements = {
   difficultyValue: document.getElementById("difficultyValue"),
   difficultyOnlyMissing: document.getElementById("difficultyOnlyMissing"),
   difficultyStatus: document.getElementById("difficultyStatus"),
+  labelItem: document.getElementById("labelItem"),
+  labelUnit: document.getElementById("labelUnit"),
+  labelChapter: document.getElementById("labelChapter"),
   toggleHeaderSync: document.getElementById("toggleHeaderSync"),
   toggleHeaderRandom: document.getElementById("toggleHeaderRandom"),
   toggleHeaderImport: document.getElementById("toggleHeaderImport"),
@@ -90,6 +93,11 @@ const defaultSettings = {
     youtubeSuffix: "dsa leetcode",
     webSuffix: "dsa",
   },
+  labels: {
+    item: "Question",
+    unit: "Unit",
+    chapter: "Chapter",
+  },
 };
 
 function loadSettings() {
@@ -106,6 +114,7 @@ function loadSettings() {
       header: { ...defaultSettings.header, ...(parsed.header || {}) },
       theme: { ...defaultSettings.theme, ...(parsed.theme || {}) },
       linkFallback: { ...defaultSettings.linkFallback, ...(parsed.linkFallback || {}) },
+      labels: { ...defaultSettings.labels, ...(parsed.labels || {}) },
     };
   } catch (error) {
     return { ...defaultSettings };
@@ -177,6 +186,10 @@ function syncAppearanceForm() {
   if (elements.leetSuffix) elements.leetSuffix.value = uiSettings.linkFallback.leetcodeSuffix || "";
   if (elements.ytSuffix) elements.ytSuffix.value = uiSettings.linkFallback.youtubeSuffix || "";
   if (elements.webSuffix) elements.webSuffix.value = uiSettings.linkFallback.webSuffix || "";
+
+  if (elements.labelItem) elements.labelItem.value = uiSettings.labels.item || "";
+  if (elements.labelUnit) elements.labelUnit.value = uiSettings.labels.unit || "";
+  if (elements.labelChapter) elements.labelChapter.value = uiSettings.labels.chapter || "";
 
   applyTheme();
 }
@@ -570,6 +583,45 @@ function bindEvents() {
       saveSettings(uiSettings);
     });
   }
+
+  const labelBindings = [
+    [elements.labelItem, "item"],
+    [elements.labelUnit, "unit"],
+    [elements.labelChapter, "chapter"],
+  ];
+  labelBindings.forEach(([el, key]) => {
+    if (!el) return;
+    el.addEventListener("input", () => {
+      uiSettings.labels[key] = el.value.trim() || defaultSettings.labels[key];
+      saveSettings(uiSettings);
+    });
+  });
+
+  const panelButtons = document.querySelectorAll(".admin-nav-btn");
+  const panels = document.querySelectorAll(".admin-panel");
+  const savedPanel = localStorage.getItem("admin_panel");
+  if (savedPanel) {
+    setActivePanel(savedPanel, panelButtons, panels);
+  }
+  panelButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      setActivePanel(button.dataset.panel, panelButtons, panels);
+    });
+  });
+}
+
+function setActivePanel(panelId, buttons, panels) {
+  if (!panelId) return;
+  const hasPanel = Array.from(panels).some((panel) => panel.dataset.panel === panelId);
+  const activeId = hasPanel ? panelId : panels[0]?.dataset.panel;
+  if (!activeId) return;
+  panels.forEach((panel) => {
+    panel.classList.toggle("active", panel.dataset.panel === activeId);
+  });
+  buttons.forEach((button) => {
+    button.classList.toggle("active", button.dataset.panel === activeId);
+  });
+  localStorage.setItem("admin_panel", activeId);
 }
 
 async function init() {

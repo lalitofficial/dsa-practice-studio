@@ -769,6 +769,83 @@ body.hide-last-sync #lastSync {
   margin-top: 24px;
 }
 
+.admin-shell {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(200px, 240px) minmax(0, 1fr);
+  margin-top: 24px;
+  align-items: start;
+}
+
+.admin-nav {
+  background: var(--surface-glass);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 18px;
+  box-shadow: var(--shadow-soft);
+}
+
+.admin-nav-title {
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 12px;
+}
+
+.admin-nav-btn {
+  width: 100%;
+  text-align: left;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink);
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.admin-nav-btn.active {
+  border-color: rgba(231, 238, 246, 0.2);
+  background: rgba(50, 209, 197, 0.12);
+  color: var(--accent);
+}
+
+.admin-panels {
+  display: grid;
+  gap: 20px;
+}
+
+.admin-panel {
+  display: none;
+}
+
+.admin-panel.active {
+  display: block;
+}
+
+.admin-panel-head {
+  margin-bottom: 16px;
+}
+
+.admin-panel-head h2 {
+  margin: 0 0 6px;
+  font-size: 20px;
+}
+
+.admin-panel-head p {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 13px;
+}
+
+.admin-panel-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
 .admin-grid {
   display: grid;
   gap: 20px;
@@ -788,6 +865,11 @@ body.hide-last-sync #lastSync {
   font-size: 16px;
 }
 
+.admin-card h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
 .admin-card p {
   color: var(--ink-muted);
   font-size: 12px;
@@ -797,6 +879,12 @@ body.hide-last-sync #lastSync {
 .admin-form {
   display: grid;
   gap: 12px;
+}
+
+.admin-field {
+  display: grid;
+  gap: 6px;
+  min-width: 180px;
 }
 
 .admin-row {
@@ -1019,6 +1107,14 @@ body.hide-last-sync #lastSync {
 
   .layout {
     grid-template-columns: 1fr;
+  }
+
+  .admin-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-nav {
+    position: static;
   }
 }
 
