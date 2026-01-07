@@ -83,39 +83,47 @@
 
       <div class="content">
         <section class="controls">
-          <div class="search">
-            <label for="searchInput">Search</label>
-            <input
-              id="searchInput"
-              type="search"
-              placeholder="Title, id, or keyword"
-            />
-          </div>
-          <div class="filters">
-            <div class="filter">
-              <label id="unitFilterLabel" for="stepFilter">Unit</label>
-              <select id="stepFilter"></select>
+          <div class="controls-row">
+            <div class="search">
+              <label for="searchInput">Search</label>
+              <input
+                id="searchInput"
+                type="search"
+                placeholder="Title, id, or keyword"
+              />
             </div>
-            <div class="filter">
-              <label id="chapterFilterLabel" for="chapterFilter">Chapter</label>
-              <select id="chapterFilter"></select>
-            </div>
-            <div class="filter">
-              <label for="statusFilter">Status</label>
-              <select id="statusFilter">
-                <option value="all">All</option>
-                <option value="todo">Todo</option>
-                <option value="done">Done</option>
-              </select>
-            </div>
-            <div class="filter">
-              <label id="difficultyFilterLabel" for="difficultyFilter">Difficulty</label>
-              <select id="difficultyFilter"></select>
+            <div class="controls-meta">
+              <span id="resultCount">0 results</span>
+              <span id="lastSync">Last sync: -</span>
             </div>
           </div>
-          <div class="controls-meta">
-            <span id="resultCount">0 results</span>
-            <span id="lastSync">Last sync: -</span>
+          <div class="filters-row">
+            <div class="filters">
+              <div class="filter">
+                <label id="unitFilterLabel" for="stepFilter">Unit</label>
+                <select id="stepFilter"></select>
+              </div>
+              <div class="filter">
+                <label id="chapterFilterLabel" for="chapterFilter">Chapter</label>
+                <select id="chapterFilter"></select>
+              </div>
+              <div class="filter">
+                <label for="statusFilter">Status</label>
+                <select id="statusFilter">
+                  <option value="all">All</option>
+                  <option value="todo">Todo</option>
+                  <option value="done">Done</option>
+                </select>
+              </div>
+              <div class="filter">
+                <label id="difficultyFilterLabel" for="difficultyFilter">Difficulty</label>
+                <select id="difficultyFilter"></select>
+              </div>
+            </div>
+            <div class="filters-actions">
+              <span class="filter-count" id="activeFilterCount">0 active</span>
+              <button id="clearFiltersBtn" class="btn ghost" type="button">Clear</button>
+            </div>
           </div>
         </section>
 

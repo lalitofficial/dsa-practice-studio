@@ -71,6 +71,8 @@ const elements = {
   unitFilterLabel: document.getElementById("unitFilterLabel"),
   chapterFilterLabel: document.getElementById("chapterFilterLabel"),
   difficultyFilterLabel: document.getElementById("difficultyFilterLabel"),
+  activeFilterCount: document.getElementById("activeFilterCount"),
+  clearFiltersBtn: document.getElementById("clearFiltersBtn"),
 };
 
 const defaultSettings = {
@@ -560,7 +562,24 @@ function applyFilters() {
   renderList();
   updateCounts({ unitFilter, chapterFilter, status, query, difficultyFilter });
   updatePanelHeader(unitFilter, chapterFilter, status, query, difficultyFilter);
+  updateFilterActions({ unitFilter, chapterFilter, status, query, difficultyFilter });
   updateListProgress();
+}
+
+function updateFilterActions({ unitFilter, chapterFilter, status, query, difficultyFilter }) {
+  const active =
+    (unitFilter !== "all" ? 1 : 0) +
+    (chapterFilter !== "all" ? 1 : 0) +
+    (status !== "all" ? 1 : 0) +
+    (difficultyFilter !== "all" ? 1 : 0) +
+    (query ? 1 : 0);
+  if (elements.activeFilterCount) {
+    elements.activeFilterCount.textContent = active ? `${active} active` : "All";
+  }
+  if (elements.clearFiltersBtn) {
+    elements.clearFiltersBtn.disabled = active === 0;
+    elements.clearFiltersBtn.classList.toggle("disabled", active === 0);
+  }
 }
 
 function updateCounts({ unitFilter, chapterFilter, status, query, difficultyFilter }) {
@@ -1205,6 +1224,20 @@ function bindEvents() {
   elements.statusFilter.addEventListener("change", applyFilters);
   if (elements.difficultyFilter) {
     elements.difficultyFilter.addEventListener("change", applyFilters);
+  }
+
+  if (elements.clearFiltersBtn) {
+    elements.clearFiltersBtn.addEventListener("click", () => {
+      elements.searchInput.value = "";
+      elements.stepFilter.value = "all";
+      buildChapterOptions();
+      elements.chapterFilter.value = "all";
+      elements.statusFilter.value = "all";
+      if (elements.difficultyFilter) {
+        elements.difficultyFilter.value = "all";
+      }
+      applyFilters();
+    });
   }
   elements.syncBtn.addEventListener("click", syncData);
   elements.randomBtn.addEventListener("click", pickRandomTodo);
