@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from striver_tracker.config import (
+from dsa_practice_studio.config import (
     BASE_DIR,
     DATA_DIR,
     DEFAULT_SHEET_ID,
@@ -9,9 +9,9 @@ from striver_tracker.config import (
     SHEETS,
     STATE_PATH,
 )
-from striver_tracker.grouping import apply_sheet_grouping
-from striver_tracker.parser import parse_html_lessons
-from striver_tracker.utils import now_iso, slugify
+from dsa_practice_studio.grouping import apply_sheet_grouping
+from dsa_practice_studio.parser import parse_html_lessons
+from dsa_practice_studio.utils import now_iso, slugify
 
 
 def resolve_sheet_id(sheet_id):

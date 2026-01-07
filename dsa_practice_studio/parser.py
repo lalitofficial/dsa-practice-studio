@@ -1,7 +1,7 @@
 import re
 from html.parser import HTMLParser
 
-from striver_tracker.utils import clean_heading_text, slugify
+from dsa_practice_studio.utils import clean_heading_text, slugify
 
 
 class SheetHTMLExtractor(HTMLParser):

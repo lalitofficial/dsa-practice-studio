@@ -1,5 +1,5 @@
-from striver_tracker.config import ALGOMASTER_GROUPS
-from striver_tracker.utils import slugify
+from dsa_practice_studio.config import ALGOMASTER_GROUPS
+from dsa_practice_studio.utils import slugify
 
 
 def classify_linked_list_chapter(title):

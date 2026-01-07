@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 
-from striver_tracker.web import run_server
+from dsa_practice_studio.web import run_server
 
 
 if __name__ == "__main__":

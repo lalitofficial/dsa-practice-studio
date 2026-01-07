@@ -1,8 +1,8 @@
 import sqlite3
 
-from striver_tracker.config import DATA_DIR, DEFAULT_SHEET_ID, UNIT_DB_PATH
-from striver_tracker.storage import resolve_sheet_id
-from striver_tracker.utils import now_iso
+from dsa_practice_studio.config import DATA_DIR, DEFAULT_SHEET_ID, UNIT_DB_PATH
+from dsa_practice_studio.storage import resolve_sheet_id
+from dsa_practice_studio.utils import now_iso
 
 
 def _open_unit_db():

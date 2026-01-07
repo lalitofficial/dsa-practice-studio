@@ -2,10 +2,10 @@ import argparse
 import sys
 from pathlib import Path
 
-from striver_tracker.grouping import apply_sheet_grouping
-from striver_tracker.importers import parse_csv_lessons, parse_xlsx_lessons
-from striver_tracker.parser import parse_html_lessons
-from striver_tracker.service import (
+from dsa_practice_studio.grouping import apply_sheet_grouping
+from dsa_practice_studio.importers import parse_csv_lessons, parse_xlsx_lessons
+from dsa_practice_studio.parser import parse_html_lessons
+from dsa_practice_studio.service import (
     apply_import_urls,
     compute_stats,
     filter_questions,
@@ -14,7 +14,7 @@ from striver_tracker.service import (
     resolve_question,
     sync_state,
 )
-from striver_tracker.storage import (
+from dsa_practice_studio.storage import (
     load_lessons,
     load_state,
     merge_lessons,
@@ -22,7 +22,7 @@ from striver_tracker.storage import (
     save_lessons,
     save_state,
 )
-from striver_tracker.utils import now_iso
+from dsa_practice_studio.utils import now_iso
 
 
 def cmd_list(state, args):

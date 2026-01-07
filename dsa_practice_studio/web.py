@@ -6,17 +6,17 @@ from pathlib import Path
 
 from flask import Flask, jsonify, request, send_from_directory
 
-from striver_tracker.db import load_unit_status, set_unit_status
-from striver_tracker.grouping import apply_sheet_grouping
-from striver_tracker.importers import parse_csv_text, parse_xlsx_lessons
-from striver_tracker.service import (
+from dsa_practice_studio.db import load_unit_status, set_unit_status
+from dsa_practice_studio.grouping import apply_sheet_grouping
+from dsa_practice_studio.importers import parse_csv_text, parse_xlsx_lessons
+from dsa_practice_studio.service import (
         compute_stats,
         filter_questions,
         find_question_by_id,
         load_and_sync_state,
     )
-from striver_tracker.storage import load_lessons, merge_lessons, resolve_sheet_id, save_lessons, save_state
-from striver_tracker.utils import now_iso
+from dsa_practice_studio.storage import load_lessons, merge_lessons, resolve_sheet_id, save_lessons, save_state
+from dsa_practice_studio.utils import now_iso
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 DASHBOARD_DIR = BASE_DIR / "dashboard"

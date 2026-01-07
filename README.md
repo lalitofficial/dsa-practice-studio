@@ -145,18 +145,18 @@ python3 tracker.py import-table /path/to/sheet.xlsx --sheet striver --sheet-name
 
 Sample templates live in `samples/`.
 
-If you want to reset a sheet, delete its state files from `.striver_tracker/` and
+If you want to reset a sheet, delete its state files from `.dsa_practice_studio/` and
 re-run the import.
 
 ## Data storage
 
-Progress, notes, and imported lessons live in `.striver_tracker/`. These files
+Progress, notes, and imported lessons live in `.dsa_practice_studio/`. These files
 are ignored by git so each user can keep their own progress locally.
 
 ## Project layout
 
 ```
-striver_tracker/   # Python package (parsers, storage, web, CLI)
+dsa_practice_studio/   # Python package (parsers, storage, web, CLI)
 dashboard/         # UI assets
 app.py             # UI entrypoint (thin wrapper)
 tracker.py         # CLI entrypoint (thin wrapper)

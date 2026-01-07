@@ -1,9 +1,9 @@
 import random
 import sys
 
-from striver_tracker.config import BASE_DIR, DEFAULT_SHEET_ID, QUESTION_EXTS, SHEET_DIR
-from striver_tracker.storage import load_lessons, load_state, save_state
-from striver_tracker.utils import normalize_title, pretty_title, slugify
+from dsa_practice_studio.config import BASE_DIR, DEFAULT_SHEET_ID, QUESTION_EXTS, SHEET_DIR
+from dsa_practice_studio.storage import load_lessons, load_state, save_state
+from dsa_practice_studio.utils import normalize_title, pretty_title, slugify
 
 
 def scan_questions(sheet_id=DEFAULT_SHEET_ID):

@@ -1,7 +1,7 @@
 import csv
 from pathlib import Path
 
-from striver_tracker.utils import slugify
+from dsa_practice_studio.utils import slugify
 
 
 def _normalize_row(row):

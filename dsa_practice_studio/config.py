@@ -2,7 +2,10 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 SHEET_DIR = BASE_DIR / "leetcode-striver"
-DATA_DIR = BASE_DIR / ".striver_tracker"
+LEGACY_DATA_DIR = BASE_DIR / ".striver_tracker"
+DATA_DIR = BASE_DIR / ".dsa_practice_studio"
+if not DATA_DIR.exists() and LEGACY_DATA_DIR.exists():
+    DATA_DIR = LEGACY_DATA_DIR
 STATE_PATH = DATA_DIR / "state.json"
 LESSONS_PATH = DATA_DIR / "lessons.json"
 UNIT_DB_PATH = DATA_DIR / "tracker.db"

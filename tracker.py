@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from striver_tracker.cli import main
+from dsa_practice_studio.cli import main
 
 
 if __name__ == "__main__":
