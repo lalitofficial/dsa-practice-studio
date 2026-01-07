@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin · DSA Practice Studio</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="backdrop"></div>
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo">DSA</div>
+          <div class="brand-text">
+            <h1>DSA Practice Studio</h1>
+            <div class="panel-subtitle">Admin Console</div>
+          </div>
+        </div>
+        <div class="top-actions">
+          <a class="btn ghost" href="/">Back to Dashboard</a>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="admin-layout">
+          <div class="admin-card">
+            <h2>Sheet Manager</h2>
+            <p>Create, rename, duplicate, or reset sheets.</p>
+            <form id="createSheetForm" class="admin-form">
+              <div class="admin-row">
+                <input
+                  id="newSheetName"
+                  class="admin-input"
+                  type="text"
+                  placeholder="New sheet name"
+                />
+                <button class="btn primary" type="submit">Create Sheet</button>
+              </div>
+              <div class="admin-note" id="sheetStatus"></div>
+            </form>
+            <div class="table-wrap">
+              <table class="admin-table" id="sheetTable">
+                <thead>
+                  <tr>
+                    <th>Sheet</th>
+                    <th>Questions</th>
+                    <th>Progress</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="sheetTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <h2>Refactor Tools</h2>
+            <p>Rename units or chapters across a sheet.</p>
+            <form id="renameForm" class="admin-form">
+              <select id="renameSheet" class="admin-select"></select>
+              <div class="admin-row">
+                <select id="renameScope" class="admin-select">
+                  <option value="unit">Unit</option>
+                  <option value="chapter">Chapter</option>
+                </select>
+                <input id="renameFrom" class="admin-input" type="text" placeholder="Current name" />
+                <input id="renameTo" class="admin-input" type="text" placeholder="New name" />
+              </div>
+              <button class="btn ghost" type="submit">Apply Rename</button>
+              <div class="admin-note" id="renameStatus"></div>
+            </form>
+          </div>
+
+          <div class="admin-card">
+            <h2>Appearance</h2>
+            <p>Customize the header, layout, and palette.</p>
+            <div class="admin-form" id="appearanceForm">
+              <div class="admin-row">
+                <label class="setting-row">
+                  <span>Show Sync</span>
+                  <input type="checkbox" id="toggleHeaderSync" />
+                </label>
+                <label class="setting-row">
+                  <span>Show Random</span>
+                  <input type="checkbox" id="toggleHeaderRandom" />
+                </label>
+                <label class="setting-row">
+                  <span>Show Import</span>
+                  <input type="checkbox" id="toggleHeaderImport" />
+                </label>
+                <label class="setting-row">
+                  <span>Show Export</span>
+                  <input type="checkbox" id="toggleHeaderExport" />
+                </label>
+                <label class="setting-row">
+                  <span>Show Settings</span>
+                  <input type="checkbox" id="toggleHeaderSettings" />
+                </label>
+                <label class="setting-row">
+                  <span>Show Admin</span>
+                  <input type="checkbox" id="toggleHeaderAdmin" />
+                </label>
+                <label class="setting-row">
+                  <span>Show Sheets</span>
+                  <input type="checkbox" id="toggleHeaderSheets" />
+                </label>
+                <label class="setting-row">
+                  <span>Show Search</span>
+                  <input type="checkbox" id="toggleHeaderSearch" />
+                </label>
+                <label class="setting-row">
+                  <span>Show Filters</span>
+                  <input type="checkbox" id="toggleHeaderFilters" />
+                </label>
+                <label class="setting-row">
+                  <span>Show Last Sync</span>
+                  <input type="checkbox" id="toggleHeaderLastSync" />
+                </label>
+              </div>
+              <div class="admin-row">
+                <label class="setting-row">
+                  <span>Compact mode</span>
+                  <input type="checkbox" id="toggleCompactAdmin" />
+                </label>
+                <label class="setting-row">
+                  <span>Show units</span>
+                  <input type="checkbox" id="toggleUnitsAdmin" />
+                </label>
+                <label class="setting-row">
+                  <span>Show progress strip</span>
+                  <input type="checkbox" id="toggleProgressAdmin" />
+                </label>
+                <label class="setting-row">
+                  <span>Show SR column</span>
+                  <input type="checkbox" id="toggleSrAdmin" />
+                </label>
+                <label class="setting-row">
+                  <span>Show notes column</span>
+                  <input type="checkbox" id="toggleNotesAdmin" />
+                </label>
+                <label class="setting-row">
+                  <span>Show difficulty</span>
+                  <input type="checkbox" id="toggleDifficultyAdmin" />
+                </label>
+                <label class="setting-row">
+                  <span>Zebra rows</span>
+                  <input type="checkbox" id="toggleZebraAdmin" />
+                </label>
+              </div>
+              <div class="admin-row">
+                <label class="setting-row">
+                  <span>Accent</span>
+                  <input type="color" id="themeAccent" />
+                </label>
+                <label class="setting-row">
+                  <span>Warm Accent</span>
+                  <input type="color" id="themeAccentWarm" />
+                </label>
+                <label class="setting-row">
+                  <span>Surface</span>
+                  <input type="color" id="themeSurface" />
+                </label>
+                <label class="setting-row">
+                  <span>Background</span>
+                  <input type="color" id="themeBackground" />
+                </label>
+                <button class="btn ghost" type="button" id="resetTheme">Reset Theme</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <h2>Default Links</h2>
+            <p>Generate search links when a question has no URL.</p>
+            <form id="linkForm" class="admin-form">
+              <label class="setting-row">
+                <span>Enable search links</span>
+                <input type="checkbox" id="toggleLinkFallback" />
+              </label>
+              <div class="admin-row">
+                <label class="setting-row">
+                  <span>LeetCode search</span>
+                  <input type="checkbox" id="toggleLinkLeet" />
+                </label>
+                <input
+                  id="leetSuffix"
+                  class="admin-input"
+                  type="text"
+                  placeholder="Suffix for LC search"
+                />
+              </div>
+              <div class="admin-row">
+                <label class="setting-row">
+                  <span>YouTube search</span>
+                  <input type="checkbox" id="toggleLinkYT" />
+                </label>
+                <input
+                  id="ytSuffix"
+                  class="admin-input"
+                  type="text"
+                  placeholder="Suffix for YT search"
+                />
+              </div>
+              <div class="admin-row">
+                <label class="setting-row">
+                  <span>Web search</span>
+                  <input type="checkbox" id="toggleLinkWeb" />
+                </label>
+                <input
+                  id="webSuffix"
+                  class="admin-input"
+                  type="text"
+                  placeholder="Suffix for web search"
+                />
+              </div>
+            </form>
+          </div>
+        </section>
+      </div>
+    </div>
+    <script src="/static/admin.js"></script>
+  </body>
+</html>
