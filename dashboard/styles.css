@@ -822,6 +822,9 @@ body.hide-last-sync #lastSync {
   border: 1px solid var(--border);
   padding: 18px;
   box-shadow: var(--shadow-soft);
+  position: sticky;
+  top: 20px;
+  backdrop-filter: blur(10px);
 }
 
 .admin-nav-title {
@@ -843,6 +846,11 @@ body.hide-last-sync #lastSync {
   margin-bottom: 8px;
   cursor: pointer;
   font-size: 13px;
+}
+
+.admin-nav-btn:hover {
+  border-color: rgba(231, 238, 246, 0.18);
+  background: rgba(231, 238, 246, 0.06);
 }
 
 .admin-nav-btn.active {
@@ -877,6 +885,152 @@ body.hide-last-sync #lastSync {
   margin: 0;
   color: var(--ink-muted);
   font-size: 13px;
+}
+
+.admin-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
+  gap: 20px;
+  padding: 20px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(50, 209, 197, 0.18), rgba(18, 24, 33, 0.95));
+  border: 1px solid rgba(231, 238, 246, 0.12);
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 24px;
+}
+
+.admin-kicker {
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 8px;
+}
+
+.admin-hero h2 {
+  margin: 0 0 10px;
+  font-size: 26px;
+}
+
+.admin-hero p {
+  margin: 0 0 18px;
+  color: var(--ink-muted);
+}
+
+.admin-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.admin-hero-card {
+  background: rgba(9, 13, 18, 0.65);
+  border: 1px solid rgba(231, 238, 246, 0.1);
+  border-radius: 16px;
+  padding: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.admin-summary-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.stat-card {
+  background: var(--surface-glass);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  padding: 16px;
+  box-shadow: var(--shadow-soft);
+  display: grid;
+  gap: 8px;
+}
+
+.stat-label {
+  color: var(--ink-muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.stat-meta {
+  font-size: 12px;
+  color: var(--ink-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.stat-divider {
+  opacity: 0.5;
+}
+
+.progress-rail {
+  background: rgba(231, 238, 246, 0.12);
+  border-radius: 999px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.progress-rail span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-warm));
+  width: 0;
+}
+
+.difficulty-bar {
+  display: flex;
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(231, 238, 246, 0.12);
+}
+
+.difficulty-bar span {
+  display: block;
+  height: 100%;
+  width: 0;
+}
+
+.diff-easy {
+  background: rgba(111, 227, 162, 0.9);
+}
+
+.diff-medium {
+  background: rgba(255, 179, 102, 0.9);
+}
+
+.diff-hard {
+  background: rgba(255, 123, 123, 0.9);
+}
+
+.diff-unknown {
+  background: rgba(148, 162, 184, 0.6);
+}
+
+.difficulty-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.difficulty-pill {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(231, 238, 246, 0.12);
+  color: var(--ink);
 }
 
 .admin-panel-grid {
@@ -931,6 +1085,23 @@ body.hide-last-sync #lastSync {
   flex-wrap: wrap;
   gap: 12px;
   align-items: center;
+}
+
+.admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  margin: 14px 0;
+  border-radius: 14px;
+  border: 1px solid rgba(231, 238, 246, 0.1);
+  background: rgba(9, 13, 18, 0.55);
+}
+
+.admin-toolbar .admin-input,
+.admin-toolbar .admin-select {
+  min-width: 140px;
 }
 
 .admin-input,
@@ -1165,6 +1336,10 @@ body.hide-last-sync #lastSync {
 
   .admin-nav {
     position: static;
+  }
+
+  .admin-hero {
+    grid-template-columns: 1fr;
   }
 }
 

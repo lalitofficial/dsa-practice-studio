@@ -28,7 +28,10 @@
         <section class="admin-shell">
           <nav class="admin-nav" aria-label="Admin panels">
             <div class="admin-nav-title">Panels</div>
-            <button class="admin-nav-btn active" type="button" data-panel="sheets">
+            <button class="admin-nav-btn active" type="button" data-panel="overview">
+              Overview
+            </button>
+            <button class="admin-nav-btn" type="button" data-panel="sheets">
               Sheet Management
             </button>
             <button class="admin-nav-btn" type="button" data-panel="units">
@@ -46,7 +49,61 @@
           </nav>
 
           <div class="admin-panels">
-            <section class="admin-panel active" data-panel="sheets">
+            <section class="admin-panel active" data-panel="overview">
+              <div class="admin-hero">
+                <div>
+                  <div class="admin-kicker">Command Center</div>
+                  <h2>Workspace overview</h2>
+                  <p>Track sheet health, progress, and configuration changes from one place.</p>
+                  <div class="admin-hero-actions">
+                    <button class="btn primary" type="button" data-panel-jump="sheets">
+                      Manage Sheets
+                    </button>
+                    <button class="btn ghost" type="button" data-panel-jump="ui">
+                      Refactor Labels
+                    </button>
+                    <a class="btn ghost" href="/">Open Dashboard</a>
+                  </div>
+                </div>
+                <div class="admin-hero-card">
+                  <div class="stat-label">Overall Completion</div>
+                  <div class="stat-value" id="summaryCompletion">0%</div>
+                  <div class="progress-rail">
+                    <span id="summaryProgress"></span>
+                  </div>
+                  <div class="stat-meta" id="summaryCompletionMeta">0 of 0</div>
+                </div>
+              </div>
+
+              <div class="admin-summary-grid">
+                <div class="stat-card">
+                  <div class="stat-label">Sheets</div>
+                  <div class="stat-value" id="summaryTotalSheets">0</div>
+                  <div class="stat-meta">
+                    <span id="summarySampleSheets">0 samples</span>
+                    <span class="stat-divider">•</span>
+                    <span id="summaryCustomSheets">0 custom</span>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">Questions</div>
+                  <div class="stat-value" id="summaryTotalQuestions">0</div>
+                  <div class="stat-meta" id="summaryDoneQuestions">0 done</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">Difficulty mix</div>
+                  <div class="difficulty-bar" id="summaryDifficultyBar">
+                    <span class="diff-easy"></span>
+                    <span class="diff-medium"></span>
+                    <span class="diff-hard"></span>
+                    <span class="diff-unknown"></span>
+                  </div>
+                  <div class="difficulty-legend" id="summaryDifficultyLegend"></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="admin-panel" data-panel="sheets">
               <div class="admin-panel-head">
                 <h2>Sheet Management</h2>
                 <p>Manage sheet inventory, duplicates, resets, and health.</p>
