@@ -27,7 +27,7 @@ def parse_tabular_rows(rows, default_unit=None, default_chapter=None, has_header
         row = _normalize_row(row)
         if not row or all(not cell for cell in row):
             continue
-        while len(row) < 6:
+        while len(row) < 7:
             row.append("")
 
         unit = row[0] or default_unit or "Imported"
@@ -38,6 +38,7 @@ def parse_tabular_rows(rows, default_unit=None, default_chapter=None, has_header
         leetcode_url = row[3].strip()
         youtube_url = row[4].strip()
         note = row[5].strip()
+        difficulty = row[6].strip()
 
         lesson_id = f"sheet-{slugify(unit)}-{slugify(chapter)}-{slugify(title)}"
         lessons.append(
@@ -51,7 +52,7 @@ def parse_tabular_rows(rows, default_unit=None, default_chapter=None, has_header
                 "leetcode_url": leetcode_url,
                 "youtube_url": youtube_url,
                 "resource_url": "",
-                "difficulty": "",
+                "difficulty": difficulty,
                 "notes": note,
                 "order": order,
             }

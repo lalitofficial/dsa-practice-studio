@@ -133,12 +133,22 @@ def compute_stats(questions):
     total = len(questions)
     done = sum(1 for q in questions if q["done"])
     by_unit = {}
+    difficulty_counts = {"Easy": 0, "Medium": 0, "Hard": 0, "Unknown": 0}
     for q in questions:
         unit = q.get("unit") or q.get("step") or "Unassigned"
         bucket = by_unit.setdefault(unit, {"done": 0, "total": 0})
         bucket["total"] += 1
         if q["done"]:
             bucket["done"] += 1
+        diff_value = str(q.get("difficulty") or "").strip().lower()
+        if "easy" in diff_value:
+            difficulty_counts["Easy"] += 1
+        elif "medium" in diff_value:
+            difficulty_counts["Medium"] += 1
+        elif "hard" in diff_value:
+            difficulty_counts["Hard"] += 1
+        else:
+            difficulty_counts["Unknown"] += 1
     units = []
     for unit in sorted(by_unit.keys()):
         bucket = by_unit[unit]
@@ -158,6 +168,7 @@ def compute_stats(questions):
         "todo": total - done,
         "percent": pct,
         "by_unit": units,
+        "difficulty": difficulty_counts,
     }
 
 

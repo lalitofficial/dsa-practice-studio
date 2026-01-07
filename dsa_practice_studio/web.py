@@ -70,6 +70,7 @@ def create_app():
                         "total": stats.get("total", 0),
                         "done": stats.get("done", 0),
                         "percent": stats.get("percent", 0),
+                        "difficulty": stats.get("difficulty", {}),
                     },
                 }
             )
@@ -186,6 +187,48 @@ def create_app():
                 question["chapter"] = to_name
         save_state(state, sheet_id)
         return jsonify({"sheet": sheet_id, "scope": scope, "from": from_name, "to": to_name})
+
+    @app.post("/api/refactor/difficulty")
+    def api_refactor_difficulty():
+        payload = request.get_json(silent=True) or {}
+        sheet_id = resolve_sheet_id(payload.get("sheet"))
+        unit = str(payload.get("unit", "")).strip()
+        chapter = str(payload.get("chapter", "")).strip()
+        difficulty = str(payload.get("difficulty", "")).strip()
+        only_missing = bool(payload.get("only_missing", False))
+        if not difficulty:
+            return jsonify({"error": "Missing difficulty"}), 400
+
+        lessons = load_lessons(sheet_id)
+        for lesson in lessons:
+            if unit and lesson.get("unit") != unit:
+                continue
+            if chapter and lesson.get("chapter") != chapter:
+                continue
+            if only_missing and lesson.get("difficulty"):
+                continue
+            lesson["difficulty"] = difficulty
+        save_lessons(lessons, sheet_id)
+
+        state = load_and_sync_state(sheet_id)
+        for question in state["questions"]:
+            if unit and question.get("unit") != unit:
+                continue
+            if chapter and question.get("chapter") != chapter:
+                continue
+            if only_missing and question.get("difficulty"):
+                continue
+            question["difficulty"] = difficulty
+        save_state(state, sheet_id)
+        return jsonify(
+            {
+                "sheet": sheet_id,
+                "difficulty": difficulty,
+                "unit": unit,
+                "chapter": chapter,
+                "only_missing": only_missing,
+            }
+        )
 
     @app.get("/api/questions")
     def api_questions():
