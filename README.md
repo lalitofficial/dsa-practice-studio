@@ -1,49 +1,10 @@
 <p align="center">
-  <svg width="960" height="190" viewBox="0 0 960 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="DSA Practice Studio banner">
-    <defs>
-      <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#0B0F14" />
-        <stop offset="60%" stop-color="#121C28" />
-        <stop offset="100%" stop-color="#1C2636" />
-      </linearGradient>
-      <linearGradient id="glowA" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#32D1C5" stop-opacity="0.5" />
-        <stop offset="100%" stop-color="#32D1C5" stop-opacity="0" />
-      </linearGradient>
-      <linearGradient id="glowB" x1="1" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#FF9F43" stop-opacity="0.45" />
-        <stop offset="100%" stop-color="#FF9F43" stop-opacity="0" />
-      </linearGradient>
-      <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
-        <path d="M32 0H0V32" fill="none" stroke="#1C2A3A" stroke-width="1" />
-      </pattern>
-      <filter id="blur20" x="-20%" y="-20%" width="140%" height="140%">
-        <feGaussianBlur stdDeviation="18" />
-      </filter>
-    </defs>
-    <rect width="960" height="190" rx="24" fill="url(#bg)" />
-    <rect width="960" height="190" rx="24" fill="url(#grid)" opacity="0.35" />
-    <ellipse cx="120" cy="40" rx="120" ry="60" fill="url(#glowA)" filter="url(#blur20)" />
-    <ellipse cx="860" cy="150" rx="140" ry="70" fill="url(#glowB)" filter="url(#blur20)" />
-    <path d="M0 132 C180 80 360 170 540 120 C700 80 820 110 960 70 V190 H0 Z" fill="#0E1520" opacity="0.92" />
-    <rect x="48" y="52" width="7" height="86" rx="4" fill="#32D1C5" />
-    <g fill="#E7EEF6">
-      <text x="72" y="92" font-size="40" font-family="Segoe UI, Arial, sans-serif" font-weight="700" letter-spacing="0.6">
-        DSA Practice Studio
-      </text>
-      <text x="72" y="120" font-size="14" font-family="Segoe UI, Arial, sans-serif" opacity="0.8">
-        Local-first practice dashboard with sample Striver and AlgoMaster sheets
-      </text>
-    </g>
-    <g font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#E7EEF6">
-      <rect x="72" y="134" width="110" height="26" rx="13" fill="#162231" stroke="#223246" />
-      <text x="92" y="151">Striver A2Z</text>
-      <rect x="190" y="134" width="110" height="26" rx="13" fill="#162231" stroke="#223246" />
-      <text x="210" y="151">AlgoMaster</text>
-      <rect x="308" y="134" width="120" height="26" rx="13" fill="#162231" stroke="#223246" />
-      <text x="328" y="151">Notes &amp; Progress</text>
-    </g>
-  </svg>
+  <img
+    src="assets/banner.svg"
+    width="960"
+    height="190"
+    alt="DSA Practice Studio banner"
+  />
 </p>
 
 <p align="center">
