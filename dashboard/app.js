@@ -16,6 +16,7 @@ const elements = {
   stepFilter: document.getElementById("stepFilter"),
   chapterFilter: document.getElementById("chapterFilter"),
   statusFilter: document.getElementById("statusFilter"),
+  difficultyFilter: document.getElementById("difficultyFilter"),
   resultCount: document.getElementById("resultCount"),
   lastSync: document.getElementById("lastSync"),
   panelCount: document.getElementById("panelCount"),
@@ -99,6 +100,7 @@ const defaultSettings = {
     leetcode: false,
     youtube: false,
     web: false,
+    includeDifficulty: false,
     leetcodeSuffix: "leetcode",
     youtubeSuffix: "dsa leetcode",
     webSuffix: "dsa",
@@ -408,6 +410,7 @@ async function fetchQuestions() {
   state.unitIndex = buildUnitIndex(state.questions);
   buildUnitOptions();
   buildChapterOptions();
+  buildDifficultyOptions();
   applyFilters();
   renderStats();
   renderUnits();
@@ -448,11 +451,49 @@ function buildChapterOptions() {
   }
 }
 
+function normalizeDifficulty(value) {
+  const text = String(value || "").trim().toLowerCase();
+  if (!text || text === "unknown") return "Unknown";
+  if (text.includes("easy")) return "Easy";
+  if (text.includes("medium")) return "Medium";
+  if (text.includes("hard")) return "Hard";
+  return String(value || "Unknown");
+}
+
+function buildDifficultyOptions() {
+  if (!elements.difficultyFilter) return;
+  const current = elements.difficultyFilter.value || "all";
+  const seen = new Set();
+  state.questions.forEach((q) => {
+    seen.add(normalizeDifficulty(q.difficulty));
+  });
+  const preferred = ["Easy", "Medium", "Hard", "Unknown"];
+  const extras = Array.from(seen).filter((item) => !preferred.includes(item));
+  const options = [
+    "all",
+    ...preferred.filter((item) => seen.has(item)),
+    ...extras.sort(),
+  ];
+  elements.difficultyFilter.innerHTML = "";
+  options.forEach((value) => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value === "all" ? "All difficulties" : value;
+    elements.difficultyFilter.appendChild(option);
+  });
+  if (options.includes(current)) {
+    elements.difficultyFilter.value = current;
+  } else {
+    elements.difficultyFilter.value = "all";
+  }
+}
+
 function applyFilters() {
   const query = elements.searchInput.value.trim().toLowerCase();
   const unitFilter = elements.stepFilter.value;
   const chapterFilter = elements.chapterFilter.value;
   const status = elements.statusFilter.value;
+  const difficultyFilter = elements.difficultyFilter ? elements.difficultyFilter.value : "all";
 
   state.filtered = state.questions.filter((q) => {
     const unit = q.unit || q.step;
@@ -461,6 +502,10 @@ function applyFilters() {
     if (chapterFilter !== "all" && chapter !== chapterFilter) return false;
     if (status === "done" && !q.done) return false;
     if (status === "todo" && q.done) return false;
+    if (difficultyFilter !== "all") {
+      const diff = normalizeDifficulty(q.difficulty);
+      if (diff !== difficultyFilter) return false;
+    }
     if (query) {
       const inTitle = q.title.toLowerCase().includes(query);
       const inId = q.id.includes(query);
@@ -472,16 +517,20 @@ function applyFilters() {
   state.filtered.sort((a, b) => (a.order || 10 ** 9) - (b.order || 10 ** 9));
 
   renderList();
-  updateCounts({ unitFilter, chapterFilter, status, query });
-  updatePanelHeader(unitFilter, chapterFilter, status, query);
+  updateCounts({ unitFilter, chapterFilter, status, query, difficultyFilter });
+  updatePanelHeader(unitFilter, chapterFilter, status, query, difficultyFilter);
   updateListProgress();
 }
 
-function updateCounts({ unitFilter, chapterFilter, status, query }) {
+function updateCounts({ unitFilter, chapterFilter, status, query, difficultyFilter }) {
   const total = state.questions.length;
   const visible = state.filtered.length;
   const hasFilter =
-    unitFilter !== "all" || chapterFilter !== "all" || status !== "all" || query;
+    unitFilter !== "all" ||
+    chapterFilter !== "all" ||
+    status !== "all" ||
+    difficultyFilter !== "all" ||
+    query;
 
   if (hasFilter) {
     elements.resultCount.textContent = `${visible} of ${total} results`;
@@ -492,7 +541,7 @@ function updateCounts({ unitFilter, chapterFilter, status, query }) {
   }
 }
 
-function updatePanelHeader(unitFilter, chapterFilter, status, query) {
+function updatePanelHeader(unitFilter, chapterFilter, status, query, difficultyFilter) {
   if (!elements.panelTitle || !elements.panelSubtitle) return;
 
   let title = "Questions";
@@ -521,6 +570,10 @@ function updatePanelHeader(unitFilter, chapterFilter, status, query) {
 
   if (status !== "all") {
     subtitleParts.push(`Status ${status}`);
+  }
+
+  if (difficultyFilter !== "all") {
+    subtitleParts.push(`Difficulty ${difficultyFilter}`);
   }
 
   elements.panelTitle.textContent = title;
@@ -734,7 +787,9 @@ function getFallbackLink(question, type) {
   if (!fallback.enabled || !fallback[type]) return "";
   const suffixKey = `${type}Suffix`;
   const suffix = fallback[suffixKey] ? ` ${fallback[suffixKey].trim()}` : "";
-  const query = `${question.title || ""}${suffix}`.trim();
+  const diff = fallback.includeDifficulty ? normalizeDifficulty(question.difficulty) : "";
+  const diffToken = diff && diff !== "Unknown" ? ` ${diff}` : "";
+  const query = `${question.title || ""}${diffToken}${suffix}`.trim();
   if (!query) return "";
   const encoded = encodeURIComponent(query);
   const templates = {
@@ -1081,6 +1136,9 @@ function bindEvents() {
   });
   elements.chapterFilter.addEventListener("change", applyFilters);
   elements.statusFilter.addEventListener("change", applyFilters);
+  if (elements.difficultyFilter) {
+    elements.difficultyFilter.addEventListener("change", applyFilters);
+  }
   elements.syncBtn.addEventListener("click", syncData);
   elements.randomBtn.addEventListener("click", pickRandomTodo);
 
