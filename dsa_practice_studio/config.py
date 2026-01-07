@@ -9,6 +9,7 @@ if not DATA_DIR.exists() and LEGACY_DATA_DIR.exists():
 STATE_PATH = DATA_DIR / "state.json"
 LESSONS_PATH = DATA_DIR / "lessons.json"
 UNIT_DB_PATH = DATA_DIR / "tracker.db"
+SHEETS_REGISTRY_PATH = DATA_DIR / "sheets.json"
 
 QUESTION_EXTS = {".py", ".ipynb"}
 

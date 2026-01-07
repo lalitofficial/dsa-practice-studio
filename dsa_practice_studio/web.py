@@ -6,16 +6,32 @@ from pathlib import Path
 
 from flask import Flask, jsonify, request, send_from_directory
 
-from dsa_practice_studio.db import load_unit_status, set_unit_status
+from dsa_practice_studio.db import delete_unit_status, load_unit_status, set_unit_status
 from dsa_practice_studio.grouping import apply_sheet_grouping
 from dsa_practice_studio.importers import parse_csv_text, parse_xlsx_lessons
 from dsa_practice_studio.service import (
-        compute_stats,
-        filter_questions,
-        find_question_by_id,
-        load_and_sync_state,
-    )
-from dsa_practice_studio.storage import load_lessons, merge_lessons, resolve_sheet_id, save_lessons, save_state
+    compute_stats,
+    filter_questions,
+    find_question_by_id,
+    load_and_sync_state,
+)
+from dsa_practice_studio.storage import (
+    create_sheet_entry,
+    delete_sheet_entry,
+    duplicate_sheet_entry,
+    ensure_sheet_entry,
+    ensure_sheet_registry,
+    get_lessons_path,
+    get_state_path,
+    load_lessons,
+    load_state,
+    merge_lessons,
+    regenerate_sheet_from_html,
+    rename_sheet_entry,
+    resolve_sheet_id,
+    save_lessons,
+    save_state,
+)
 from dsa_practice_studio.utils import now_iso
 
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -34,6 +50,142 @@ def create_app():
     @app.route("/")
     def index():
         return send_from_directory(DASHBOARD_DIR, "index.html")
+
+    @app.route("/admin")
+    def admin():
+        return send_from_directory(DASHBOARD_DIR, "admin.html")
+
+    @app.get("/api/sheets")
+    def api_sheets():
+        entries = ensure_sheet_registry()
+        sheets = []
+        for entry in entries:
+            sheet_id = entry["id"]
+            state = load_and_sync_state(sheet_id)
+            stats = compute_stats(state["questions"])
+            sheets.append(
+                {
+                    **entry,
+                    "stats": {
+                        "total": stats.get("total", 0),
+                        "done": stats.get("done", 0),
+                        "percent": stats.get("percent", 0),
+                    },
+                }
+            )
+        return jsonify({"sheets": sheets})
+
+    @app.post("/api/sheets")
+    def api_create_sheet():
+        payload = request.get_json(silent=True) or {}
+        name = str(payload.get("name", "")).strip()
+        if not name:
+            return jsonify({"error": "Missing sheet name"}), 400
+        entry = create_sheet_entry(name)
+        if not entry:
+            return jsonify({"error": "Invalid sheet name"}), 400
+        return jsonify(entry)
+
+    @app.patch("/api/sheets/<path:sheet_id>")
+    def api_rename_sheet(sheet_id):
+        sheet_id = resolve_sheet_id(sheet_id)
+        payload = request.get_json(silent=True) or {}
+        name = str(payload.get("name", "")).strip()
+        if not name:
+            return jsonify({"error": "Missing sheet name"}), 400
+        entry = rename_sheet_entry(sheet_id, name)
+        if not entry:
+            return jsonify({"error": "Sheet not found"}), 404
+        return jsonify(entry)
+
+    @app.delete("/api/sheets/<path:sheet_id>")
+    def api_delete_sheet(sheet_id):
+        sheet_id = resolve_sheet_id(sheet_id)
+        entries = ensure_sheet_registry()
+        entry = next((item for item in entries if item.get("id") == sheet_id), None)
+        if entry and entry.get("source") == "sample":
+            return jsonify({"error": "Sample sheets cannot be deleted"}), 400
+        deleted = delete_sheet_entry(sheet_id)
+        if not deleted:
+            return jsonify({"error": "Sheet not found"}), 404
+        state_path = get_state_path(sheet_id)
+        lessons_path = get_lessons_path(sheet_id)
+        state_path.unlink(missing_ok=True)
+        lessons_path.unlink(missing_ok=True)
+        delete_unit_status(sheet_id)
+        return jsonify({"deleted": sheet_id})
+
+    @app.post("/api/sheets/<path:sheet_id>/duplicate")
+    def api_duplicate_sheet(sheet_id):
+        payload = request.get_json(silent=True) or {}
+        name = str(payload.get("name", "")).strip()
+        if not name:
+            return jsonify({"error": "Missing sheet name"}), 400
+        entry = duplicate_sheet_entry(sheet_id, name)
+        if not entry:
+            return jsonify({"error": "Could not duplicate sheet"}), 400
+        source_lessons = load_lessons(sheet_id)
+        source_state = load_state(sheet_id)
+        if source_lessons:
+            save_lessons(source_lessons, entry["id"])
+        if source_state.get("questions"):
+            save_state(source_state, entry["id"])
+        return jsonify(entry)
+
+    @app.post("/api/sheets/<path:sheet_id>/reset")
+    def api_reset_sheet(sheet_id):
+        sheet_id = resolve_sheet_id(sheet_id)
+        payload = request.get_json(silent=True) or {}
+        clear_done = payload.get("clear_done", True)
+        clear_notes = payload.get("clear_notes", False)
+        state = load_and_sync_state(sheet_id)
+        for question in state["questions"]:
+            if clear_done:
+                question["done"] = False
+                question["last_done_at"] = ""
+            if clear_notes:
+                question["notes"] = ""
+        if clear_done:
+            delete_unit_status(sheet_id)
+        save_state(state, sheet_id)
+        return jsonify({"sheet": sheet_id, "cleared": {"done": clear_done, "notes": clear_notes}})
+
+    @app.post("/api/sheets/<path:sheet_id>/regenerate")
+    def api_regenerate_sheet(sheet_id):
+        sheet_id = resolve_sheet_id(sheet_id)
+        refreshed = regenerate_sheet_from_html(sheet_id)
+        if refreshed is None:
+            return jsonify({"error": "No HTML source for this sheet"}), 400
+        state = load_and_sync_state(sheet_id)
+        save_state(state, sheet_id)
+        return jsonify({"sheet": sheet_id, "count": len(refreshed)})
+
+    @app.post("/api/refactor/rename")
+    def api_refactor_rename():
+        payload = request.get_json(silent=True) or {}
+        sheet_id = resolve_sheet_id(payload.get("sheet"))
+        scope = str(payload.get("scope", "")).strip().lower()
+        from_name = str(payload.get("from", "")).strip()
+        to_name = str(payload.get("to", "")).strip()
+        if scope not in {"unit", "chapter"}:
+            return jsonify({"error": "Invalid scope"}), 400
+        if not from_name or not to_name:
+            return jsonify({"error": "Missing rename fields"}), 400
+        lessons = load_lessons(sheet_id)
+        for lesson in lessons:
+            if scope == "unit" and lesson.get("unit") == from_name:
+                lesson["unit"] = to_name
+            if scope == "chapter" and lesson.get("chapter") == from_name:
+                lesson["chapter"] = to_name
+        save_lessons(lessons, sheet_id)
+        state = load_and_sync_state(sheet_id)
+        for question in state["questions"]:
+            if scope == "unit" and question.get("unit") == from_name:
+                question["unit"] = to_name
+            if scope == "chapter" and question.get("chapter") == from_name:
+                question["chapter"] = to_name
+        save_state(state, sheet_id)
+        return jsonify({"sheet": sheet_id, "scope": scope, "from": from_name, "to": to_name})
 
     @app.get("/api/questions")
     def api_questions():
@@ -172,6 +324,7 @@ def create_app():
     @app.post("/api/import-table")
     def api_import_table():
         sheet_id = get_sheet_id()
+        ensure_sheet_entry(sheet_id)
         if "file" not in request.files:
             return jsonify({"error": "Missing file"}), 400
         file = request.files["file"]

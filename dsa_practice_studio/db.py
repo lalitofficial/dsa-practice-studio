@@ -65,3 +65,11 @@ def set_unit_status(sheet_id, unit, done):
     )
     conn.commit()
     conn.close()
+
+
+def delete_unit_status(sheet_id):
+    sheet_id = resolve_sheet_id(sheet_id)
+    conn = _open_unit_db()
+    conn.execute("DELETE FROM unit_status WHERE sheet = ?", (sheet_id,))
+    conn.commit()
+    conn.close()
