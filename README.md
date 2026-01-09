@@ -25,6 +25,7 @@
 - Progress tracking, notes, and difficulty visibility.
 - Star important questions and filter starred-only.
 - Notes hub to review all saved notes in one place.
+- Revision panel for notes and bookmarked questions.
 - CSV/Excel import plus JSON/CSV export (UI and CLI).
 - Local-first storage in SQLite/JSON (no browser storage).
 
