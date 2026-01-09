@@ -61,6 +61,10 @@ def create_app():
     def admin():
         return send_from_directory(DASHBOARD_DIR, "admin.html")
 
+    @app.route("/revision")
+    def revision():
+        return send_from_directory(DASHBOARD_DIR, "revision.html")
+
     @app.get("/api/sheets")
     def api_sheets():
         entries = ensure_sheet_registry()

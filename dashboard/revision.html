@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Revision · DSA Practice Studio</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="backdrop"></div>
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo">DSA</div>
+          <div class="brand-text">
+            <h1>Revision Panel</h1>
+            <div class="sheet-switch">
+              <span class="sheet-label">Sheets</span>
+              <div class="sheet-tabs" id="sheetTabs"></div>
+            </div>
+          </div>
+        </div>
+        <div class="top-actions">
+          <a class="btn ghost" href="/">Back to Dashboard</a>
+          <a class="btn ghost" href="/admin">Admin</a>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="revision-grid">
+          <div class="revision-card">
+            <div class="revision-card-header">
+              <div>
+                <h2>Notes</h2>
+                <p class="panel-subtitle" id="notesCount">0 notes</p>
+              </div>
+            </div>
+            <div class="revision-search">
+              <label for="notesSearch">Search notes</label>
+              <input id="notesSearch" type="search" placeholder="Title or note text" />
+            </div>
+            <div id="notesList" class="revision-list"></div>
+          </div>
+
+          <div class="revision-card">
+            <div class="revision-card-header">
+              <div>
+                <h2>Bookmarked</h2>
+                <p class="panel-subtitle" id="starredCount">0 starred</p>
+              </div>
+            </div>
+            <div class="revision-search">
+              <label for="starredSearch">Search bookmarked</label>
+              <input id="starredSearch" type="search" placeholder="Title or unit" />
+            </div>
+            <div id="starredList" class="revision-list"></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script src="/static/revision.js"></script>
+  </body>
+</html>
