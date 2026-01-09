@@ -26,13 +26,13 @@
 - Star important questions and filter starred-only.
 - Notes hub to review all saved notes in one place.
 - CSV/Excel import plus JSON/CSV export (UI and CLI).
-- Local storage only: data stays on your machine.
+- Local-first storage in SQLite/JSON (no browser storage).
 
 ## Tech stack
 
 - Python 3.9+
 - Flask
-- SQLite (unit completion state)
+- SQLite (unit status + UI/view state)
 - JSON (questions, notes, progress)
 - OpenPyXL (Excel import)
 - Vanilla HTML/CSS/JS dashboard
@@ -115,8 +115,9 @@ re-run the import.
 
 ## Data storage
 
-Progress, notes, and imported lessons live in `.dsa_practice_studio/`. These files
-are ignored by git so each user can keep their own progress locally.
+Progress, notes, and imported lessons live in `.dsa_practice_studio/` JSON files.
+UI preferences, view state, and unit completion live in `.dsa_practice_studio/tracker.db`.
+All data is local and ignored by git.
 
 ## Project layout
 
