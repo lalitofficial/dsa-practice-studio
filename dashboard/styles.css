@@ -293,7 +293,7 @@ h1 {
   position: absolute;
   top: 52px;
   right: 0;
-  width: 220px;
+  width: 260px;
   padding: 14px;
   border-radius: 14px;
   background: rgba(9, 13, 18, 0.98);
@@ -309,6 +309,24 @@ h1 {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--ink-muted);
+}
+
+.settings-section {
+  display: grid;
+  gap: 8px;
+}
+
+.settings-section-title {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.settings-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
 }
 
 .setting-row {

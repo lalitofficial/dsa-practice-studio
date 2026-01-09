@@ -23,12 +23,6 @@
           </div>
         </div>
         <div class="top-actions">
-          <button id="syncBtn" class="btn ghost" type="button">Sync</button>
-          <button id="randomBtn" class="btn primary" type="button">
-            Pick Random
-          </button>
-          <button id="importBtn" class="btn ghost" type="button">Import</button>
-          <button id="exportBtn" class="btn ghost" type="button">Export</button>
           <button id="notesHubBtn" class="btn ghost" type="button">Notes</button>
           <a class="btn ghost" href="/revision">Revision</a>
           <a id="adminBtn" class="btn ghost" href="/admin">Admin</a>
@@ -51,34 +45,51 @@
             aria-label="Settings"
           >
             <div class="settings-header">Settings</div>
-            <label class="setting-row">
-              <span>Compact mode</span>
-              <input type="checkbox" id="toggleCompact" />
-            </label>
-            <label class="setting-row">
-              <span>Show unit strip</span>
-              <input type="checkbox" id="toggleUnits" checked />
-            </label>
-            <label class="setting-row">
-              <span>Show progress strip</span>
-              <input type="checkbox" id="toggleProgress" checked />
-            </label>
-            <label class="setting-row">
-              <span>Show SR column</span>
-              <input type="checkbox" id="toggleSr" checked />
-            </label>
-            <label class="setting-row">
-              <span>Show notes column</span>
-              <input type="checkbox" id="toggleNotes" checked />
-            </label>
-            <label class="setting-row">
-              <span>Show difficulty</span>
-              <input type="checkbox" id="toggleDifficulty" checked />
-            </label>
-            <label class="setting-row">
-              <span>Zebra rows</span>
-              <input type="checkbox" id="toggleZebra" />
-            </label>
+            <div class="settings-section">
+              <div class="settings-section-title">Quick actions</div>
+              <div class="settings-actions">
+                <button id="syncBtn" class="btn ghost slim" type="button">Sync</button>
+                <button id="randomBtn" class="btn ghost slim" type="button">Pick random</button>
+              </div>
+            </div>
+            <div class="settings-section">
+              <div class="settings-section-title">Data tools</div>
+              <div class="settings-actions">
+                <button id="importBtn" class="btn ghost slim" type="button">Import</button>
+                <button id="exportBtn" class="btn ghost slim" type="button">Export</button>
+              </div>
+            </div>
+            <div class="settings-section">
+              <div class="settings-section-title">Display</div>
+              <label class="setting-row">
+                <span>Compact mode</span>
+                <input type="checkbox" id="toggleCompact" />
+              </label>
+              <label class="setting-row">
+                <span>Show unit strip</span>
+                <input type="checkbox" id="toggleUnits" checked />
+              </label>
+              <label class="setting-row">
+                <span>Show progress strip</span>
+                <input type="checkbox" id="toggleProgress" checked />
+              </label>
+              <label class="setting-row">
+                <span>Show SR column</span>
+                <input type="checkbox" id="toggleSr" checked />
+              </label>
+              <label class="setting-row">
+                <span>Show notes column</span>
+                <input type="checkbox" id="toggleNotes" checked />
+              </label>
+              <label class="setting-row">
+                <span>Show difficulty</span>
+                <input type="checkbox" id="toggleDifficulty" checked />
+              </label>
+              <label class="setting-row">
+                <span>Zebra rows</span>
+                <input type="checkbox" id="toggleZebra" />
+              </label>
+            </div>
           </div>
         </div>
       </header>
