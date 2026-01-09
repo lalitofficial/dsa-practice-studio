@@ -1,3 +1,4 @@
+import json
 import sqlite3
 
 from dsa_practice_studio.config import DATA_DIR, DEFAULT_SHEET_ID, UNIT_DB_PATH
@@ -19,7 +20,6 @@ def _open_unit_db():
             "PRIMARY KEY (sheet, unit))"
         )
         conn.commit()
-        return conn
 
     if "sheet" not in columns:
         rows = conn.execute("SELECT unit, done, updated_at FROM unit_status").fetchall()
@@ -38,6 +38,13 @@ def _open_unit_db():
         )
         conn.execute("DROP TABLE unit_status_old")
         conn.commit()
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS app_state ("
+        "key TEXT PRIMARY KEY, "
+        "value TEXT NOT NULL, "
+        "updated_at TEXT NOT NULL)"
+    )
+    conn.commit()
     return conn
 
 
@@ -71,5 +78,36 @@ def delete_unit_status(sheet_id):
     sheet_id = resolve_sheet_id(sheet_id)
     conn = _open_unit_db()
     conn.execute("DELETE FROM unit_status WHERE sheet = ?", (sheet_id,))
+    conn.commit()
+    conn.close()
+
+
+def load_app_state(key, default=None):
+    conn = _open_unit_db()
+    row = conn.execute("SELECT value FROM app_state WHERE key = ?", (key,)).fetchone()
+    conn.close()
+    if not row:
+        return default
+    try:
+        return json.loads(row[0])
+    except json.JSONDecodeError:
+        return default
+
+
+def save_app_state(key, value):
+    conn = _open_unit_db()
+    payload = json.dumps(value)
+    conn.execute(
+        "INSERT INTO app_state (key, value, updated_at) VALUES (?, ?, ?) "
+        "ON CONFLICT(key) DO UPDATE SET value=excluded.value, updated_at=excluded.updated_at",
+        (key, payload, now_iso()),
+    )
+    conn.commit()
+    conn.close()
+
+
+def delete_app_state(key):
+    conn = _open_unit_db()
+    conn.execute("DELETE FROM app_state WHERE key = ?", (key,))
     conn.commit()
     conn.close()

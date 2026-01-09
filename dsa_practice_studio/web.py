@@ -6,7 +6,13 @@ from pathlib import Path
 
 from flask import Flask, jsonify, request, send_from_directory
 
-from dsa_practice_studio.db import delete_unit_status, load_unit_status, set_unit_status
+from dsa_practice_studio.db import (
+    delete_unit_status,
+    load_app_state,
+    load_unit_status,
+    save_app_state,
+    set_unit_status,
+)
 from dsa_practice_studio.grouping import apply_sheet_grouping
 from dsa_practice_studio.importers import parse_csv_text, parse_xlsx_lessons
 from dsa_practice_studio.service import (
@@ -75,6 +81,60 @@ def create_app():
                 }
             )
         return jsonify({"sheets": sheets})
+
+    @app.get("/api/ui-settings")
+    def api_get_ui_settings():
+        settings = load_app_state("ui_settings", {})
+        return jsonify({"settings": settings})
+
+    @app.post("/api/ui-settings")
+    def api_set_ui_settings():
+        payload = request.get_json(silent=True) or {}
+        if "settings" not in payload:
+            return jsonify({"error": "Invalid payload"}), 400
+        save_app_state("ui_settings", payload["settings"])
+        return jsonify({"settings": payload["settings"]})
+
+    @app.get("/api/view-state")
+    def api_get_view_state():
+        state = load_app_state("view_state", {})
+        return jsonify({"state": state})
+
+    @app.post("/api/view-state")
+    def api_set_view_state():
+        payload = request.get_json(silent=True) or {}
+        if "state" not in payload:
+            return jsonify({"error": "Invalid payload"}), 400
+        save_app_state("view_state", payload["state"])
+        return jsonify({"state": payload["state"]})
+
+    @app.get("/api/active-sheet")
+    def api_get_active_sheet():
+        sheet = load_app_state("active_sheet", "")
+        return jsonify({"sheet": sheet})
+
+    @app.post("/api/active-sheet")
+    def api_set_active_sheet():
+        payload = request.get_json(silent=True) or {}
+        if "sheet" not in payload:
+            return jsonify({"error": "Invalid payload"}), 400
+        sheet = resolve_sheet_id(payload.get("sheet"))
+        save_app_state("active_sheet", sheet)
+        return jsonify({"sheet": sheet})
+
+    @app.get("/api/admin-state")
+    def api_get_admin_state():
+        panel = load_app_state("admin_panel", "")
+        return jsonify({"panel": panel})
+
+    @app.post("/api/admin-state")
+    def api_set_admin_state():
+        payload = request.get_json(silent=True) or {}
+        if "panel" not in payload:
+            return jsonify({"error": "Invalid payload"}), 400
+        panel = str(payload.get("panel") or "").strip()
+        save_app_state("admin_panel", panel)
+        return jsonify({"panel": panel})
 
     @app.post("/api/sheets")
     def api_create_sheet():
