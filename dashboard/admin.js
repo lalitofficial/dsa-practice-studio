@@ -1,5 +1,3 @@
-const SETTINGS_KEY = "a2z_settings";
-
 const state = {
   sheets: [],
 };
@@ -128,32 +126,83 @@ const defaultSettings = {
   },
 };
 
-function loadSettings() {
+function normalizeSettings(parsed) {
+  const next = parsed ? { ...parsed } : {};
+  if (next.showNotes !== undefined && next.showNotesColumn === undefined) {
+    next.showNotesColumn = next.showNotes;
+  }
+  return {
+    ...defaultSettings,
+    ...next,
+    header: { ...defaultSettings.header, ...(next.header || {}) },
+    theme: { ...defaultSettings.theme, ...(next.theme || {}) },
+    linkFallback: { ...defaultSettings.linkFallback, ...(next.linkFallback || {}) },
+    labels: { ...defaultSettings.labels, ...(next.labels || {}) },
+  };
+}
+
+async function fetchUiSettings() {
   try {
-    const raw = localStorage.getItem(SETTINGS_KEY);
-    if (!raw) return { ...defaultSettings };
-    const parsed = JSON.parse(raw);
-    if (parsed.showNotes !== undefined && parsed.showNotesColumn === undefined) {
-      parsed.showNotesColumn = parsed.showNotes;
-    }
-    return {
-      ...defaultSettings,
-      ...parsed,
-      header: { ...defaultSettings.header, ...(parsed.header || {}) },
-      theme: { ...defaultSettings.theme, ...(parsed.theme || {}) },
-      linkFallback: { ...defaultSettings.linkFallback, ...(parsed.linkFallback || {}) },
-      labels: { ...defaultSettings.labels, ...(parsed.labels || {}) },
-    };
+    const response = await fetch("/api/ui-settings");
+    if (!response.ok) return { ...defaultSettings };
+    const data = await response.json();
+    return normalizeSettings(data.settings || {});
   } catch (error) {
     return { ...defaultSettings };
   }
 }
 
-function saveSettings(settings) {
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+let settingsSaveTimer = null;
+function scheduleSettingsSave() {
+  if (settingsSaveTimer) clearTimeout(settingsSaveTimer);
+  settingsSaveTimer = setTimeout(() => {
+    persistUiSettings();
+  }, 200);
 }
 
-let uiSettings = loadSettings();
+async function persistUiSettings() {
+  try {
+    await fetch("/api/ui-settings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ settings: uiSettings }),
+    });
+  } catch (error) {
+    // Ignore network errors; settings stay in memory until next save.
+  }
+}
+
+function saveSettings(settings) {
+  uiSettings = settings;
+  scheduleSettingsSave();
+}
+
+let uiSettings = { ...defaultSettings };
+let adminPanelButtons = [];
+let adminPanels = [];
+
+async function fetchAdminPanel() {
+  try {
+    const response = await fetch("/api/admin-state");
+    if (!response.ok) return "";
+    const data = await response.json();
+    return data.panel || "";
+  } catch (error) {
+    return "";
+  }
+}
+
+async function saveAdminPanel(panelId) {
+  try {
+    await fetch("/api/admin-state", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ panel: panelId }),
+    });
+  } catch (error) {
+    // Ignore network errors; state will sync next time.
+  }
+}
 
 function getCssVar(name) {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -865,21 +914,17 @@ function bindEvents() {
     });
   });
 
-  const panelButtons = document.querySelectorAll(".admin-nav-btn");
-  const panels = document.querySelectorAll(".admin-panel");
-  const savedPanel = localStorage.getItem("admin_panel");
-  if (savedPanel) {
-    setActivePanel(savedPanel, panelButtons, panels);
-  }
-  panelButtons.forEach((button) => {
+  adminPanelButtons = Array.from(document.querySelectorAll(".admin-nav-btn"));
+  adminPanels = Array.from(document.querySelectorAll(".admin-panel"));
+  adminPanelButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      setActivePanel(button.dataset.panel, panelButtons, panels);
+      setActivePanel(button.dataset.panel, adminPanelButtons, adminPanels);
     });
   });
 
   document.querySelectorAll("[data-panel-jump]").forEach((button) => {
     button.addEventListener("click", () => {
-      setActivePanel(button.dataset.panelJump, panelButtons, panels);
+      setActivePanel(button.dataset.panelJump, adminPanelButtons, adminPanels);
     });
   });
 
@@ -945,12 +990,17 @@ function setActivePanel(panelId, buttons, panels) {
   buttons.forEach((button) => {
     button.classList.toggle("active", button.dataset.panel === activeId);
   });
-  localStorage.setItem("admin_panel", activeId);
+  saveAdminPanel(activeId);
 }
 
 async function init() {
+  uiSettings = await fetchUiSettings();
   syncAppearanceForm();
   bindEvents();
+  const savedPanel = await fetchAdminPanel();
+  if (savedPanel && adminPanelButtons.length && adminPanels.length) {
+    setActivePanel(savedPanel, adminPanelButtons, adminPanels);
+  }
   await refreshSheets();
 }
 

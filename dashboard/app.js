@@ -12,6 +12,7 @@ const state = {
   sheetId: "",
   sheetList: [],
   lastRenderedSheetId: "",
+  viewStateStore: {},
 };
 
 const elements = {
@@ -128,12 +129,9 @@ const defaultSettings = {
   },
 };
 
-let uiSettings = loadSettings();
+let uiSettings = { ...defaultSettings };
 applySettings();
 
-const SHEET_STORAGE_KEY = "a2z_sheet";
-const SHEET_LIST_KEY = "a2z_sheet_list";
-const VIEW_STATE_KEY = "a2z_view_state_v1";
 const VIEW_STATE_DEFAULT = {
   openUnits: [],
   scrollY: 0,
@@ -159,32 +157,99 @@ function slugifySheet(value) {
     .replace(/^-|-$/g, "");
 }
 
-function loadSheetList() {
+function normalizeSettings(parsed) {
+  const next = parsed ? { ...parsed } : {};
+  if (next.showNotes !== undefined && next.showNotesColumn === undefined) {
+    next.showNotesColumn = next.showNotes;
+  }
+  return {
+    ...defaultSettings,
+    ...next,
+    header: { ...defaultSettings.header, ...(next.header || {}) },
+    theme: { ...defaultSettings.theme, ...(next.theme || {}) },
+    linkFallback: { ...defaultSettings.linkFallback, ...(next.linkFallback || {}) },
+    labels: { ...defaultSettings.labels, ...(next.labels || {}) },
+  };
+}
+
+async function fetchUiSettings() {
   try {
-    const raw = localStorage.getItem(SHEET_LIST_KEY);
-    if (!raw) return [...DEFAULT_SHEETS];
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [...DEFAULT_SHEETS];
-    const byId = new Map(parsed.map((item) => [item.id, item]));
-    DEFAULT_SHEETS.forEach((sheet) => {
-      if (!byId.has(sheet.id)) byId.set(sheet.id, sheet);
+    const response = await fetch("/api/ui-settings");
+    if (!response.ok) return { ...defaultSettings };
+    const data = await response.json();
+    return normalizeSettings(data.settings || {});
+  } catch (error) {
+    return { ...defaultSettings };
+  }
+}
+
+let settingsSaveTimer = null;
+function scheduleSettingsSave() {
+  if (settingsSaveTimer) clearTimeout(settingsSaveTimer);
+  settingsSaveTimer = setTimeout(() => {
+    persistUiSettings();
+  }, 200);
+}
+
+async function persistUiSettings() {
+  try {
+    await fetch("/api/ui-settings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ settings: uiSettings }),
     });
-    return Array.from(byId.values());
+  } catch (error) {
+    // Ignore network errors; settings stay in memory until next save.
+  }
+}
+
+async function fetchSheetList() {
+  try {
+    const response = await fetch("/api/sheets");
+    if (!response.ok) {
+      return [...DEFAULT_SHEETS];
+    }
+    const data = await response.json();
+    const sheets = Array.isArray(data.sheets) ? data.sheets : [];
+    const list = sheets.map((sheet) => ({
+      id: sheet.id,
+      label: sheet.label || sheet.id,
+    }));
+    return list.length ? list : [...DEFAULT_SHEETS];
   } catch (error) {
     return [...DEFAULT_SHEETS];
   }
 }
 
-function saveSheetList(list) {
-  localStorage.setItem(SHEET_LIST_KEY, JSON.stringify(list));
+async function fetchActiveSheet() {
+  try {
+    const response = await fetch("/api/active-sheet");
+    if (!response.ok) return "";
+    const data = await response.json();
+    return data.sheet || "";
+  } catch (error) {
+    return "";
+  }
 }
 
-function loadViewStateStore() {
+async function saveActiveSheet(sheetId) {
   try {
-    const raw = localStorage.getItem(VIEW_STATE_KEY);
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" ? parsed : {};
+    await fetch("/api/active-sheet", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sheet: sheetId }),
+    });
+  } catch (error) {
+    // Ignore network errors; will retry on next save.
+  }
+}
+
+async function fetchViewStateStore() {
+  try {
+    const response = await fetch("/api/view-state");
+    if (!response.ok) return {};
+    const data = await response.json();
+    return data.state && typeof data.state === "object" ? data.state : {};
   } catch (error) {
     return {};
   }
@@ -192,7 +257,7 @@ function loadViewStateStore() {
 
 function loadViewState(sheetId) {
   if (!sheetId) return { ...VIEW_STATE_DEFAULT };
-  const store = loadViewStateStore();
+  const store = state.viewStateStore || {};
   const entry = store[sheetId];
   if (!entry || typeof entry !== "object") return { ...VIEW_STATE_DEFAULT };
   return {
@@ -205,9 +270,29 @@ function loadViewState(sheetId) {
   };
 }
 
+let viewStateSaveTimer = null;
+function scheduleViewStateSave() {
+  if (viewStateSaveTimer) clearTimeout(viewStateSaveTimer);
+  viewStateSaveTimer = setTimeout(() => {
+    persistViewStateStore();
+  }, 200);
+}
+
+async function persistViewStateStore() {
+  try {
+    await fetch("/api/view-state", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ state: state.viewStateStore || {} }),
+    });
+  } catch (error) {
+    // Ignore network errors; will retry on next save.
+  }
+}
+
 function saveViewState(sheetId, patch) {
   if (!sheetId) return;
-  const store = loadViewStateStore();
+  const store = state.viewStateStore || {};
   const current = loadViewState(sheetId);
   const next = {
     ...current,
@@ -218,26 +303,8 @@ function saveViewState(sheetId, patch) {
     },
   };
   store[sheetId] = next;
-  localStorage.setItem(VIEW_STATE_KEY, JSON.stringify(store));
-}
-
-async function fetchSheetList() {
-  try {
-    const response = await fetch("/api/sheets");
-    if (!response.ok) {
-      return loadSheetList();
-    }
-    const data = await response.json();
-    const sheets = Array.isArray(data.sheets) ? data.sheets : [];
-    const list = sheets.map((sheet) => ({
-      id: sheet.id,
-      label: sheet.label || sheet.id,
-    }));
-    saveSheetList(list);
-    return list.length ? list : loadSheetList();
-  } catch (error) {
-    return loadSheetList();
-  }
+  state.viewStateStore = store;
+  scheduleViewStateSave();
 }
 
 function getSheetLabel(sheetId) {
@@ -251,11 +318,9 @@ function ensureSheet(sheetId, label) {
   const existing = state.sheetList.find((item) => item.id === id);
   if (!existing) {
     state.sheetList.push({ id, label: label || sheetId || id });
-    saveSheetList(state.sheetList);
     renderSheetTabs();
   } else if (label && label.trim() && existing.label !== label) {
     existing.label = label;
-    saveSheetList(state.sheetList);
     renderSheetTabs();
   }
   return id;
@@ -271,8 +336,7 @@ function loadActiveSheet() {
   if (urlSheet) {
     return slugifySheet(urlSheet);
   }
-  const saved = localStorage.getItem(SHEET_STORAGE_KEY);
-  return saved || getDefaultSheetId();
+  return "";
 }
 
 function renderSheetTabs() {
@@ -308,7 +372,6 @@ async function createSheet(name) {
   } else if (entry.label) {
     existing.label = entry.label;
   }
-  saveSheetList(state.sheetList);
   renderSheetTabs();
   return entry;
 }
@@ -328,7 +391,7 @@ function setActiveSheet(sheetId, options = {}) {
     closeNotes();
   }
   state.sheetId = sheetId;
-  localStorage.setItem(SHEET_STORAGE_KEY, sheetId);
+  saveActiveSheet(sheetId);
   renderSheetTabs();
   if (!options.keepFilters) {
     elements.stepFilter.value = "all";
@@ -351,29 +414,8 @@ function formatDate(value) {
   return date.toLocaleString();
 }
 
-function loadSettings() {
-  try {
-    const raw = localStorage.getItem("a2z_settings");
-    if (!raw) return { ...defaultSettings };
-    const parsed = JSON.parse(raw);
-    if (parsed.showNotes !== undefined && parsed.showNotesColumn === undefined) {
-      parsed.showNotesColumn = parsed.showNotes;
-    }
-    return {
-      ...defaultSettings,
-      ...parsed,
-      header: { ...defaultSettings.header, ...(parsed.header || {}) },
-      theme: { ...defaultSettings.theme, ...(parsed.theme || {}) },
-      linkFallback: { ...defaultSettings.linkFallback, ...(parsed.linkFallback || {}) },
-      labels: { ...defaultSettings.labels, ...(parsed.labels || {}) },
-    };
-  } catch (error) {
-    return { ...defaultSettings };
-  }
-}
-
 function saveSettings() {
-  localStorage.setItem("a2z_settings", JSON.stringify(uiSettings));
+  scheduleSettingsSave();
 }
 
 function applyTheme() {
@@ -1757,7 +1799,12 @@ function bindEvents() {
 async function initApp() {
   state.sheetList = await fetchSheetList();
   renderSheetTabs();
-  state.sheetId = loadActiveSheet();
+  state.viewStateStore = await fetchViewStateStore();
+  uiSettings = await fetchUiSettings();
+  applySettings();
+  const urlSheet = loadActiveSheet();
+  const savedSheet = await fetchActiveSheet();
+  state.sheetId = urlSheet || savedSheet || getDefaultSheetId();
   if (!state.sheetList.find((sheet) => sheet.id === state.sheetId)) {
     state.sheetId = getDefaultSheetId();
   }
