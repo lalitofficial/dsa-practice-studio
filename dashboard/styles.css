@@ -135,6 +135,11 @@ h1 {
   font-size: 18px;
 }
 
+.section-title {
+  margin: 0;
+  font-size: 18px;
+}
+
 .sheet-switch {
   display: flex;
   align-items: center;
@@ -435,11 +440,6 @@ h1 {
   margin-bottom: 12px;
 }
 
-.unit-strip-header h2 {
-  margin: 0;
-  font-size: 16px;
-}
-
 .unit-hint {
   font-size: 12px;
   color: var(--ink-muted);
@@ -537,15 +537,14 @@ h1 {
   margin-bottom: 12px;
 }
 
-.panel-header h2 {
-  margin: 0;
-  font-size: 18px;
-}
-
 .panel-subtitle {
   margin: 6px 0 0;
   font-size: 12px;
   color: var(--ink-muted);
+}
+
+.admin-panel-head .panel-subtitle {
+  margin: 0;
 }
 
 .panel-count {
@@ -840,11 +839,6 @@ body.hide-last-sync #lastSync {
   gap: 14px;
 }
 
-.revision-card-header h2 {
-  margin: 0;
-  font-size: 18px;
-}
-
 .revision-search label {
   display: block;
   font-size: 12px;
@@ -1018,17 +1012,8 @@ body.hide-last-sync #lastSync {
 
 .admin-panel-head {
   margin-bottom: 16px;
-}
-
-.admin-panel-head h2 {
-  margin: 0 0 6px;
-  font-size: 20px;
-}
-
-.admin-panel-head p {
-  margin: 0;
-  color: var(--ink-muted);
-  font-size: 13px;
+  display: grid;
+  gap: 6px;
 }
 
 .admin-hero {
