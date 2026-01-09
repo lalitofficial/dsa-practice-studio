@@ -823,6 +823,49 @@ body.hide-last-sync #lastSync {
   font-size: 14px;
 }
 
+.modal-wide {
+  max-width: 900px;
+}
+
+.notes-hub-list {
+  display: grid;
+  gap: 14px;
+}
+
+.notes-item {
+  border-radius: 14px;
+  border: 1px solid rgba(231, 238, 246, 0.1);
+  background: rgba(9, 13, 18, 0.6);
+  padding: 14px 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.notes-item-header {
+  display: grid;
+  gap: 4px;
+}
+
+.notes-item-title {
+  font-weight: 600;
+}
+
+.notes-item-meta {
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+.notes-item-body {
+  white-space: pre-wrap;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.notes-item-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .admin-layout {
   display: grid;
   gap: 20px;

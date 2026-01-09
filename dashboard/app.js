@@ -7,6 +7,7 @@ const state = {
   unitStatus: {},
   unitIndex: { units: [], map: new Map() },
   notesOpen: false,
+  notesHubOpen: false,
   openUnits: new Set(),
   sheetId: "",
   sheetList: [],
@@ -38,6 +39,13 @@ const elements = {
   notesModal: document.getElementById("notesModal"),
   notesBackdrop: document.getElementById("notesBackdrop"),
   closeNotesBtn: document.getElementById("closeNotesBtn"),
+  notesHubBtn: document.getElementById("notesHubBtn"),
+  notesHubModal: document.getElementById("notesHubModal"),
+  notesHubBackdrop: document.getElementById("notesHubBackdrop"),
+  closeNotesHubBtn: document.getElementById("closeNotesHubBtn"),
+  notesHubList: document.getElementById("notesHubList"),
+  notesHubSearch: document.getElementById("notesHubSearch"),
+  notesHubCount: document.getElementById("notesHubCount"),
   syncBtn: document.getElementById("syncBtn"),
   randomBtn: document.getElementById("randomBtn"),
   adminBtn: document.getElementById("adminBtn"),
@@ -1185,6 +1193,95 @@ function closeNotes() {
   elements.notesModal.classList.add("hidden");
 }
 
+function openNotesHub() {
+  if (!elements.notesHubModal) return;
+  state.notesHubOpen = true;
+  renderNotesHub();
+  elements.notesHubModal.classList.remove("hidden");
+  if (elements.notesHubSearch) {
+    elements.notesHubSearch.focus();
+  }
+}
+
+function closeNotesHub() {
+  if (!elements.notesHubModal) return;
+  state.notesHubOpen = false;
+  elements.notesHubModal.classList.add("hidden");
+}
+
+function renderNotesHub() {
+  if (!elements.notesHubList) return;
+  const query = elements.notesHubSearch
+    ? elements.notesHubSearch.value.trim().toLowerCase()
+    : "";
+  const notes = state.questions.filter((q) => q.notes && q.notes.trim());
+  const ordered = notes
+    .slice()
+    .sort((a, b) => (a.order || 10 ** 9) - (b.order || 10 ** 9));
+  const filtered = query
+    ? ordered.filter((q) => {
+        const title = q.title.toLowerCase();
+        const text = q.notes.toLowerCase();
+        return title.includes(query) || text.includes(query);
+      })
+    : ordered;
+
+  if (elements.notesHubCount) {
+    elements.notesHubCount.textContent = `${filtered.length} notes`;
+  }
+
+  elements.notesHubList.innerHTML = "";
+  if (!filtered.length) {
+    elements.notesHubList.innerHTML =
+      '<div class="detail-empty">No notes yet. Add notes on any question to see them here.</div>';
+    return;
+  }
+
+  filtered.forEach((q) => {
+    const item = document.createElement("div");
+    item.className = "notes-item";
+
+    const header = document.createElement("div");
+    header.className = "notes-item-header";
+
+    const titleWrap = document.createElement("div");
+    titleWrap.className = "notes-item-title";
+    const badge = getUnitBadge(q.unit || q.step || "");
+    const badgeText = badge ? `${badge} · ` : "";
+    titleWrap.textContent = `${badgeText}${q.title}`;
+
+    const meta = document.createElement("div");
+    meta.className = "notes-item-meta";
+    const chapter = q.chapter || q.lesson || q.group || "General";
+    const sr = q.order ? `#${q.order}` : "#-";
+    meta.textContent = `${sr} · ${q.unit || q.step || "Unassigned"} / ${chapter}`;
+
+    header.appendChild(titleWrap);
+    header.appendChild(meta);
+
+    const body = document.createElement("div");
+    body.className = "notes-item-body";
+    body.textContent = q.notes;
+
+    const actions = document.createElement("div");
+    actions.className = "notes-item-actions";
+    const openBtn = document.createElement("button");
+    openBtn.type = "button";
+    openBtn.className = "btn slim";
+    openBtn.textContent = "Open";
+    openBtn.addEventListener("click", () => {
+      closeNotesHub();
+      openNotes(q.id);
+    });
+    actions.appendChild(openBtn);
+
+    item.appendChild(header);
+    item.appendChild(body);
+    item.appendChild(actions);
+    elements.notesHubList.appendChild(item);
+  });
+}
+
 function updateNotesModal(question) {
   if (!question) return;
   const unit = question.unit || question.step || "Unassigned";
@@ -1404,6 +1501,9 @@ function applyUpdate(data) {
     const question = state.questions.find((q) => q.id === state.selectedId);
     if (question) updateNotesModal(question);
   }
+  if (state.notesHubOpen) {
+    renderNotesHub();
+  }
 }
 
 function pickRandomTodo() {
@@ -1473,6 +1573,22 @@ function bindEvents() {
     elements.notesBackdrop.addEventListener("click", closeNotes);
   }
 
+  if (elements.notesHubBtn) {
+    elements.notesHubBtn.addEventListener("click", openNotesHub);
+  }
+
+  if (elements.closeNotesHubBtn) {
+    elements.closeNotesHubBtn.addEventListener("click", closeNotesHub);
+  }
+
+  if (elements.notesHubBackdrop) {
+    elements.notesHubBackdrop.addEventListener("click", closeNotesHub);
+  }
+
+  if (elements.notesHubSearch) {
+    elements.notesHubSearch.addEventListener("input", renderNotesHub);
+  }
+
   if (elements.importBtn) {
     elements.importBtn.addEventListener("click", () => {
       openImportModal();
@@ -1537,6 +1653,7 @@ function bindEvents() {
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       if (state.notesOpen) closeNotes();
+      if (state.notesHubOpen) closeNotesHub();
       if (elements.importModal && !elements.importModal.classList.contains("hidden")) {
         closeImportModal();
       }
