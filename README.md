@@ -18,6 +18,21 @@
   Local-first practice dashboard with sample Striver and AlgoMaster sheets.
 </p>
 
+## Table of contents
+
+- [Features](#features)
+- [Quickstart](#quickstart)
+- [Usage guide](#usage-guide)
+- [Widget studio](#widget-studio)
+- [Revision panel](#revision-panel)
+- [Admin console](#admin-console)
+- [Tracking logic](#tracking-logic)
+- [Import & export](#import--export)
+- [CLI](#cli)
+- [Data storage](#data-storage)
+- [Project layout](#project-layout)
+- [Contributing](#contributing)
+
 ## Features
 
 - Multi-sheet support with a quick switch in the header.
@@ -49,13 +64,51 @@ python3 app.py
 
 Open `http://127.0.0.1:8000` and switch sample sheets from the header.
 
-## Usage
+## Usage guide
 
-### UI
+### Dashboard (learner view)
 
-- Use the sheet switcher to change between sample Striver and AlgoMaster sheets.
-- Filter by unit/chapter/status, mark done, and add notes.
-- Use the Import/Export buttons in the header for CSV/Excel/JSON flows.
+- Switch sheets from the header tabs.
+- Use search + filters to narrow the list.
+- Mark questions done and add notes as you practice.
+- Star questions to revisit later.
+- Open Notes to edit per-question notes.
+- Greyed link icons mean a URL is missing.
+- Click the floating `W` launcher in the bottom-right corner to open the widget dialog, pick which cards (clock, timer, stopwatch, custom/community widgets) stay active, and toggle the overlay so the draggable cards float over the dashboard while the launcher can keep the dialog out of the way.
+
+### Revision panel
+
+- Review all notes and starred questions in one place at `/revision`.
+- Use search to filter notes or bookmarked questions.
+- Unstar items when you are done with them.
+
+### Admin console
+
+- `/admin` hosts the command center and configuration tools.
+- Tracking panel shows momentum, heatmap, and sheet health.
+- Sheet Management handles create/rename/import/export and bulk actions.
+- Unit Management refactors unit/chapter names and bulk difficulty.
+- UI Management controls labels, layout, themes, and link fallback rules.
+- Troubleshooting provides health checks and recovery actions.
+
+### Tracking logic
+
+- Heatmap counts only questions marked done.
+- Heatmap scope is the currently active sheet.
+- Momentum counts solved items over the last 7 days.
+
+### Import & export
+
+- Import is CSV or Excel only.
+- Export any sheet as CSV or JSON.
+- UI settings can be exported/imported as JSON in Admin → UI Management.
+
+## Widget studio
+
+- Visit `/widgets` or open Widget Studio from the dashboard Settings panel for the full widget workbench.
+- The clock, timer, and stopwatch live as widgets, so toggling them from Settings adds or removes distinct cards; transit the floating `W` launcher to open the widget dialog and learn how to control which cards show up in the overlay, which itself continues to expose inline start/pause and reset buttons so there is no separate focus tray.
+- Custom widgets created via the dashboard form (title, description, tags) show up in both the rack and overlay, remember their position, and can be removed any time.
+- The community catalog inside the studio ships with a growing set of helper widgets—click any catalog card to add it to your rack/overlay instantly and drag it to the place you need.
 
 ### CLI
 
@@ -70,23 +123,8 @@ Run `python3 tracker.py --help` to see all options.
 
 ## Import sheets (one-time)
 
-Ref HTML files are for initial import only and are ignored in git. The bundled
-sample names are just defaults; you can import your own sheets and use them as
-your primary data source.
-
-```bash
-python3 tracker.py import-html /path/to/striver.html --sheet striver
-python3 tracker.py import-html /path/to/algomaster.html --sheet algomaster
-```
-
-You can also paste HTML directly:
-
-```bash
-python3 tracker.py import-html - --sheet algomaster < algomaster.html
-```
-
-Units and chapters are detected automatically when headings are present.
-Use `--unit`/`--chapter` to provide defaults if a sheet is missing headings.
+Import is CSV/Excel only. The bundled sample sheets live in `samples/` and can be
+re-imported any time if you want to reset to defaults.
 
 ### CSV / Excel format
 
@@ -131,4 +169,4 @@ tracker.py         # CLI entrypoint (thin wrapper)
 
 ## Contributing
 
-See `CONTRIBUTING.md` for setup and workflow notes.
+See `CONTRIBUTING.md` for setup and workflow notes. Please validate locally with `pip install -r requirements.txt` (and `pip install -e .` if you change Python modules) before submitting a branch, document architectural changes in the README or an ADR, and open a pull request for review so we can sync on widget/interface updates.
