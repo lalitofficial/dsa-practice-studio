@@ -15,7 +15,15 @@
 </p>
 
 <p align="center">
-  Local-first practice dashboard with sample Striver and AlgoMaster sheets.
+  Local-first LeetCode practice dashboard with sample Striver and AlgoMaster sheets.
+</p>
+
+<p align="center">
+  DSA Practice Studio is a LeetCode study tracker built for intentional practice: sync unit progress, log notes, and lean on floating focus widgets while staying entirely local-first.
+</p>
+
+<p align="center">
+  ⭐ <strong>Find this helpful?</strong> Please star the repo so others can discover the LeetCode workflow and we can keep improving the dashboard.
 </p>
 
 ## Table of contents
@@ -35,14 +43,12 @@
 
 ## Features
 
-- Multi-sheet support with a quick switch in the header.
-- Unit and chapter grouping with a focused practice flow.
-- Progress tracking, notes, and difficulty visibility.
-- Star important questions and filter starred-only.
-- Notes hub to review all saved notes in one place.
-- Revision panel for notes and bookmarked questions.
-- CSV/Excel import plus JSON/CSV export (UI and CLI).
-- Local-first storage in SQLite/JSON (no browser storage).
+- Multi-sheet LeetCode/DSA reviews (Striver + AlgoMaster) with a persistent sheet switcher.
+- Unit-chapter grouping, adjustable filters, and streak-friendly progress tracking for purposeful practice.
+- Star, note, and categorize questions with easy access to the notes hub and bookmarked revisions.
+- Widget overlay (clock, timer, stopwatch) plus the draggable `W` launcher keep focus helpers visible on screen.
+- Import/export flows across UI and CLI (CSV/Excel + JSON) so work stays synchronized and sharable.
+- Local-first storage in SQLite and JSON keeps your data private and git-ignored while also being exportable.
 
 ## Tech stack
 
@@ -62,19 +68,18 @@ pip install -r requirements.txt
 python3 app.py
 ```
 
-Open `http://127.0.0.1:8000` and switch sample sheets from the header.
+Open `http://127.0.0.1:8000`, switch sheets using the header tabs, and revisit the bundled `samples/` directory whenever you want to reset the workspace.
 
 ## Usage guide
 
 ### Dashboard (learner view)
 
-- Switch sheets from the header tabs.
-- Use search + filters to narrow the list.
-- Mark questions done and add notes as you practice.
-- Star questions to revisit later.
-- Open Notes to edit per-question notes.
-- Greyed link icons mean a URL is missing.
-- Click the floating `W` launcher in the bottom-right corner to open the widget dialog, pick which cards (clock, timer, stopwatch, custom/community widgets) stay active, and toggle the overlay so the draggable cards float over the dashboard while the launcher can keep the dialog out of the way.
+- Switch sheets from the header tabs and keep your streak by unlocking the next chapter.
+- Use the search bar + filters to focus on units, statuses, or difficulty and widen the pace with zero lag.
+- Mark questions done, star the ones you want to revisit, and jot notes inline to track context.
+- Use the Notes modal to edit every saved note and keep all thoughts exportable.
+- Gray link icons signal a missing URL so you can flag what needs research.
+- Click the floating `W` launcher in the bottom-right corner. The widget dialog exposes the clock, timer, stopwatch toggles, your timer preset, and the overlay display—every helper runs independently while the overlay can be hidden when you want a clean workspace.
 
 ### Revision panel
 
@@ -105,10 +110,9 @@ Open `http://127.0.0.1:8000` and switch sample sheets from the header.
 
 ## Widget studio
 
-- Visit `/widgets` or open Widget Studio from the dashboard Settings panel for the full widget workbench.
-- The clock, timer, and stopwatch live as widgets, so toggling them from Settings adds or removes distinct cards; transit the floating `W` launcher to open the widget dialog and learn how to control which cards show up in the overlay, which itself continues to expose inline start/pause and reset buttons so there is no separate focus tray.
-- Custom widgets created via the dashboard form (title, description, tags) show up in both the rack and overlay, remember their position, and can be removed any time.
-- The community catalog inside the studio ships with a growing set of helper widgets—click any catalog card to add it to your rack/overlay instantly and drag it to the place you need.
+- Visit `/widgets` or tap the Widget Studio link to read how the floating `W` launcher, clock, timer, and stopwatch work together on the dashboard.
+- The dialog keeps every widget toggle, timer preset, and overlay visibility control in one place, and the overlay keeps the draggable cards in sync with the inline start/pause/reset actions.
+- Only the built-in widgets shipping today (clock, timer, stopwatch) are supported, but the studio page will grow with future helper types and catalog entries.
 
 ### CLI
 
