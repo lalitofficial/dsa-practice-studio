@@ -79,6 +79,15 @@ const elements = {
   toggleProgress: document.getElementById("toggleProgress"),
   toggleSr: document.getElementById("toggleSr"),
   toggleZebra: document.getElementById("toggleZebra"),
+  toggleClock: document.getElementById("toggleClock"),
+  toggleTimer: document.getElementById("toggleTimer"),
+  toggleStopwatch: document.getElementById("toggleStopwatch"),
+  timerMinutes: document.getElementById("timerMinutes"),
+  widgetDialog: document.getElementById("widgetDialog"),
+  widgetDialogClose: document.getElementById("widgetDialogClose"),
+  widgetLauncher: document.getElementById("widgetLauncher"),
+  widgetFocusButton: document.getElementById("widgetFocusButton"),
+  widgetOverlay: document.getElementById("widgetOverlay"),
   unitFilterLabel: document.getElementById("unitFilterLabel"),
   chapterFilterLabel: document.getElementById("chapterFilterLabel"),
   difficultyFilterLabel: document.getElementById("difficultyFilterLabel"),
@@ -86,6 +95,75 @@ const elements = {
   clearFiltersBtn: document.getElementById("clearFiltersBtn"),
 };
 
+const timerState = {
+  duration: 25 * 60,
+  remaining: 25 * 60,
+  running: false,
+  interval: null,
+};
+
+const stopwatchState = {
+  elapsed: 0,
+  running: false,
+  interval: null,
+};
+
+let clockInterval = null;
+
+const widgetTemplates = {
+  clock: {
+    templateId: "clock",
+    instanceId: "widget-clock",
+    type: "clock",
+    label: "Local clock",
+    value: "--:--",
+    description: "Live time",
+    accent: "cyan",
+    tags: ["Focus"],
+    source: "system",
+    removable: false,
+  },
+  timer: {
+    templateId: "timer",
+    instanceId: "widget-timer",
+    type: "timer",
+    label: "Timer",
+    value: "25:00",
+    description: "Countdown helper",
+    accent: "amber",
+    tags: ["Focus", "Timer"],
+    source: "system",
+    removable: false,
+  },
+  stopwatch: {
+    templateId: "stopwatch",
+    instanceId: "widget-stopwatch",
+    type: "stopwatch",
+    label: "Stopwatch",
+    value: "00:00",
+    description: "Track elapsed time",
+    accent: "rose",
+    tags: ["Focus", "Timer"],
+    source: "system",
+    removable: false,
+  },
+};
+
+const DEFAULT_WIDGET_KEYS = ["clock", "timer", "stopwatch"];
+
+const widgetDisplayRefs = {
+  clock: new Set(),
+  timer: new Set(),
+  stopwatch: new Set(),
+};
+const WIDGET_OVERLAY_ICONS = {
+  edit:
+    '<path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/><path d="M20.71 7.04a1 1 0 0 0 0-1.41L18.37 3.29a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>',
+  play: '<path d="M8 5v14l11-7z"/>',
+  pause: '<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>',
+  reset: '<path d="M12 5V1l-4 4 4 4V6a6 6 0 1 1-6 6h2a4 4 0 1 0 4-4z"/>',
+};
+let settingsSaveTimer = null;
 const defaultSettings = {
   compact: false,
   showUnits: true,
@@ -126,6 +204,17 @@ const defaultSettings = {
     item: "Question",
     unit: "Unit",
     chapter: "Chapter",
+  },
+  widgetSettings: {
+    showClock: false,
+    showTimer: false,
+    showStopwatch: false,
+    timerMinutes: 25,
+    timerSeconds: 0,
+    overlayVisible: true,
+    dialogVisible: false,
+    widgetPositions: {},
+    launcherPosition: null,
   },
 };
 
@@ -169,6 +258,7 @@ function normalizeSettings(parsed) {
     theme: { ...defaultSettings.theme, ...(next.theme || {}) },
     linkFallback: { ...defaultSettings.linkFallback, ...(next.linkFallback || {}) },
     labels: { ...defaultSettings.labels, ...(next.labels || {}) },
+    widgetSettings: { ...defaultSettings.widgetSettings, ...(next.widgetSettings || {}) },
   };
 }
 
@@ -183,7 +273,6 @@ async function fetchUiSettings() {
   }
 }
 
-let settingsSaveTimer = null;
 function scheduleSettingsSave() {
   if (settingsSaveTimer) clearTimeout(settingsSaveTimer);
   settingsSaveTimer = setTimeout(() => {
@@ -436,6 +525,391 @@ function applyTheme() {
   });
 }
 
+function getWidgetSettings() {
+  if (!uiSettings.widgetSettings) {
+    uiSettings.widgetSettings = { ...defaultSettings.widgetSettings };
+  }
+  return uiSettings.widgetSettings;
+}
+
+function ensureWidgetSettings() {
+  const widgetSettings = getWidgetSettings();
+  if (!Array.isArray(widgetSettings.widgets)) {
+    widgetSettings.widgets = DEFAULT_WIDGET_KEYS.map((key) => ({ ...widgetTemplates[key] }));
+  }
+  widgetSettings.widgets = widgetSettings.widgets.map((widget) => {
+    if (widget.templateId && widgetTemplates[widget.templateId]) {
+      return { ...widgetTemplates[widget.templateId], ...widget };
+    }
+    return { ...widget };
+  });
+  widgetSettings.widgets = widgetSettings.widgets.map((widget) => {
+    if (!widget.instanceId) {
+      widget.instanceId = widget.templateId ? `widget-${widget.templateId}` : `widget-${Date.now()}`;
+    }
+    return widget;
+  });
+  return widgetSettings;
+}
+
+function widgetListContains(templateId) {
+  const widgetSettings = ensureWidgetSettings();
+  setOverlayVisible(Boolean(widgetSettings.overlayVisible));
+  return widgetSettings.widgets.some((widget) => widget.templateId === templateId);
+}
+
+function persistWidgetState() {
+  saveSettings();
+}
+
+function clearWidgetDisplayRefs() {
+  Object.values(widgetDisplayRefs).forEach((set) => set.clear());
+}
+
+const widgetDragState = {
+  active: false,
+  instanceId: null,
+  card: null,
+  offsetX: 0,
+  offsetY: 0,
+};
+
+const launcherDragState = {
+  active: false,
+  offsetX: 0,
+  offsetY: 0,
+  moved: false,
+};
+
+function getWidgetPosition(instanceId) {
+  const widgetSettings = ensureWidgetSettings();
+  widgetSettings.widgetPositions = widgetSettings.widgetPositions || {};
+  return widgetSettings.widgetPositions[instanceId];
+}
+
+function setWidgetPosition(instanceId, x, y) {
+  const widgetSettings = ensureWidgetSettings();
+  widgetSettings.widgetPositions = widgetSettings.widgetPositions || {};
+  widgetSettings.widgetPositions[instanceId] = { x, y };
+  persistWidgetState();
+}
+
+function startWidgetDrag(event, instanceId, card) {
+  if (!elements.widgetOverlay) return;
+  widgetDragState.active = true;
+  widgetDragState.instanceId = instanceId;
+  widgetDragState.card = card;
+  const rect = card.getBoundingClientRect();
+  widgetDragState.offsetX = event.clientX - rect.left;
+  widgetDragState.offsetY = event.clientY - rect.top;
+  card.classList.add("dragging");
+  document.addEventListener("pointermove", handleWidgetDragMove);
+  document.addEventListener("pointerup", stopWidgetDrag);
+  event.preventDefault();
+}
+
+function handleWidgetDragMove(event) {
+  if (!widgetDragState.active || !widgetDragState.card) return;
+  const overlay = elements.widgetOverlay;
+  if (!overlay) return;
+  const bounds = overlay.getBoundingClientRect();
+  let left = event.clientX - bounds.left - widgetDragState.offsetX;
+  let top = event.clientY - bounds.top - widgetDragState.offsetY;
+  left = Math.max(0, Math.min(bounds.width - widgetDragState.card.offsetWidth, left));
+  top = Math.max(0, Math.min(bounds.height - widgetDragState.card.offsetHeight, top));
+  widgetDragState.card.style.left = `${left}px`;
+  widgetDragState.card.style.top = `${top}px`;
+  setWidgetPosition(widgetDragState.instanceId, left, top);
+}
+
+function stopWidgetDrag() {
+  if (!widgetDragState.active || !widgetDragState.card) return;
+  widgetDragState.card.classList.remove("dragging");
+  widgetDragState.active = false;
+  widgetDragState.instanceId = null;
+  widgetDragState.card = null;
+  document.removeEventListener("pointermove", handleWidgetDragMove);
+  document.removeEventListener("pointerup", stopWidgetDrag);
+}
+
+function renderOverlayWidgets() {
+  const overlay = elements.widgetOverlay;
+  if (!overlay) return;
+  const widgetSettings = ensureWidgetSettings();
+  const widgets = widgetSettings.widgets || [];
+  overlay.innerHTML = "";
+  clearWidgetDisplayRefs();
+  if (!widgets.length) {
+    overlay.classList.add("hidden");
+    return;
+  }
+  widgets.forEach((widget, index) => {
+    const card = document.createElement("div");
+    card.className = "widget-overlay-card";
+    card.dataset.widgetInstance = widget.instanceId || widget.templateId;
+    const position = getWidgetPosition(widget.instanceId);
+    if (position) {
+      card.style.left = `${position.x}px`;
+      card.style.top = `${position.y}px`;
+    } else {
+      const x = 20 + index * 30;
+      const y = 20 + index * 20;
+      card.style.left = `${x}px`;
+      card.style.top = `${y}px`;
+      setWidgetPosition(widget.instanceId, x, y);
+    }
+    card.addEventListener("pointerdown", (event) => startWidgetDrag(event, widget.instanceId, card));
+
+    const label = document.createElement("div");
+    label.className = "widget-overlay-label";
+    label.textContent = widget.label || "Widget";
+    card.appendChild(label);
+
+    const value = document.createElement("div");
+    value.className = "widget-overlay-value";
+    if (widget.type === "clock") {
+      value.textContent = "--:--";
+      widgetDisplayRefs.clock.add(value);
+    } else if (widget.type === "timer") {
+      value.textContent = formatTimer(timerState.remaining);
+      widgetDisplayRefs.timer.add(value);
+    } else if (widget.type === "stopwatch") {
+      value.textContent = formatStopwatch(stopwatchState.elapsed);
+      widgetDisplayRefs.stopwatch.add(value);
+    } else {
+      value.textContent = widget.value || widget.description || "--";
+    }
+    card.appendChild(value);
+    if (widget.type === "timer" || widget.type === "stopwatch") {
+      const actions = document.createElement("div");
+      actions.className = "widget-overlay-actions";
+      const toggleBtn = createOverlayIconButton({
+        icon: WIDGET_OVERLAY_ICONS.play,
+        label: widget.type === "timer" ? "Start timer" : "Start stopwatch",
+        onClick: () => {
+          if (widget.type === "timer") {
+            toggleTimer();
+          } else {
+            toggleStopwatch();
+          }
+          updateToggleButtonIcon(toggleBtn);
+        },
+      });
+      toggleBtn.dataset.widgetType = widget.type;
+      updateToggleButtonIcon(toggleBtn);
+      const resetBtn = createOverlayIconButton({
+        icon: WIDGET_OVERLAY_ICONS.reset,
+        label: widget.type === "timer" ? "Reset timer" : "Reset stopwatch",
+        onClick: () => {
+          if (widget.type === "timer") {
+            resetTimer();
+          } else {
+            resetStopwatch();
+          }
+          updateToggleButtonIcon(toggleBtn);
+        },
+      });
+      if (widget.type === "timer") {
+        const editBtn = createOverlayIconButton({
+          icon: WIDGET_OVERLAY_ICONS.edit,
+          label: "Edit timer",
+          onClick: () => {
+            handleTimerEdit();
+          },
+        });
+        actions.appendChild(editBtn);
+      }
+      actions.appendChild(toggleBtn);
+      actions.appendChild(resetBtn);
+      card.appendChild(actions);
+    }
+    overlay.appendChild(card);
+  });
+  overlay.classList.toggle("hidden", !widgetSettings.overlayVisible);
+}
+
+function createOverlayIconButton({ icon, label, onClick }) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "widget-overlay-btn";
+  button.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${icon}</svg>`;
+  button.setAttribute("aria-label", label);
+  button.addEventListener("pointerdown", (event) => event.stopPropagation());
+  if (onClick) {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      onClick(event);
+    });
+  }
+  return button;
+}
+
+function updateToggleButtonIcon(button) {
+  if (!button) return;
+  const widgetType = button.dataset.widgetType;
+  const running = widgetType === "timer" ? timerState.running : stopwatchState.running;
+  const icon = running ? WIDGET_OVERLAY_ICONS.pause : WIDGET_OVERLAY_ICONS.play;
+  const label =
+    running
+      ? `Pause ${widgetType}`
+      : `Start ${widgetType}`;
+  button.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${icon}</svg>`;
+  button.setAttribute("aria-label", label);
+}
+
+function handleTimerEdit() {
+  const currentMinutes = Math.floor(timerState.duration / 60);
+  const currentSeconds = timerState.duration % 60;
+  const formatted = `${currentMinutes}:${String(currentSeconds).padStart(2, "0")}`;
+  const input = prompt("Set timer duration (minutes:seconds)", formatted);
+  if (!input) return;
+  const [minPart, secPart = "0"] = input.split(":").map((part) => (part ? part.trim() : ""));
+  const minutes = Math.max(0, Number(minPart) || 0);
+  const seconds = Math.min(59, Math.max(0, Number(secPart) || 0));
+  setTimerDuration(minutes, seconds, { resetRemaining: true });
+  uiSettings.widgetSettings = uiSettings.widgetSettings || {};
+  uiSettings.widgetSettings.timerMinutes = minutes;
+  uiSettings.widgetSettings.timerSeconds = seconds;
+  saveSettings();
+  applySettings();
+}
+
+function setOverlayVisible(visible) {
+  const widgetSettings = ensureWidgetSettings();
+  if (widgetSettings.overlayVisible === visible) {
+    renderOverlayWidgets();
+    return;
+  }
+  widgetSettings.overlayVisible = visible;
+  persistWidgetState();
+  renderOverlayWidgets();
+}
+
+function setDialogVisible(visible, options = {}) {
+  const widgetSettings = ensureWidgetSettings();
+  if (widgetSettings.dialogVisible === visible && !options.force) {
+    if (elements.widgetDialog) {
+      elements.widgetDialog.classList.toggle("hidden", !visible);
+    }
+    return;
+  }
+  widgetSettings.dialogVisible = visible;
+  if (elements.widgetDialog) {
+    elements.widgetDialog.classList.toggle("hidden", !visible);
+  }
+  if (!options.silent) {
+    persistWidgetState();
+  }
+}
+
+function applyLauncherPosition() {
+  if (!elements.widgetLauncher) return;
+  const widgetSettings = ensureWidgetSettings();
+  const pos = widgetSettings.launcherPosition;
+  if (pos && Number.isFinite(pos.x) && Number.isFinite(pos.y)) {
+    elements.widgetLauncher.style.left = `${pos.x}px`;
+    elements.widgetLauncher.style.top = `${pos.y}px`;
+    elements.widgetLauncher.style.right = "auto";
+    elements.widgetLauncher.style.bottom = "auto";
+  } else {
+    elements.widgetLauncher.style.removeProperty("left");
+    elements.widgetLauncher.style.removeProperty("top");
+    elements.widgetLauncher.style.right = "24px";
+    elements.widgetLauncher.style.bottom = "24px";
+  }
+}
+
+function clampLauncherPosition(x, y) {
+  const margin = 12;
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  const button = elements.widgetLauncher;
+  if (!button) {
+    return { x, y };
+  }
+  const rect = button.getBoundingClientRect();
+  const maxX = Math.max(margin, width - rect.width - margin);
+  const maxY = Math.max(margin, height - rect.height - margin);
+  return {
+    x: Math.min(Math.max(margin, x), maxX),
+    y: Math.min(Math.max(margin, y), maxY),
+  };
+}
+
+function updateLauncherPosition(x, y) {
+  const widgetSettings = ensureWidgetSettings();
+  const next = clampLauncherPosition(x, y);
+  widgetSettings.launcherPosition = { x: next.x, y: next.y };
+  applyLauncherPosition();
+}
+
+function startLauncherDrag(event) {
+  if (!elements.widgetLauncher) return;
+  if (event.button !== undefined && event.button !== 0) return;
+  launcherDragState.active = true;
+  launcherDragState.moved = false;
+  const rect = elements.widgetLauncher.getBoundingClientRect();
+  launcherDragState.offsetX = event.clientX - rect.left;
+  launcherDragState.offsetY = event.clientY - rect.top;
+  document.addEventListener("pointermove", handleLauncherDragMove);
+  document.addEventListener("pointerup", stopLauncherDrag);
+  event.preventDefault();
+}
+
+function handleLauncherDragMove(event) {
+  if (!launcherDragState.active) return;
+  const x = event.clientX - launcherDragState.offsetX;
+  const y = event.clientY - launcherDragState.offsetY;
+  updateLauncherPosition(x, y);
+  launcherDragState.moved = true;
+}
+
+function stopLauncherDrag(event) {
+  if (!launcherDragState.active) return;
+  launcherDragState.active = false;
+  document.removeEventListener("pointermove", handleLauncherDragMove);
+  document.removeEventListener("pointerup", stopLauncherDrag);
+  if (!launcherDragState.moved) {
+    const widgetSettings = ensureWidgetSettings();
+    setDialogVisible(!widgetSettings.dialogVisible);
+  } else {
+    saveSettings();
+  }
+}
+
+function openWidgetStudio() {
+  window.location.href = "/widgets";
+}
+
+function syncWidgetToggles() {
+  if (elements.toggleClock) {
+    elements.toggleClock.checked = widgetListContains("clock");
+  }
+  if (elements.toggleTimer) {
+    elements.toggleTimer.checked = widgetListContains("timer");
+  }
+  if (elements.toggleStopwatch) {
+    elements.toggleStopwatch.checked = widgetListContains("stopwatch");
+  }
+}
+
+function setWidgetVisibility(templateId, flagKey, enabled) {
+  const widgetSettings = ensureWidgetSettings();
+  widgetSettings[flagKey] = enabled;
+  const has = widgetSettings.widgets.some((widget) => widget.templateId === templateId);
+  if (enabled && !has) {
+    const template = widgetTemplates[templateId];
+    if (template) {
+      widgetSettings.widgets.push({ ...template });
+    }
+  }
+  if (!enabled && has) {
+    widgetSettings.widgets = widgetSettings.widgets.filter((widget) => widget.templateId !== templateId);
+  }
+  setOverlayVisible(widgetSettings.widgets.length > 0);
+  applySettings();
+}
+
 function applySettings() {
   document.body.classList.toggle("compact", uiSettings.compact);
   document.body.classList.toggle("hide-units", !uiSettings.showUnits);
@@ -462,9 +936,212 @@ function applySettings() {
   if (elements.toggleSr) elements.toggleSr.checked = uiSettings.showSr;
   if (elements.toggleDifficulty) elements.toggleDifficulty.checked = uiSettings.showDifficulty;
   if (elements.toggleZebra) elements.toggleZebra.checked = uiSettings.zebra;
+  const widgetSettings = ensureWidgetSettings();
+  const showClock = widgetListContains("clock");
+  const showTimer = widgetListContains("timer");
+  const showStopwatch = widgetListContains("stopwatch");
+  widgetSettings.showClock = showClock;
+  widgetSettings.showTimer = showTimer;
+  widgetSettings.showStopwatch = showStopwatch;
+  const timerMinutes = Number(widgetSettings.timerMinutes) || 25;
+  const timerSeconds = Number(widgetSettings.timerSeconds) || 0;
+  syncWidgetToggles();
+  if (elements.timerMinutes) {
+    const presetValue = String(timerMinutes);
+    const hasOption = Array.from(elements.timerMinutes.options || []).some(
+      (option) => option.value === presetValue
+    );
+    if (!hasOption) {
+      const customOption = document.createElement("option");
+      customOption.value = presetValue;
+      customOption.textContent = `${timerMinutes} min`;
+      elements.timerMinutes.appendChild(customOption);
+    }
+    elements.timerMinutes.value = presetValue;
+    elements.timerMinutes.disabled = !showTimer;
+  }
+  if (showClock) startClock();
+  if (!showClock) stopClock();
+  if (showTimer) setTimerDuration(timerMinutes, timerSeconds, { resetRemaining: !timerState.running });
+  if (!showTimer) pauseTimer();
+  if (!showStopwatch) pauseStopwatch();
+  updateStopwatchDisplay();
   if (!uiSettings.showNotesColumn) closeNotes();
   applyTheme();
   applyLabels();
+  renderOverlayWidgets();
+  applyLauncherPosition();
+  setDialogVisible(Boolean(widgetSettings.dialogVisible), { silent: true });
+}
+
+function formatTimer(value) {
+  const total = Math.max(0, value);
+  const minutes = Math.floor(total / 60);
+  const seconds = total % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
+function updateTimerDisplay() {
+  const formatted = formatTimer(timerState.remaining);
+  widgetDisplayRefs.timer.forEach((el) => {
+    el.textContent = formatted;
+  });
+}
+
+function setTimerDuration(minutes, seconds, options = {}) {
+  const nextMinutes = Math.max(0, Number(minutes) || 0);
+  const nextSeconds = Math.min(59, Math.max(0, Number(seconds) || 0));
+  const totalSeconds = Math.max(1, nextMinutes * 60 + nextSeconds);
+  timerState.duration = totalSeconds;
+  const shouldReset = options.resetRemaining !== undefined ? options.resetRemaining : !timerState.running;
+  if (shouldReset) {
+    timerState.remaining = totalSeconds;
+  }
+  updateTimerDisplay();
+}
+
+function tickTimer() {
+  if (!timerState.running) return;
+  timerState.remaining = Math.max(0, timerState.remaining - 1);
+  updateTimerDisplay();
+  if (timerState.remaining <= 0) {
+    pauseTimer();
+  }
+}
+
+function startTimer() {
+  if (timerState.running) return;
+  timerState.running = true;
+  updateTimerDisplay();
+  timerState.interval = window.setInterval(tickTimer, 1000);
+}
+
+function pauseTimer() {
+  if (!timerState.running) {
+    if (timerState.interval) {
+      clearInterval(timerState.interval);
+      timerState.interval = null;
+    }
+    updateTimerDisplay();
+    return;
+  }
+  timerState.running = false;
+  if (timerState.interval) {
+    clearInterval(timerState.interval);
+    timerState.interval = null;
+  }
+  updateTimerDisplay();
+}
+
+function resetTimer() {
+  pauseTimer();
+  timerState.remaining = timerState.duration;
+  updateTimerDisplay();
+}
+
+function toggleTimer() {
+  if (timerState.running) {
+    pauseTimer();
+  } else {
+    if (timerState.remaining <= 0) {
+      timerState.remaining = timerState.duration;
+    }
+    startTimer();
+  }
+}
+
+function formatStopwatch(value) {
+  const total = Math.max(0, value);
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = total % 60;
+  if (hours > 0) {
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(
+      seconds
+    ).padStart(2, "0")}`;
+  }
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
+function updateStopwatchDisplay() {
+  const formatted = formatStopwatch(stopwatchState.elapsed);
+  widgetDisplayRefs.stopwatch.forEach((el) => {
+    el.textContent = formatted;
+  });
+}
+
+function setStopwatchElapsed(minutes, seconds) {
+  const nextMinutes = Number(minutes) || 0;
+  const nextSeconds = Number(seconds) || 0;
+  stopwatchState.elapsed = Math.max(0, nextMinutes * 60 + nextSeconds);
+  updateStopwatchDisplay();
+}
+
+function tickStopwatch() {
+  if (!stopwatchState.running) return;
+  stopwatchState.elapsed += 1;
+  updateStopwatchDisplay();
+}
+
+function startStopwatch() {
+  if (stopwatchState.running) return;
+  stopwatchState.running = true;
+  updateStopwatchDisplay();
+  stopwatchState.interval = window.setInterval(tickStopwatch, 1000);
+}
+
+function pauseStopwatch() {
+  if (!stopwatchState.running) {
+    if (stopwatchState.interval) {
+      clearInterval(stopwatchState.interval);
+      stopwatchState.interval = null;
+    }
+    updateStopwatchDisplay();
+    return;
+  }
+  stopwatchState.running = false;
+  if (stopwatchState.interval) {
+    clearInterval(stopwatchState.interval);
+    stopwatchState.interval = null;
+  }
+  updateStopwatchDisplay();
+}
+
+function resetStopwatch() {
+  pauseStopwatch();
+  stopwatchState.elapsed = 0;
+  updateStopwatchDisplay();
+}
+
+function toggleStopwatch() {
+  if (stopwatchState.running) {
+    pauseStopwatch();
+  } else {
+    startStopwatch();
+  }
+}
+
+function updateClockDisplay() {
+  const now = new Date();
+  const formatted = now.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  widgetDisplayRefs.clock.forEach((el) => {
+    el.textContent = formatted;
+  });
+}
+
+function startClock() {
+  if (clockInterval) return;
+  updateClockDisplay();
+  clockInterval = window.setInterval(updateClockDisplay, 1000);
+}
+
+function stopClock() {
+  if (!clockInterval) return;
+  clearInterval(clockInterval);
+  clockInterval = null;
 }
 
 function getLabel(key, fallback) {
@@ -1599,8 +2276,12 @@ function bindEvents() {
       applyFilters();
     });
   }
-  elements.syncBtn.addEventListener("click", syncData);
-  elements.randomBtn.addEventListener("click", pickRandomTodo);
+  if (elements.syncBtn) {
+    elements.syncBtn.addEventListener("click", syncData);
+  }
+  if (elements.randomBtn) {
+    elements.randomBtn.addEventListener("click", pickRandomTodo);
+  }
 
   elements.saveNoteBtn.addEventListener("click", () => {
     if (!state.selectedId) return;
@@ -1777,6 +2458,52 @@ function bindEvents() {
     });
   }
 
+  if (elements.toggleClock) {
+    elements.toggleClock.addEventListener("change", () => {
+      setWidgetVisibility("clock", "showClock", elements.toggleClock.checked);
+    });
+  }
+
+  if (elements.toggleTimer) {
+    elements.toggleTimer.addEventListener("change", () => {
+      setWidgetVisibility("timer", "showTimer", elements.toggleTimer.checked);
+    });
+  }
+
+  if (elements.toggleStopwatch) {
+    elements.toggleStopwatch.addEventListener("change", () => {
+      setWidgetVisibility("stopwatch", "showStopwatch", elements.toggleStopwatch.checked);
+    });
+  }
+
+  if (elements.widgetDialogClose) {
+    elements.widgetDialogClose.addEventListener("click", () => {
+      setDialogVisible(false);
+    });
+  }
+
+  if (elements.widgetLauncher) {
+    elements.widgetLauncher.addEventListener("pointerdown", startLauncherDrag);
+  }
+
+  if (elements.widgetFocusButton) {
+    elements.widgetFocusButton.addEventListener("click", openWidgetStudio);
+  }
+
+  if (elements.timerMinutes) {
+    elements.timerMinutes.addEventListener("change", () => {
+      uiSettings.widgetSettings = uiSettings.widgetSettings || {};
+      uiSettings.widgetSettings.timerMinutes = Number(elements.timerMinutes.value) || 25;
+      uiSettings.widgetSettings.timerSeconds = 0;
+      pauseTimer();
+      setTimerDuration(uiSettings.widgetSettings.timerMinutes, uiSettings.widgetSettings.timerSeconds, {
+        resetRemaining: true,
+      });
+      saveSettings();
+      applySettings();
+    });
+  }
+
   window.addEventListener(
     "scroll",
     () => {
@@ -1784,6 +2511,10 @@ function bindEvents() {
     },
     { passive: true }
   );
+
+  window.addEventListener("resize", () => {
+    applyLauncherPosition();
+  });
 
   window.addEventListener("beforeunload", () => {
     persistCurrentViewState();
