@@ -1,5 +1,7 @@
 const state = {
   sheets: [],
+  insights: null,
+  health: null,
 };
 
 const elements = {
@@ -21,6 +23,11 @@ const elements = {
   sheetExportFormat: document.getElementById("sheetExportFormat"),
   sheetExportBtn: document.getElementById("sheetExportBtn"),
   sheetExportStatus: document.getElementById("sheetExportStatus"),
+  saveSheetNamesBtn: document.getElementById("saveSheetNamesBtn"),
+  sheetBulkAction: document.getElementById("sheetBulkAction"),
+  sheetBulkApply: document.getElementById("sheetBulkApply"),
+  sheetSelectionCount: document.getElementById("sheetSelectionCount"),
+  sheetSelectAll: document.getElementById("sheetSelectAll"),
   summaryTotalSheets: document.getElementById("summaryTotalSheets"),
   summarySampleSheets: document.getElementById("summarySampleSheets"),
   summaryCustomSheets: document.getElementById("summaryCustomSheets"),
@@ -28,9 +35,26 @@ const elements = {
   summaryDoneQuestions: document.getElementById("summaryDoneQuestions"),
   summaryCompletion: document.getElementById("summaryCompletion"),
   summaryCompletionMeta: document.getElementById("summaryCompletionMeta"),
+  summaryLastActivity: document.getElementById("summaryLastActivity"),
+  summaryFocusTotal: document.getElementById("summaryFocusTotal"),
+  summaryStarred: document.getElementById("summaryStarred"),
+  summaryNotes: document.getElementById("summaryNotes"),
+  summaryTodo: document.getElementById("summaryTodo"),
   summaryProgress: document.getElementById("summaryProgress"),
   summaryDifficultyBar: document.getElementById("summaryDifficultyBar"),
   summaryDifficultyLegend: document.getElementById("summaryDifficultyLegend"),
+  momentumChart: document.getElementById("momentumChart"),
+  momentumMeta: document.getElementById("momentumMeta"),
+  sheetHealth: document.getElementById("sheetHealth"),
+  activityHeatmap: document.getElementById("activityHeatmap"),
+  activityLegend: document.getElementById("activityLegend"),
+  heatmapScope: document.getElementById("heatmapScope"),
+  healthList: document.getElementById("healthList"),
+  healthStatus: document.getElementById("healthStatus"),
+  downloadDiagnosticsBtn: document.getElementById("downloadDiagnosticsBtn"),
+  refreshHealthBtn: document.getElementById("refreshHealthBtn"),
+  resetUiBtn: document.getElementById("resetUiBtn"),
+  resetViewBtn: document.getElementById("resetViewBtn"),
   renameForm: document.getElementById("renameForm"),
   renameSheet: document.getElementById("renameSheet"),
   renameScope: document.getElementById("renameScope"),
@@ -68,6 +92,11 @@ const elements = {
   toggleNotesAdmin: document.getElementById("toggleNotesAdmin"),
   toggleDifficultyAdmin: document.getElementById("toggleDifficultyAdmin"),
   toggleZebraAdmin: document.getElementById("toggleZebraAdmin"),
+  toggleWidgetClock: document.getElementById("toggleWidgetClock"),
+  toggleWidgetTimer: document.getElementById("toggleWidgetTimer"),
+  toggleWidgetStopwatch: document.getElementById("toggleWidgetStopwatch"),
+  widgetTimerMinutes: document.getElementById("widgetTimerMinutes"),
+  resetWidgetPosition: document.getElementById("resetWidgetPosition"),
   themeAccent: document.getElementById("themeAccent"),
   themeAccentWarm: document.getElementById("themeAccentWarm"),
   themeSurface: document.getElementById("themeSurface"),
@@ -124,8 +153,15 @@ const defaultSettings = {
     unit: "Unit",
     chapter: "Chapter",
   },
+  widgetSettings: {
+    showClock: false,
+    showTimer: false,
+    showStopwatch: false,
+    timerMinutes: 25,
+    timerSeconds: 0,
+  },
 };
-
+let settingsSaveTimer = null;
 function normalizeSettings(parsed) {
   const next = parsed ? { ...parsed } : {};
   if (next.showNotes !== undefined && next.showNotesColumn === undefined) {
@@ -138,6 +174,7 @@ function normalizeSettings(parsed) {
     theme: { ...defaultSettings.theme, ...(next.theme || {}) },
     linkFallback: { ...defaultSettings.linkFallback, ...(next.linkFallback || {}) },
     labels: { ...defaultSettings.labels, ...(next.labels || {}) },
+    widgetSettings: { ...defaultSettings.widgetSettings, ...(next.widgetSettings || {}) },
   };
 }
 
@@ -152,7 +189,6 @@ async function fetchUiSettings() {
   }
 }
 
-let settingsSaveTimer = null;
 function scheduleSettingsSave() {
   if (settingsSaveTimer) clearTimeout(settingsSaveTimer);
   settingsSaveTimer = setTimeout(() => {
@@ -267,6 +303,17 @@ function syncAppearanceForm() {
   if (elements.labelItem) elements.labelItem.value = uiSettings.labels.item || "";
   if (elements.labelUnit) elements.labelUnit.value = uiSettings.labels.unit || "";
   if (elements.labelChapter) elements.labelChapter.value = uiSettings.labels.chapter || "";
+  if (elements.toggleWidgetClock)
+    elements.toggleWidgetClock.checked = uiSettings.widgetSettings?.showClock ?? false;
+  if (elements.toggleWidgetTimer)
+    elements.toggleWidgetTimer.checked = uiSettings.widgetSettings?.showTimer ?? false;
+  if (elements.toggleWidgetStopwatch)
+    elements.toggleWidgetStopwatch.checked = uiSettings.widgetSettings?.showStopwatch ?? false;
+  if (elements.widgetTimerMinutes) {
+    elements.widgetTimerMinutes.value = String(
+      uiSettings.widgetSettings?.timerMinutes || defaultSettings.widgetSettings.timerMinutes
+    );
+  }
 
   if (elements.sheetImportDelimiter) {
     elements.sheetImportDelimiter.value = ",";
@@ -282,6 +329,29 @@ async function fetchSheets() {
   }
   const data = await response.json();
   return Array.isArray(data.sheets) ? data.sheets : [];
+}
+
+async function fetchAdminInsights() {
+  const response = await fetch("/api/admin/insights");
+  if (!response.ok) {
+    return null;
+  }
+  return response.json();
+}
+
+async function fetchHealth() {
+  const response = await fetch("/api/health");
+  if (!response.ok) {
+    return null;
+  }
+  return response.json();
+}
+
+function formatDate(value) {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleString();
 }
 
 function setSheetStatus(message, isError = false) {
@@ -314,6 +384,12 @@ function setSettingsStatus(message, isError = false) {
   elements.settingsStatus.style.color = isError ? "#ff7b7b" : "";
 }
 
+function setHealthStatus(message, isError = false) {
+  if (!elements.healthStatus) return;
+  elements.healthStatus.textContent = message;
+  elements.healthStatus.style.color = isError ? "#ff7b7b" : "";
+}
+
 function confirmTwice(message) {
   if (!confirm(message)) return false;
   return confirm("Please confirm once more to continue.");
@@ -325,11 +401,59 @@ function setDifficultyStatus(message, isError = false) {
   elements.difficultyStatus.style.color = isError ? "#ff7b7b" : "";
 }
 
+function createIconButton({ title, icon, onClick, href, disabled, className }) {
+  const button = document.createElement(href ? "a" : "button");
+  button.className = `btn icon-btn icon-sm${className ? ` ${className}` : ""}`;
+  button.setAttribute("aria-label", title);
+  button.setAttribute("title", title);
+  if (href) {
+    button.href = href;
+  } else {
+    button.type = "button";
+  }
+  if (icon) {
+    button.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${icon}</svg>`;
+  }
+  if (disabled) {
+    button.setAttribute("disabled", "disabled");
+  }
+  if (onClick) {
+    button.addEventListener("click", onClick);
+  }
+  return button;
+}
+
+function getSheetCheckboxes() {
+  return Array.from(document.querySelectorAll(".sheet-select"));
+}
+
+function updateSelectionCount() {
+  const checkboxes = getSheetCheckboxes();
+  const selected = checkboxes.filter((input) => input.checked);
+  if (elements.sheetSelectionCount) {
+    elements.sheetSelectionCount.textContent = `${selected.length} selected`;
+  }
+  if (elements.sheetSelectAll) {
+    elements.sheetSelectAll.checked = selected.length > 0 && selected.length === checkboxes.length;
+    elements.sheetSelectAll.indeterminate =
+      selected.length > 0 && selected.length < checkboxes.length;
+  }
+}
+
 function renderSheetTable() {
   if (!elements.sheetTableBody) return;
   elements.sheetTableBody.innerHTML = "";
   state.sheets.forEach((sheet) => {
     const row = document.createElement("tr");
+
+    const selectCell = document.createElement("td");
+    const selectBox = document.createElement("input");
+    selectBox.type = "checkbox";
+    selectBox.className = "admin-checkbox sheet-select";
+    selectBox.dataset.sheetId = sheet.id;
+    selectBox.dataset.source = sheet.source || "custom";
+    selectBox.addEventListener("change", updateSelectionCount);
+    selectCell.appendChild(selectBox);
 
     const nameCell = document.createElement("td");
     const nameWrap = document.createElement("div");
@@ -337,6 +461,8 @@ function renderSheetTable() {
     const labelInput = document.createElement("input");
     labelInput.className = "admin-input";
     labelInput.value = sheet.label || sheet.id;
+    labelInput.dataset.sheetId = sheet.id;
+    labelInput.dataset.originalLabel = sheet.label || sheet.id;
     const idNote = document.createElement("div");
     idNote.className = "admin-note";
     idNote.textContent = `ID: ${sheet.id}`;
@@ -364,102 +490,79 @@ function renderSheetTable() {
     const actions = document.createElement("div");
     actions.className = "admin-actions";
 
-    const openBtn = document.createElement("a");
-    openBtn.className = "btn ghost";
-    openBtn.href = `/?sheet=${encodeURIComponent(sheet.id)}`;
-    openBtn.textContent = "Open";
+    const openBtn = createIconButton({
+      title: "Open sheet",
+      href: `/?sheet=${encodeURIComponent(sheet.id)}`,
+      icon:
+        '<path d="M14 4h6v6M10 14l10-10M20 14v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6" />',
+    });
 
-    const saveBtn = document.createElement("button");
-    saveBtn.className = "btn ghost";
-    saveBtn.type = "button";
-    saveBtn.textContent = "Rename";
-    saveBtn.addEventListener("click", async () => {
-      const newName = labelInput.value.trim();
-      if (!newName) return;
-      const response = await fetch(`/api/sheets/${encodeURIComponent(sheet.id)}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newName }),
-      });
-      if (response.ok) {
+    const duplicateBtn = createIconButton({
+      title: "Duplicate sheet",
+      icon:
+        '<path d="M8 8h10v10H8z"/><path d="M4 4h10v10H4z" />',
+      onClick: async () => {
+        const name = prompt("New sheet name", `${sheet.label || sheet.id} copy`);
+        if (!name) return;
+        await fetch(`/api/sheets/${encodeURIComponent(sheet.id)}/duplicate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name }),
+        });
         await refreshSheets();
-      }
+      },
     });
 
-    const duplicateBtn = document.createElement("button");
-    duplicateBtn.className = "btn ghost";
-    duplicateBtn.type = "button";
-    duplicateBtn.textContent = "Duplicate";
-    duplicateBtn.addEventListener("click", async () => {
-      const name = prompt("New sheet name", `${sheet.label || sheet.id} copy`);
-      if (!name) return;
-      await fetch(`/api/sheets/${encodeURIComponent(sheet.id)}/duplicate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name }),
-      });
-      await refreshSheets();
+    const resetBtn = createIconButton({
+      title: "Reset progress",
+      icon:
+        '<path d="M4 4v6h6" /><path d="M20 12a8 8 0 1 1-2.35-5.65L20 10" />',
+      onClick: async () => {
+        if (!confirmTwice(`Reset progress for ${sheet.label || sheet.id}?`)) return;
+        await fetch(`/api/sheets/${encodeURIComponent(sheet.id)}/reset`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ clear_done: true, clear_notes: false }),
+        });
+        await refreshSheets();
+      },
     });
 
-    const resetBtn = document.createElement("button");
-    resetBtn.className = "btn ghost";
-    resetBtn.type = "button";
-    resetBtn.textContent = "Reset Progress";
-    resetBtn.addEventListener("click", async () => {
-      if (!confirmTwice(`Reset progress for ${sheet.label || sheet.id}?`)) return;
-      await fetch(`/api/sheets/${encodeURIComponent(sheet.id)}/reset`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ clear_done: true, clear_notes: false }),
-      });
-      await refreshSheets();
+    const clearNotesBtn = createIconButton({
+      title: "Clear notes",
+      icon:
+        '<path d="M7 4h10v16H7z" /><path d="M9 8h6M9 12h6" />',
+      onClick: async () => {
+        if (!confirmTwice(`Clear notes for ${sheet.label || sheet.id}?`)) return;
+        await fetch(`/api/sheets/${encodeURIComponent(sheet.id)}/reset`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ clear_done: false, clear_notes: true }),
+        });
+        await refreshSheets();
+      },
     });
 
-    const clearNotesBtn = document.createElement("button");
-    clearNotesBtn.className = "btn ghost";
-    clearNotesBtn.type = "button";
-    clearNotesBtn.textContent = "Clear Notes";
-    clearNotesBtn.addEventListener("click", async () => {
-      if (!confirmTwice(`Clear notes for ${sheet.label || sheet.id}?`)) return;
-      await fetch(`/api/sheets/${encodeURIComponent(sheet.id)}/reset`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ clear_done: false, clear_notes: true }),
-      });
-      await refreshSheets();
-    });
-
-    const regenBtn = document.createElement("button");
-    regenBtn.className = "btn ghost";
-    regenBtn.type = "button";
-    regenBtn.textContent = "Regenerate";
-    regenBtn.disabled = sheet.source !== "sample";
-    regenBtn.addEventListener("click", async () => {
-      if (!confirmTwice(`Rebuild ${sheet.label || sheet.id} from HTML?`)) return;
-      await fetch(`/api/sheets/${encodeURIComponent(sheet.id)}/regenerate`, { method: "POST" });
-      await refreshSheets();
-    });
-
-    const deleteBtn = document.createElement("button");
-    deleteBtn.className = "btn ghost";
-    deleteBtn.type = "button";
-    deleteBtn.textContent = "Delete";
-    deleteBtn.disabled = sheet.source === "sample";
-    deleteBtn.addEventListener("click", async () => {
-      if (!confirmTwice(`Delete ${sheet.label || sheet.id}? This cannot be undone.`)) return;
-      await fetch(`/api/sheets/${encodeURIComponent(sheet.id)}`, { method: "DELETE" });
-      await refreshSheets();
+    const deleteBtn = createIconButton({
+      title: "Delete sheet",
+      icon: '<path d="M6 6l12 12M18 6l-12 12" />',
+      disabled: sheet.source === "sample",
+      className: "icon-danger",
+      onClick: async () => {
+        if (!confirmTwice(`Delete ${sheet.label || sheet.id}? This cannot be undone.`)) return;
+        await fetch(`/api/sheets/${encodeURIComponent(sheet.id)}`, { method: "DELETE" });
+        await refreshSheets();
+      },
     });
 
     actions.appendChild(openBtn);
-    actions.appendChild(saveBtn);
     actions.appendChild(duplicateBtn);
     actions.appendChild(resetBtn);
     actions.appendChild(clearNotesBtn);
-    actions.appendChild(regenBtn);
     actions.appendChild(deleteBtn);
     actionsCell.appendChild(actions);
 
+    row.appendChild(selectCell);
     row.appendChild(nameCell);
     row.appendChild(countCell);
     row.appendChild(progressCell);
@@ -467,6 +570,7 @@ function renderSheetTable() {
     row.appendChild(actionsCell);
     elements.sheetTableBody.appendChild(row);
   });
+  updateSelectionCount();
 }
 
 function renderSummary() {
@@ -547,6 +651,236 @@ function renderSummary() {
       elements.summaryDifficultyLegend.appendChild(item);
     });
   }
+
+  const summary = state.insights && state.insights.summary ? state.insights.summary : null;
+  const focusTotal = summary
+    ? (summary.starred || 0) + (summary.notes || 0)
+    : 0;
+  if (elements.summaryFocusTotal) {
+    elements.summaryFocusTotal.textContent = focusTotal;
+  }
+  if (elements.summaryStarred) {
+    elements.summaryStarred.textContent = `${summary ? summary.starred || 0 : 0} starred`;
+  }
+  if (elements.summaryNotes) {
+    elements.summaryNotes.textContent = `${summary ? summary.notes || 0 : 0} notes`;
+  }
+  if (elements.summaryTodo) {
+    const todoCount = summary ? summary.todo || 0 : Math.max(totalQuestions - doneQuestions, 0);
+    elements.summaryTodo.textContent = `${todoCount} todo`;
+  }
+  if (elements.summaryLastActivity) {
+    const last = summary ? summary.last_done_at : "";
+    elements.summaryLastActivity.textContent = last
+      ? `Last activity: ${formatDate(last)}`
+      : "Last activity: -";
+  }
+}
+
+function renderInsights() {
+  const insights = state.insights || {};
+  renderMomentum(insights.activity || [], insights.summary || null);
+  renderHeatmap(insights.activity_heatmap || [], insights.activity_max || 0);
+  renderSheetHealth(insights.sheets || []);
+}
+
+function renderMomentum(activity, summary) {
+  if (!elements.momentumChart) return;
+  elements.momentumChart.innerHTML = "";
+  const items = Array.isArray(activity) ? activity : [];
+  if (!items.length) {
+    elements.momentumChart.innerHTML =
+      '<div class="detail-empty">No recent activity yet.</div>';
+    if (elements.momentumMeta) elements.momentumMeta.textContent = "0 solved · 0 active days";
+    return;
+  }
+  const maxCount = Math.max(...items.map((item) => item.count || 0), 0);
+  if (!maxCount) {
+    elements.momentumChart.innerHTML =
+      '<div class="detail-empty">No recent activity yet.</div>';
+    if (elements.momentumMeta) elements.momentumMeta.textContent = "0 solved · 0 active days";
+    return;
+  }
+  items.forEach((item) => {
+    const slot = document.createElement("div");
+    slot.className = "spark-slot";
+    const bar = document.createElement("div");
+    bar.className = "spark-bar";
+    const height = maxCount ? Math.max(12, Math.round((item.count / maxCount) * 100)) : 12;
+    bar.style.height = `${height}%`;
+    const dateLabel = item.date || "Unknown day";
+    bar.title = `${dateLabel}: ${item.count} solved`;
+    const label = document.createElement("div");
+    label.className = "spark-label";
+    label.textContent = item.date ? item.date.slice(5) : "--";
+    slot.appendChild(bar);
+    slot.appendChild(label);
+    elements.momentumChart.appendChild(slot);
+  });
+  if (elements.momentumMeta) {
+    const recent = summary ? summary.recent_done || 0 : 0;
+    const active = summary ? summary.active_days || 0 : 0;
+    elements.momentumMeta.textContent = `${recent} solved · ${active} active days`;
+  }
+}
+
+function renderHeatmap(entries, maxCount) {
+  if (!elements.activityHeatmap) return;
+  elements.activityHeatmap.innerHTML = "";
+  const items = Array.isArray(entries) ? entries : [];
+  if (!items.length) {
+    renderEmptyHeatmap();
+    return;
+  }
+
+  const firstDate = new Date(items[0].date);
+  const lastDate = new Date(items[items.length - 1].date);
+  const msWeek = 7 * 24 * 60 * 60 * 1000;
+  const weekCount = Number.isFinite(firstDate.getTime()) && Number.isFinite(lastDate.getTime())
+    ? Math.floor((lastDate - firstDate) / msWeek) + 1
+    : 12;
+  elements.activityHeatmap.style.gridTemplateColumns = `repeat(${weekCount}, 12px)`;
+
+  const peak = maxCount || Math.max(...items.map((item) => item.count || 0), 0);
+  items.forEach((item) => {
+    const date = new Date(item.date);
+    const count = item.count || 0;
+    const dateLabel = item.date || "Unknown day";
+    if (!Number.isFinite(date.getTime())) return;
+    const weekIndex = Math.floor((date - firstDate) / msWeek);
+    const dayIndex = date.getDay();
+    let level = 0;
+    if (count > 0 && peak) {
+      const ratio = Math.min(1, count / peak);
+      level = Math.max(1, Math.ceil(Math.sqrt(ratio) * 4));
+    }
+    const cell = document.createElement("div");
+    cell.className = `heat-cell level-${level}`;
+    cell.style.gridColumnStart = weekIndex + 1;
+    cell.style.gridRowStart = dayIndex + 1;
+    cell.title = `${dateLabel}: ${count} solved`;
+    elements.activityHeatmap.appendChild(cell);
+  });
+
+  if (elements.activityLegend) {
+    renderHeatmapLegend();
+  }
+  if (elements.heatmapScope) {
+    const scopeLabel = (state.insights && state.insights.heatmap_scope) || "All sheets";
+    elements.heatmapScope.textContent = `Scope: ${scopeLabel} · last 12 weeks`;
+  }
+}
+
+function renderEmptyHeatmap() {
+  if (!elements.activityHeatmap) return;
+  const weeks = 12;
+  elements.activityHeatmap.style.gridTemplateColumns = `repeat(${weeks}, 12px)`;
+  for (let i = 0; i < weeks * 7; i += 1) {
+    const cell = document.createElement("div");
+    cell.className = "heat-cell level-0";
+    cell.style.gridColumnStart = Math.floor(i / 7) + 1;
+    cell.style.gridRowStart = (i % 7) + 1;
+    elements.activityHeatmap.appendChild(cell);
+  }
+  renderHeatmapLegend();
+  if (elements.heatmapScope) {
+    const scopeLabel = (state.insights && state.insights.heatmap_scope) || "All sheets";
+    elements.heatmapScope.textContent = `Scope: ${scopeLabel} · last 12 weeks`;
+  }
+}
+
+function renderHeatmapLegend() {
+  if (!elements.activityLegend) return;
+  elements.activityLegend.innerHTML = "";
+  const less = document.createElement("span");
+  less.className = "heat-label";
+  less.textContent = "Less";
+  elements.activityLegend.appendChild(less);
+  for (let i = 0; i <= 4; i += 1) {
+    const cell = document.createElement("span");
+    cell.className = `heat-cell level-${i}`;
+    elements.activityLegend.appendChild(cell);
+  }
+  const more = document.createElement("span");
+  more.className = "heat-label";
+  more.textContent = "More";
+  elements.activityLegend.appendChild(more);
+}
+
+function renderSheetHealth(sheets) {
+  if (!elements.sheetHealth) return;
+  elements.sheetHealth.innerHTML = "";
+  if (!Array.isArray(sheets) || !sheets.length) {
+    elements.sheetHealth.innerHTML =
+      '<div class="detail-empty">No sheets available yet.</div>';
+    return;
+  }
+  sheets.forEach((sheet) => {
+    const card = document.createElement("div");
+    card.className = "sheet-health-card";
+
+    const header = document.createElement("div");
+    header.className = "sheet-health-header";
+    const title = document.createElement("div");
+    title.className = "sheet-health-title";
+    title.textContent = sheet.label || sheet.id;
+    const badge = document.createElement("span");
+    badge.className = `sheet-pill ${sheet.source === "sample" ? "sample" : "custom"}`;
+    badge.textContent = sheet.source === "sample" ? "Sample" : "Custom";
+    header.appendChild(title);
+    header.appendChild(badge);
+
+    const meta = document.createElement("div");
+    meta.className = "sheet-health-meta";
+    meta.textContent = `${sheet.done}/${sheet.total} done · ${sheet.notes} notes · ${sheet.starred} starred`;
+
+    const progress = document.createElement("div");
+    progress.className = "progress-rail";
+    const bar = document.createElement("span");
+    bar.style.width = `${Math.round(sheet.percent || 0)}%`;
+    progress.appendChild(bar);
+
+    const gaps = [];
+    if (sheet.missing_difficulty) gaps.push(`${sheet.missing_difficulty} missing difficulty`);
+    if (sheet.missing_leetcode) gaps.push(`${sheet.missing_leetcode} missing LC`);
+    if (sheet.missing_youtube) gaps.push(`${sheet.missing_youtube} missing YT`);
+    if (sheet.missing_resource) gaps.push(`${sheet.missing_resource} missing web`);
+    const gapText = document.createElement("div");
+    gapText.className = "sheet-health-gaps";
+    gapText.textContent = gaps.length ? gaps.join(" · ") : "Links and difficulty look healthy.";
+
+    let focusText = null;
+    if (Array.isArray(sheet.focus_units) && sheet.focus_units.length) {
+      focusText = document.createElement("div");
+      focusText.className = "sheet-health-focus";
+      const picks = sheet.focus_units.slice(0, 2).map((unit) => {
+        const pct = Number.isFinite(unit.percent) ? Math.round(unit.percent) : 0;
+        return `${unit.unit} (${pct}%)`;
+      });
+      focusText.textContent = `Focus: ${picks.join(" · ")}`;
+    }
+
+    const footer = document.createElement("div");
+    footer.className = "sheet-health-footer";
+    footer.textContent = `Last activity: ${formatDate(sheet.last_done_at)}`;
+
+    const actions = document.createElement("div");
+    actions.className = "sheet-health-actions";
+    const open = document.createElement("a");
+    open.className = "btn ghost slim";
+    open.href = `/?sheet=${encodeURIComponent(sheet.id)}`;
+    open.textContent = "Open";
+    actions.appendChild(open);
+
+    card.appendChild(header);
+    card.appendChild(meta);
+    card.appendChild(progress);
+    card.appendChild(gapText);
+    if (focusText) card.appendChild(focusText);
+    card.appendChild(footer);
+    card.appendChild(actions);
+    elements.sheetHealth.appendChild(card);
+  });
 }
 
 function renderSheetSelects() {
@@ -688,7 +1022,186 @@ async function refreshSheets() {
   renderSheetTable();
   renderSheetSelects();
   renderSheetNameList();
+  await refreshInsights();
+  await refreshHealth();
   renderSummary();
+}
+
+async function refreshInsights() {
+  state.insights = await fetchAdminInsights();
+  renderInsights();
+}
+
+async function refreshHealth() {
+  state.health = await fetchHealth();
+  renderHealth();
+}
+
+function renderHealth() {
+  if (!elements.healthList) return;
+  elements.healthList.innerHTML = "";
+  const health = state.health;
+  if (!health) {
+    elements.healthList.innerHTML = '<div class="detail-empty">Health data unavailable.</div>';
+    return;
+  }
+
+  const exists = health.exists || {};
+  const summary = state.insights && state.insights.summary ? state.insights.summary : null;
+  const rows = [
+    { label: "Storage root", value: health.data_dir || "-" },
+    { label: "Legacy mode", value: health.legacy_mode ? "Yes" : "No" },
+    {
+      label: "DB file",
+      value: exists.db ? "Ready" : "Missing",
+    },
+    {
+      label: "Sheets registry",
+      value: exists.sheets ? "Ready" : "Missing",
+    },
+    {
+      label: "Questions JSON",
+      value: exists.state ? "Ready" : "Missing",
+    },
+    {
+      label: "Lessons JSON",
+      value: exists.lessons ? "Ready" : "Missing",
+    },
+    summary
+      ? {
+          label: "Solved",
+          value: `${summary.done || 0} of ${summary.total || 0}`,
+        }
+      : null,
+    summary
+      ? {
+          label: "Last activity",
+          value: summary.last_done_at ? formatDate(summary.last_done_at) : "-",
+        }
+      : null,
+  ].filter(Boolean);
+
+  rows.forEach((row) => {
+    const item = document.createElement("div");
+    item.className = "health-item";
+    const label = document.createElement("span");
+    label.className = "health-label";
+    label.textContent = row.label;
+    const value = document.createElement("span");
+    value.className = "health-value";
+    value.textContent = row.value;
+    item.appendChild(label);
+    item.appendChild(value);
+    elements.healthList.appendChild(item);
+  });
+}
+
+function getSelectedSheets() {
+  const selected = getSheetCheckboxes().filter((input) => input.checked);
+  return selected.map((input) => {
+    const sheetId = input.dataset.sheetId;
+    const sheet = state.sheets.find((item) => item.id === sheetId);
+    return {
+      id: sheetId,
+      label: sheet?.label || sheetId,
+      source: input.dataset.source || sheet?.source || "custom",
+    };
+  });
+}
+
+async function saveSheetNames() {
+  if (!elements.sheetTableBody) return;
+  const inputs = Array.from(
+    elements.sheetTableBody.querySelectorAll("input.admin-input[data-sheet-id]")
+  );
+  const updates = inputs
+    .map((input) => {
+      const name = input.value.trim();
+      const original = input.dataset.originalLabel || "";
+      return { id: input.dataset.sheetId, name, original };
+    })
+    .filter((item) => item.name && item.name !== item.original);
+
+  if (!updates.length) {
+    setSheetStatus("No sheet names changed.");
+    return;
+  }
+
+  let successCount = 0;
+  setSheetStatus("Saving sheet names...");
+  for (const update of updates) {
+    const response = await fetch(`/api/sheets/${encodeURIComponent(update.id)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: update.name }),
+    });
+    if (response.ok) successCount += 1;
+  }
+  const hadErrors = successCount !== updates.length;
+  setSheetStatus(
+    `Saved ${successCount} of ${updates.length} sheet name${updates.length === 1 ? "" : "s"}.`,
+    hadErrors
+  );
+  await refreshSheets();
+}
+
+async function applyBulkAction() {
+  const action = elements.sheetBulkAction ? elements.sheetBulkAction.value : "";
+  if (!action) {
+    setSheetStatus("Choose a bulk action to apply.", true);
+    return;
+  }
+  const selected = getSelectedSheets();
+  if (!selected.length) {
+    setSheetStatus("Select at least one sheet.", true);
+    return;
+  }
+
+  if (action === "delete") {
+    if (!confirmTwice(`Delete ${selected.length} sheet(s)? This cannot be undone.`)) return;
+    const deletable = selected.filter((sheet) => sheet.source !== "sample");
+    const blocked = selected.length - deletable.length;
+    for (const sheet of deletable) {
+      await fetch(`/api/sheets/${encodeURIComponent(sheet.id)}`, { method: "DELETE" });
+    }
+    if (blocked) {
+      setSheetStatus(`Deleted ${deletable.length} sheets. ${blocked} sample sheet(s) skipped.`, true);
+    } else {
+      setSheetStatus(`Deleted ${deletable.length} sheets.`);
+    }
+    await refreshSheets();
+    if (elements.sheetBulkAction) elements.sheetBulkAction.value = "";
+    return;
+  }
+
+  if (action === "reset") {
+    if (!confirmTwice(`Reset progress for ${selected.length} sheet(s)?`)) return;
+    for (const sheet of selected) {
+      await fetch(`/api/sheets/${encodeURIComponent(sheet.id)}/reset`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ clear_done: true, clear_notes: false }),
+      });
+    }
+    setSheetStatus(`Reset progress for ${selected.length} sheet(s).`);
+    await refreshSheets();
+    if (elements.sheetBulkAction) elements.sheetBulkAction.value = "";
+    return;
+  }
+
+  if (action === "clear-notes") {
+    if (!confirmTwice(`Clear notes for ${selected.length} sheet(s)?`)) return;
+    for (const sheet of selected) {
+      await fetch(`/api/sheets/${encodeURIComponent(sheet.id)}/reset`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ clear_done: false, clear_notes: true }),
+      });
+    }
+    setSheetStatus(`Cleared notes for ${selected.length} sheet(s).`);
+    await refreshSheets();
+    if (elements.sheetBulkAction) elements.sheetBulkAction.value = "";
+  }
 }
 
 function bindEvents() {
@@ -738,6 +1251,24 @@ function bindEvents() {
       setRenameStatus("Rename applied.");
       if (elements.renameFrom) elements.renameFrom.value = "";
       if (elements.renameTo) elements.renameTo.value = "";
+    });
+  }
+
+  if (elements.saveSheetNamesBtn) {
+    elements.saveSheetNamesBtn.addEventListener("click", saveSheetNames);
+  }
+
+  if (elements.sheetBulkApply) {
+    elements.sheetBulkApply.addEventListener("click", applyBulkAction);
+  }
+
+  if (elements.sheetSelectAll) {
+    elements.sheetSelectAll.addEventListener("change", () => {
+      const checked = elements.sheetSelectAll.checked;
+      getSheetCheckboxes().forEach((input) => {
+        input.checked = checked;
+      });
+      updateSelectionCount();
     });
   }
 
@@ -819,6 +1350,40 @@ function bindEvents() {
       applyTheme();
     });
   });
+
+  const widgetBindings = [
+    [elements.toggleWidgetClock, "showClock"],
+    [elements.toggleWidgetTimer, "showTimer"],
+    [elements.toggleWidgetStopwatch, "showStopwatch"],
+  ];
+
+  widgetBindings.forEach(([el, key]) => {
+    if (!el) return;
+    el.addEventListener("change", () => {
+      uiSettings.widgetSettings = uiSettings.widgetSettings || { ...defaultSettings.widgetSettings };
+      uiSettings.widgetSettings[key] = el.checked;
+      saveSettings(uiSettings);
+    });
+  });
+
+  if (elements.widgetTimerMinutes) {
+    elements.widgetTimerMinutes.addEventListener("input", () => {
+      const minutes = Math.max(1, Number(elements.widgetTimerMinutes.value) || 1);
+      uiSettings.widgetSettings = uiSettings.widgetSettings || { ...defaultSettings.widgetSettings };
+      uiSettings.widgetSettings.timerMinutes = minutes;
+      uiSettings.widgetSettings.timerSeconds = 0;
+      saveSettings(uiSettings);
+    });
+  }
+
+  if (elements.resetWidgetPosition) {
+    elements.resetWidgetPosition.addEventListener("click", () => {
+      uiSettings.widgetSettings = uiSettings.widgetSettings || { ...defaultSettings.widgetSettings };
+      uiSettings.widgetSettings.position = null;
+      saveSettings(uiSettings);
+      syncAppearanceForm();
+    });
+  }
 
   const themeBindings = [
     [elements.themeAccent, "accent"],
@@ -966,6 +1531,7 @@ function bindEvents() {
           theme: { ...defaultSettings.theme, ...(parsed.theme || {}) },
           linkFallback: { ...defaultSettings.linkFallback, ...(parsed.linkFallback || {}) },
           labels: { ...defaultSettings.labels, ...(parsed.labels || {}) },
+          widgetSettings: { ...defaultSettings.widgetSettings, ...(parsed.widgetSettings || {}) },
         };
         saveSettings(uiSettings);
         syncAppearanceForm();
@@ -974,6 +1540,63 @@ function bindEvents() {
         setSettingsStatus("Invalid settings file.", true);
       } finally {
         elements.settingsImportFile.value = "";
+      }
+    });
+  }
+
+  if (elements.downloadDiagnosticsBtn) {
+    elements.downloadDiagnosticsBtn.addEventListener("click", () => {
+      const payload = {
+        generated_at: new Date().toISOString(),
+        health: state.health,
+        insights: state.insights,
+        sheets: state.sheets,
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "dsa-practice-diagnostics.json";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      setHealthStatus("Diagnostics exported.");
+    });
+  }
+
+  if (elements.refreshHealthBtn) {
+    elements.refreshHealthBtn.addEventListener("click", async () => {
+      setHealthStatus("Refreshing health...");
+      await refreshHealth();
+      setHealthStatus("Health refreshed.");
+    });
+  }
+
+  if (elements.resetUiBtn) {
+    elements.resetUiBtn.addEventListener("click", async () => {
+      if (!confirmTwice("Reset UI settings to defaults?")) return;
+      uiSettings = { ...defaultSettings };
+      saveSettings(uiSettings);
+      syncAppearanceForm();
+      setHealthStatus("UI settings reset.");
+    });
+  }
+
+  if (elements.resetViewBtn) {
+    elements.resetViewBtn.addEventListener("click", async () => {
+      if (!confirmTwice("Clear saved filters and view state?")) return;
+      try {
+        await fetch("/api/view-state", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ state: {} }),
+        });
+        setHealthStatus("View state cleared.");
+      } catch (error) {
+        setHealthStatus("Failed to clear view state.", true);
       }
     });
   }
@@ -998,8 +1621,9 @@ async function init() {
   syncAppearanceForm();
   bindEvents();
   const savedPanel = await fetchAdminPanel();
-  if (savedPanel && adminPanelButtons.length && adminPanels.length) {
-    setActivePanel(savedPanel, adminPanelButtons, adminPanels);
+  const normalizedPanel = savedPanel === "overview" ? "tracking" : savedPanel;
+  if (normalizedPanel && adminPanelButtons.length && adminPanels.length) {
+    setActivePanel(normalizedPanel, adminPanelButtons, adminPanels);
   }
   await refreshSheets();
 }

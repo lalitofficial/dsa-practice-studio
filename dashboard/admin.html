@@ -15,8 +15,8 @@
         <div class="brand">
           <div class="logo">DSA</div>
           <div class="brand-text">
-            <h1>DSA Practice Studio</h1>
-            <div class="panel-subtitle">Admin Console</div>
+            <h1>Practice Studio</h1>
+            <div class="panel-subtitle">Command Center</div>
           </div>
         </div>
         <div class="top-actions">
@@ -27,9 +27,13 @@
       <div class="content">
         <section class="admin-shell">
           <nav class="admin-nav" aria-label="Admin panels">
-            <div class="admin-nav-title">Panels</div>
-            <button class="admin-nav-btn active" type="button" data-panel="overview">
-              Overview
+            <div class="admin-nav-title">Control Panels</div>
+            <button
+              class="admin-nav-btn active"
+              type="button"
+              data-panel="tracking"
+            >
+              Tracking
             </button>
             <button class="admin-nav-btn" type="button" data-panel="sheets">
               Sheet Management
@@ -40,28 +44,37 @@
             <button class="admin-nav-btn" type="button" data-panel="ui">
               UI Management
             </button>
-            <button class="admin-nav-btn" type="button" data-panel="layout">
-              Layout Edits
+            <button
+              class="admin-nav-btn"
+              type="button"
+              data-panel="troubleshooting"
+            >
+              Troubleshooting
             </button>
-            <button class="admin-nav-btn" type="button" data-panel="theme">
-              Themes & Links
+            <button class="admin-nav-btn" type="button" data-panel="help">
+              Help
             </button>
           </nav>
 
           <div class="admin-panels">
-            <section class="admin-panel active" data-panel="overview">
+            <section class="admin-panel active" data-panel="tracking">
               <div class="admin-hero">
                 <div>
                   <div class="admin-kicker">Command Center</div>
-                  <h2>Workspace overview</h2>
-                  <p>Track sheet health, progress, and configuration changes from one place.</p>
+                  <h2>Learning command center</h2>
+                  <p>
+                    Monitor momentum, uncover weak spots, and keep every sheet
+                    healthy.
+                  </p>
                   <div class="admin-hero-actions">
-                    <button class="btn primary" type="button" data-panel-jump="sheets">
+                    <button
+                      class="btn primary"
+                      type="button"
+                      data-panel-jump="sheets"
+                    >
                       Manage Sheets
                     </button>
-                    <button class="btn ghost" type="button" data-panel-jump="ui">
-                      Refactor Labels
-                    </button>
+                    <a class="btn ghost" href="/revision">Review Queue</a>
                     <a class="btn ghost" href="/">Open Dashboard</a>
                   </div>
                 </div>
@@ -72,6 +85,9 @@
                     <span id="summaryProgress"></span>
                   </div>
                   <div class="stat-meta" id="summaryCompletionMeta">0 of 0</div>
+                  <div class="stat-meta" id="summaryLastActivity">
+                    Last activity: -
+                  </div>
                 </div>
               </div>
 
@@ -91,6 +107,17 @@
                   <div class="stat-meta" id="summaryDoneQuestions">0 done</div>
                 </div>
                 <div class="stat-card">
+                  <div class="stat-label">Focus cues</div>
+                  <div class="stat-value" id="summaryFocusTotal">0</div>
+                  <div class="stat-meta">
+                    <span id="summaryStarred">0 starred</span>
+                    <span class="stat-divider">•</span>
+                    <span id="summaryNotes">0 notes</span>
+                    <span class="stat-divider">•</span>
+                    <span id="summaryTodo">0 todo</span>
+                  </div>
+                </div>
+                <div class="stat-card">
                   <div class="stat-label">Difficulty mix</div>
                   <div class="difficulty-bar" id="summaryDifficultyBar">
                     <span class="diff-easy"></span>
@@ -98,18 +125,56 @@
                     <span class="diff-hard"></span>
                     <span class="diff-unknown"></span>
                   </div>
-                  <div class="difficulty-legend" id="summaryDifficultyLegend"></div>
+                  <div
+                    class="difficulty-legend"
+                    id="summaryDifficultyLegend"
+                  ></div>
                 </div>
+              </div>
+
+              <div class="admin-grid admin-insights">
+                <div class="admin-card admin-insight">
+                  <h3>Momentum (last 7 days)</h3>
+                  <div class="sparkline" id="momentumChart"></div>
+                  <div class="stat-meta" id="momentumMeta">
+                    0 solved · 0 active days
+                  </div>
+                </div>
+              </div>
+
+              <div class="admin-card admin-insight admin-card--wide">
+                <div class="admin-card-head">
+                  <div>
+                    <h3>Practice heatmap</h3>
+                    <p id="heatmapScope">
+                      Daily attempts intensity (last 12 weeks).
+                    </p>
+                  </div>
+                </div>
+                <div class="heatmap" id="activityHeatmap"></div>
+                <div class="heatmap-legend" id="activityLegend"></div>
+              </div>
+
+              <div class="admin-card admin-insight">
+                <div class="admin-card-head">
+                  <div>
+                    <h3>Sheet health</h3>
+                    <p>Per-sheet progress, review signals, and data gaps.</p>
+                  </div>
+                </div>
+                <div class="sheet-health-grid" id="sheetHealth"></div>
               </div>
             </section>
 
             <section class="admin-panel" data-panel="sheets">
               <div class="admin-panel-head">
                 <h2 class="section-title">Sheet Management</h2>
-                <p class="panel-subtitle">Manage sheet inventory, duplicates, resets, and health.</p>
+                <p class="panel-subtitle">
+                  Manage sheet inventory, duplicates, resets, and health.
+                </p>
               </div>
               <div class="admin-panel-grid">
-                <div class="admin-card">
+                <div class="admin-card admin-card--wide">
                   <h3>Create & Track Sheets</h3>
                   <p>Create, rename, duplicate, or reset sheets.</p>
                   <form id="createSheetForm" class="admin-form">
@@ -120,14 +185,45 @@
                         type="text"
                         placeholder="New sheet name"
                       />
-                      <button class="btn primary" type="submit">Create Sheet</button>
+                      <button class="btn primary" type="submit">
+                        Create Sheet
+                      </button>
                     </div>
                     <div class="admin-note" id="sheetStatus"></div>
                   </form>
+                  <div class="admin-toolbar">
+                    <button
+                      class="btn ghost"
+                      type="button"
+                      id="saveSheetNamesBtn"
+                    >
+                      Save All Names
+                    </button>
+                    <div class="admin-spacer"></div>
+                    <span class="admin-note" id="sheetSelectionCount"
+                      >0 selected</span
+                    >
+                    <select id="sheetBulkAction" class="admin-select">
+                      <option value="" selected>Bulk actions</option>
+                      <option value="reset">Reset progress</option>
+                      <option value="clear-notes">Clear notes</option>
+                      <option value="delete">Delete sheets</option>
+                    </select>
+                    <button class="btn ghost" type="button" id="sheetBulkApply">
+                      Apply
+                    </button>
+                  </div>
                   <div class="table-wrap">
                     <table class="admin-table" id="sheetTable">
                       <thead>
                         <tr>
+                          <th>
+                            <input
+                              type="checkbox"
+                              id="sheetSelectAll"
+                              aria-label="Select all sheets"
+                            />
+                          </th>
                           <th>Sheet</th>
                           <th>Questions</th>
                           <th>Progress</th>
@@ -181,7 +277,13 @@
                         <option value="true">Has header</option>
                         <option value="false">No header</option>
                       </select>
-                      <button class="btn ghost" type="button" id="sheetImportBtn">Import</button>
+                      <button
+                        class="btn ghost"
+                        type="button"
+                        id="sheetImportBtn"
+                      >
+                        Import
+                      </button>
                     </div>
                     <div class="admin-note" id="sheetImportStatus"></div>
                   </form>
@@ -191,13 +293,22 @@
                   <h3>Export Sheet</h3>
                   <p>Download a sheet in CSV or JSON format.</p>
                   <form id="sheetExportForm" class="admin-form">
-                    <select id="sheetExportSelect" class="admin-select"></select>
+                    <select
+                      id="sheetExportSelect"
+                      class="admin-select"
+                    ></select>
                     <div class="admin-row">
                       <select id="sheetExportFormat" class="admin-select">
                         <option value="csv" selected>CSV</option>
                         <option value="json">JSON</option>
                       </select>
-                      <button class="btn ghost" type="button" id="sheetExportBtn">Export</button>
+                      <button
+                        class="btn ghost"
+                        type="button"
+                        id="sheetExportBtn"
+                      >
+                        Export
+                      </button>
                     </div>
                     <div class="admin-note" id="sheetExportStatus"></div>
                   </form>
@@ -208,7 +319,9 @@
             <section class="admin-panel" data-panel="units">
               <div class="admin-panel-head">
                 <h2 class="section-title">Unit Management</h2>
-                <p class="panel-subtitle">Rename or bulk edit units and chapters across sheets.</p>
+                <p class="panel-subtitle">
+                  Rename or bulk edit units and chapters across sheets.
+                </p>
               </div>
               <div class="admin-panel-grid">
                 <div class="admin-card">
@@ -221,10 +334,22 @@
                         <option value="unit">Unit</option>
                         <option value="chapter">Chapter</option>
                       </select>
-                      <input id="renameFrom" class="admin-input" type="text" placeholder="Current name" />
-                      <input id="renameTo" class="admin-input" type="text" placeholder="New name" />
+                      <input
+                        id="renameFrom"
+                        class="admin-input"
+                        type="text"
+                        placeholder="Current name"
+                      />
+                      <input
+                        id="renameTo"
+                        class="admin-input"
+                        type="text"
+                        placeholder="New name"
+                      />
                     </div>
-                    <button class="btn ghost" type="submit">Apply Rename</button>
+                    <button class="btn ghost" type="submit">
+                      Apply Rename
+                    </button>
                     <div class="admin-note" id="renameStatus"></div>
                   </form>
                 </div>
@@ -259,7 +384,9 @@
                         <span>Only fill missing</span>
                         <input type="checkbox" id="difficultyOnlyMissing" />
                       </label>
-                      <button class="btn ghost" type="submit">Apply Difficulty</button>
+                      <button class="btn ghost" type="submit">
+                        Apply Difficulty
+                      </button>
                     </div>
                     <div class="admin-note" id="difficultyStatus"></div>
                   </form>
@@ -270,7 +397,9 @@
             <section class="admin-panel" data-panel="ui">
               <div class="admin-panel-head">
                 <h2 class="section-title">UI Management</h2>
-                <p class="panel-subtitle">Rename labels and UX terms used across the dashboard.</p>
+                <p class="panel-subtitle">
+                  Rename labels and UX terms used across the dashboard.
+                </p>
               </div>
               <div class="admin-panel-grid">
                 <div class="admin-card">
@@ -280,18 +409,35 @@
                     <div class="admin-row">
                       <label class="admin-field">
                         <span class="admin-note">Item label</span>
-                        <input id="labelItem" class="admin-input" type="text" placeholder="Question" />
+                        <input
+                          id="labelItem"
+                          class="admin-input"
+                          type="text"
+                          placeholder="Question"
+                        />
                       </label>
                       <label class="admin-field">
                         <span class="admin-note">Unit label</span>
-                        <input id="labelUnit" class="admin-input" type="text" placeholder="Unit" />
+                        <input
+                          id="labelUnit"
+                          class="admin-input"
+                          type="text"
+                          placeholder="Unit"
+                        />
                       </label>
                       <label class="admin-field">
                         <span class="admin-note">Chapter label</span>
-                        <input id="labelChapter" class="admin-input" type="text" placeholder="Chapter" />
+                        <input
+                          id="labelChapter"
+                          class="admin-input"
+                          type="text"
+                          placeholder="Chapter"
+                        />
                       </label>
                     </div>
-                    <div class="admin-note">Changes apply when you reopen the dashboard.</div>
+                    <div class="admin-note">
+                      Changes apply when you reopen the dashboard.
+                    </div>
                   </form>
                 </div>
 
@@ -300,7 +446,11 @@
                   <p>Export or import UI preferences as JSON.</p>
                   <div class="admin-form">
                     <div class="admin-row">
-                      <button class="btn ghost" type="button" id="settingsExportBtn">
+                      <button
+                        class="btn ghost"
+                        type="button"
+                        id="settingsExportBtn"
+                      >
                         Export Settings
                       </button>
                       <input
@@ -309,34 +459,22 @@
                         type="file"
                         accept=".json"
                       />
-                      <button class="btn ghost" type="button" id="settingsImportBtn">
+                      <button
+                        class="btn ghost"
+                        type="button"
+                        id="settingsImportBtn"
+                      >
                         Import Settings
                       </button>
                     </div>
                     <div class="admin-note" id="settingsStatus"></div>
                   </div>
                 </div>
-              </div>
-            </section>
 
-            <section class="admin-panel" data-panel="layout">
-              <div class="admin-panel-head">
-                <h2 class="section-title">Layout Edits</h2>
-                <p class="panel-subtitle">Toggle header elements, layout density, and visibility.</p>
-              </div>
-              <div class="admin-panel-grid">
                 <div class="admin-card">
                   <h3>Header Visibility</h3>
                   <div class="admin-form" id="headerVisibilityForm">
                     <div class="admin-row">
-                      <label class="setting-row">
-                        <span>Show Sync</span>
-                        <input type="checkbox" id="toggleHeaderSync" />
-                      </label>
-                      <label class="setting-row">
-                        <span>Show Random</span>
-                        <input type="checkbox" id="toggleHeaderRandom" />
-                      </label>
                       <label class="setting-row">
                         <span>Show Import</span>
                         <input type="checkbox" id="toggleHeaderImport" />
@@ -408,15 +546,51 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </section>
 
-            <section class="admin-panel" data-panel="theme">
-              <div class="admin-panel-head">
-                <h2 class="section-title">Theme & Links</h2>
-                <p class="panel-subtitle">Control the palette and fallback search behavior.</p>
-              </div>
-              <div class="admin-panel-grid">
+                <div class="admin-card">
+                  <h3>Learning widgets</h3>
+                  <p>Control focus widgets shown on the dashboard.</p>
+                  <div class="admin-form" id="widgetForm">
+                    <div class="admin-row">
+                      <label class="setting-row">
+                        <span>Show clock</span>
+                        <input type="checkbox" id="toggleWidgetClock" />
+                      </label>
+                      <label class="setting-row">
+                        <span>Show timer</span>
+                        <input type="checkbox" id="toggleWidgetTimer" />
+                      </label>
+                      <label class="setting-row">
+                        <span>Show stopwatch</span>
+                        <input type="checkbox" id="toggleWidgetStopwatch" />
+                      </label>
+                    </div>
+                    <div class="admin-row">
+                      <label class="admin-field">
+                        <span class="admin-note">Timer preset (minutes)</span>
+                        <input
+                          id="widgetTimerMinutes"
+                          class="admin-input"
+                          type="number"
+                          min="1"
+                          max="180"
+                          placeholder="25"
+                        />
+                      </label>
+                      <button
+                        class="btn ghost"
+                        type="button"
+                        id="resetWidgetPosition"
+                      >
+                        Reset widget position
+                      </button>
+                    </div>
+                    <div class="admin-note">
+                      Changes apply to the floating widget on the dashboard.
+                    </div>
+                  </div>
+                </div>
+
                 <div class="admin-card">
                   <h3>Theme & Colors</h3>
                   <div class="admin-form">
@@ -437,7 +611,9 @@
                         <span>Background</span>
                         <input type="color" id="themeBackground" />
                       </label>
-                      <button class="btn ghost" type="button" id="resetTheme">Reset Theme</button>
+                      <button class="btn ghost" type="button" id="resetTheme">
+                        Reset Theme
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -492,6 +668,198 @@
                     </div>
                   </form>
                 </div>
+              </div>
+            </section>
+
+            <section class="admin-panel" data-panel="troubleshooting">
+              <div class="admin-panel-head">
+                <h2 class="section-title">Troubleshooting</h2>
+                <p class="panel-subtitle">
+                  Health checks, diagnostics, and recovery tools.
+                </p>
+              </div>
+              <div class="admin-panel-grid">
+                <div class="admin-card">
+                  <h3>Site Health</h3>
+                  <div class="health-list" id="healthList"></div>
+                </div>
+                <div class="admin-card">
+                  <h3>Diagnostics</h3>
+                  <p>Export debug data or reset local UI state.</p>
+                  <div class="admin-form">
+                    <div class="admin-row">
+                      <button
+                        class="btn ghost"
+                        type="button"
+                        id="downloadDiagnosticsBtn"
+                      >
+                        Download diagnostics
+                      </button>
+                      <button
+                        class="btn ghost"
+                        type="button"
+                        id="refreshHealthBtn"
+                      >
+                        Refresh health
+                      </button>
+                    </div>
+                    <div class="admin-row">
+                      <button class="btn ghost" type="button" id="resetUiBtn">
+                        Reset UI settings
+                      </button>
+                      <button class="btn ghost" type="button" id="resetViewBtn">
+                        Reset view state
+                      </button>
+                    </div>
+                    <div class="admin-note" id="healthStatus"></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="admin-panel" data-panel="help">
+              <div class="admin-panel-head">
+                <h2 class="section-title">Help Center</h2>
+                <p class="panel-subtitle">
+                  Full documentation for every feature, workflow, and best practice.
+                </p>
+              </div>
+              <div class="help-layout">
+                <div class="help-content">
+                  <section class="help-section" id="help-started">
+                    <h3>Getting started</h3>
+                    <p>Set up a sheet, import data, and begin tracking progress.</p>
+                    <ul class="help-list">
+                      <li><strong>Create a sheet</strong> in Sheet Management.</li>
+                      <li><strong>Import CSV/XLSX</strong> from the Admin or dashboard Import button.</li>
+                      <li><strong>Select the sheet</strong> from the header tabs.</li>
+                    </ul>
+                  </section>
+                  <section class="help-section" id="help-workflow">
+                    <h3>Daily workflow</h3>
+                    <p>Use this flow to stay consistent and focused.</p>
+                    <ul class="help-list">
+                      <li><strong>Filter by unit/chapter</strong> to narrow scope.</li>
+                      <li><strong>Mark done</strong> when you complete a question.</li>
+                      <li><strong>Add notes</strong> for patterns or mistakes.</li>
+                      <li><strong>Star</strong> questions you want to revisit.</li>
+                      <li><strong>Review</strong> notes and starred items in Revision.</li>
+                    </ul>
+                  </section>
+                  <section class="help-section" id="help-dashboard">
+                    <h3>Dashboard essentials</h3>
+                    <p>How core learner tools behave.</p>
+                    <ul class="help-list">
+                      <li><strong>Search</strong> matches title or id keywords.</li>
+                      <li><strong>Filters</strong> stack (unit, chapter, status, difficulty, starred).</li>
+                      <li><strong>Notes modal</strong> opens per-question notes.</li>
+                      <li><strong>Links</strong> show LeetCode/YT/Web; grey means missing.</li>
+                      <li><strong>Progress strip</strong> updates for the current filter scope.</li>
+                    </ul>
+                  </section>
+                  <section class="help-section" id="help-tracking">
+                    <h3>Tracking panel</h3>
+                    <p>What each tracker metric means.</p>
+                    <ul class="help-list">
+                      <li><strong>Overall completion</strong> totals done across all sheets.</li>
+                      <li><strong>Focus cues</strong> summarize starred, notes, and todo.</li>
+                      <li><strong>Difficulty mix</strong> aggregates difficulty tags.</li>
+                      <li><strong>Momentum</strong> shows solved count over the last 7 days.</li>
+                      <li><strong>Practice heatmap</strong> counts only done questions for the active sheet.</li>
+                      <li><strong>Sheet health</strong> lists gaps (missing links/difficulty).</li>
+                    </ul>
+                  </section>
+                  <section class="help-section" id="help-sheets">
+                    <h3>Sheet management</h3>
+                    <p>Create, edit, and maintain sheets confidently.</p>
+                    <ul class="help-list">
+                      <li><strong>Create sheet</strong> adds a new sheet entry.</li>
+                      <li><strong>Save all names</strong> applies edited labels at once.</li>
+                      <li><strong>Bulk actions</strong> reset progress, clear notes, or delete selected sheets.</li>
+                      <li><strong>Duplicate</strong> clones a sheet and its progress.</li>
+                      <li><strong>Export</strong> downloads a sheet as CSV/JSON.</li>
+                    </ul>
+                  </section>
+                  <section class="help-section" id="help-units">
+                    <h3>Unit management</h3>
+                    <p>Refactor naming or difficulty without re-importing.</p>
+                    <ul class="help-list">
+                      <li><strong>Rename</strong> updates unit or chapter across a sheet.</li>
+                      <li><strong>Bulk difficulty</strong> fills unit/chapter difficulty in one pass.</li>
+                      <li><strong>Only fill missing</strong> protects existing tags.</li>
+                    </ul>
+                  </section>
+                  <section class="help-section" id="help-ui">
+                    <h3>UI management</h3>
+                    <p>Control naming, layout, theme, and link behaviors.</p>
+                    <ul class="help-list">
+                      <li><strong>Labels</strong> rename Question/Unit/Chapter across the UI.</li>
+                      <li><strong>Header visibility</strong> toggles Import/Export/Search/Filters/Last sync.</li>
+                      <li><strong>Layout controls</strong> adjust compact mode and column visibility.</li>
+                      <li><strong>Theme colors</strong> override accent, surface, and background.</li>
+                      <li><strong>Default links</strong> generate search URLs for missing links.</li>
+                      <li><strong>Settings transfer</strong> export/import UI settings as JSON.</li>
+                    </ul>
+                  </section>
+                  <section class="help-section" id="help-revision">
+                    <h3>Revision & notes</h3>
+                    <p>Centralize review of learning feedback.</p>
+                    <ul class="help-list">
+                      <li><strong>Revision panel</strong> lists all notes and starred items.</li>
+                      <li><strong>Notes hub</strong> aggregates question notes from the dashboard.</li>
+                      <li><strong>Starred filter</strong> shows only important questions.</li>
+                    </ul>
+                  </section>
+                  <section class="help-section" id="help-import">
+                    <h3>Import format</h3>
+                    <p>CSV/Excel columns (only first three required).</p>
+                    <ul class="help-list">
+                      <li>1) Unit name</li>
+                      <li>2) Chapter name</li>
+                      <li>3) Question name</li>
+                      <li>4) LeetCode link (optional)</li>
+                      <li>5) YouTube link (optional)</li>
+                      <li>6) Default note (optional)</li>
+                      <li>7) Difficulty (optional)</li>
+                      <li>8) Starred (optional)</li>
+                    </ul>
+                  </section>
+                  <section class="help-section" id="help-troubleshooting">
+                    <h3>Troubleshooting</h3>
+                    <p>Health checks and recovery tools.</p>
+                    <ul class="help-list">
+                      <li><strong>Site health</strong> shows storage paths and core file status.</li>
+                      <li><strong>Diagnostics</strong> exports JSON with insights + health.</li>
+                      <li><strong>Reset UI</strong> restores theme and layout defaults.</li>
+                      <li><strong>Reset view</strong> clears saved filters and scroll position.</li>
+                    </ul>
+                  </section>
+                  <section class="help-section" id="help-shortcuts">
+                    <h3>Key shortcuts</h3>
+                    <p>Primary navigation endpoints.</p>
+                    <div class="admin-form">
+                      <div class="admin-row">
+                        <a class="btn ghost" href="/">Open Dashboard</a>
+                        <a class="btn ghost" href="/revision">Revision Panel</a>
+                        <a class="btn ghost" href="/admin">Admin Home</a>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+                <aside class="help-nav" aria-label="Help navigation">
+                  <div class="help-nav-title">On this page</div>
+                  <a href="#help-started">Getting started</a>
+                  <a href="#help-workflow">Daily workflow</a>
+                  <a href="#help-dashboard">Dashboard essentials</a>
+                  <a href="#help-tracking">Tracking panel</a>
+                  <a href="#help-sheets">Sheet management</a>
+                  <a href="#help-units">Unit management</a>
+                  <a href="#help-ui">UI management</a>
+                  <a href="#help-revision">Revision & notes</a>
+                  <a href="#help-import">Import format</a>
+                  <a href="#help-troubleshooting">Troubleshooting</a>
+                  <a href="#help-shortcuts">Key shortcuts</a>
+                </aside>
               </div>
             </section>
           </div>
