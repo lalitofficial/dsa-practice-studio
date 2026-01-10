@@ -4,9 +4,7 @@ from pathlib import Path
 
 from dsa_practice_studio.grouping import apply_sheet_grouping
 from dsa_practice_studio.importers import parse_csv_lessons, parse_xlsx_lessons
-from dsa_practice_studio.parser import parse_html_lessons
 from dsa_practice_studio.service import (
-    apply_import_urls,
     compute_stats,
     filter_questions,
     pick_next,
@@ -154,42 +152,6 @@ def cmd_sync(state, _args):
     print(f"Synced {len(state['questions'])} questions.")
 
 
-def cmd_import_html(state, args):
-    sheet_id = resolve_sheet_id(getattr(args, "sheet", None))
-    if args.path == "-":
-        html_text = sys.stdin.read()
-    else:
-        with open(args.path, "r", encoding="utf-8") as handle:
-            html_text = handle.read()
-
-    lessons = parse_html_lessons(html_text, args.unit, args.chapter)
-    lessons, _ = apply_sheet_grouping(lessons, sheet_id)
-    if not lessons:
-        print("No lessons found in HTML.")
-        return state
-
-    existing = load_lessons(sheet_id)
-    had_existing = bool(existing)
-    merged = merge_lessons(existing, lessons)
-    save_lessons(merged, sheet_id)
-    state = sync_state(state, sheet_id)
-
-    label_unit = args.unit or "auto"
-    print(f"Imported lessons: {len(lessons)} (unit: {label_unit})")
-    if not had_existing:
-        updated, skipped, missing, ambiguous = apply_import_urls(
-            state["questions"], lessons, overwrite=args.overwrite
-        )
-        print(f"Updated URLs: {updated}")
-        print(f"Skipped existing URLs: {skipped}")
-        print(f"Missing/No match: {missing}")
-        if ambiguous:
-            print(f"Ambiguous matches: {ambiguous}")
-    else:
-        print("Using ref_file lessons as the source of truth.")
-    return state
-
-
 def cmd_import_table(state, args):
     sheet_id = resolve_sheet_id(getattr(args, "sheet", None))
     path = Path(args.path)
@@ -305,20 +267,6 @@ def build_parser():
     sync_cmd = sub.add_parser("sync", help="Sync questions with filesystem")
     add_sheet_arg(sync_cmd)
 
-    import_cmd = sub.add_parser("import-html", help="Import lessons and URLs from sheet HTML")
-    add_sheet_arg(import_cmd)
-    import_cmd.add_argument("path", help="HTML file path or '-' for stdin")
-    import_cmd.add_argument("--unit", help="Default unit name when HTML has no headings")
-    import_cmd.add_argument(
-        "--chapter",
-        help="Default chapter name when HTML has no headings",
-    )
-    import_cmd.add_argument(
-        "--overwrite",
-        action="store_true",
-        help="Overwrite existing URLs when matches are found",
-    )
-
     table_cmd = sub.add_parser("import-table", help="Import lessons from CSV/XLSX")
     add_sheet_arg(table_cmd)
     table_cmd.add_argument("path", help="CSV/XLSX file path")
@@ -366,8 +314,6 @@ def main():
             cmd_next(state, args)
         elif args.command == "sync":
             cmd_sync(state, args)
-        elif args.command == "import-html":
-            state = cmd_import_html(state, args)
         elif args.command == "import-table":
             state = cmd_import_table(state, args)
         else:

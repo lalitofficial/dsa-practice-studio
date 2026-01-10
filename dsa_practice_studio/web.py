@@ -6,6 +6,14 @@ from pathlib import Path
 
 from flask import Flask, jsonify, request, send_from_directory
 
+from dsa_practice_studio.config import (
+    DATA_DIR,
+    LESSONS_PATH,
+    LEGACY_DATA_DIR,
+    SHEETS_REGISTRY_PATH,
+    STATE_PATH,
+    UNIT_DB_PATH,
+)
 from dsa_practice_studio.db import (
     delete_unit_status,
     load_app_state,
@@ -15,6 +23,7 @@ from dsa_practice_studio.db import (
 )
 from dsa_practice_studio.grouping import apply_sheet_grouping
 from dsa_practice_studio.importers import parse_csv_text, parse_xlsx_lessons
+from dsa_practice_studio.insights import build_admin_insights
 from dsa_practice_studio.service import (
     compute_stats,
     filter_questions,
@@ -32,7 +41,6 @@ from dsa_practice_studio.storage import (
     load_lessons,
     load_state,
     merge_lessons,
-    regenerate_sheet_from_html,
     rename_sheet_entry,
     resolve_sheet_id,
     save_lessons,
@@ -64,6 +72,10 @@ def create_app():
     @app.route("/revision")
     def revision():
         return send_from_directory(DASHBOARD_DIR, "revision.html")
+
+    @app.route("/widgets")
+    def widgets():
+        return send_from_directory(DASHBOARD_DIR, "widgets.html")
 
     @app.get("/api/sheets")
     def api_sheets():
@@ -140,6 +152,38 @@ def create_app():
         save_app_state("admin_panel", panel)
         return jsonify({"panel": panel})
 
+    @app.get("/api/admin/insights")
+    def api_admin_insights():
+        requested = request.args.get("sheet")
+        if requested:
+            requested = resolve_sheet_id(requested)
+        else:
+            requested = load_app_state("active_sheet", "")
+            if requested:
+                requested = resolve_sheet_id(requested)
+        return jsonify(build_admin_insights(heatmap_sheet_id=requested))
+
+    @app.get("/api/health")
+    def api_health():
+        return jsonify(
+            {
+                "data_dir": str(DATA_DIR),
+                "legacy_mode": DATA_DIR == LEGACY_DATA_DIR,
+                "paths": {
+                    "db": str(UNIT_DB_PATH),
+                    "sheets": str(SHEETS_REGISTRY_PATH),
+                    "state": str(STATE_PATH),
+                    "lessons": str(LESSONS_PATH),
+                },
+                "exists": {
+                    "db": UNIT_DB_PATH.exists(),
+                    "sheets": SHEETS_REGISTRY_PATH.exists(),
+                    "state": STATE_PATH.exists(),
+                    "lessons": LESSONS_PATH.exists(),
+                },
+            }
+        )
+
     @app.post("/api/sheets")
     def api_create_sheet():
         payload = request.get_json(silent=True) or {}
@@ -214,16 +258,6 @@ def create_app():
             delete_unit_status(sheet_id)
         save_state(state, sheet_id)
         return jsonify({"sheet": sheet_id, "cleared": {"done": clear_done, "notes": clear_notes}})
-
-    @app.post("/api/sheets/<path:sheet_id>/regenerate")
-    def api_regenerate_sheet(sheet_id):
-        sheet_id = resolve_sheet_id(sheet_id)
-        refreshed = regenerate_sheet_from_html(sheet_id)
-        if refreshed is None:
-            return jsonify({"error": "No HTML source for this sheet"}), 400
-        state = load_and_sync_state(sheet_id)
-        save_state(state, sheet_id)
-        return jsonify({"sheet": sheet_id, "count": len(refreshed)})
 
     @app.post("/api/refactor/rename")
     def api_refactor_rename():

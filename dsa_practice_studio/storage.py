@@ -2,7 +2,6 @@ import json
 from pathlib import Path
 
 from dsa_practice_studio.config import (
-    BASE_DIR,
     DATA_DIR,
     DEFAULT_SHEET_ID,
     LESSONS_PATH,
@@ -11,7 +10,7 @@ from dsa_practice_studio.config import (
     STATE_PATH,
 )
 from dsa_practice_studio.grouping import apply_sheet_grouping
-from dsa_practice_studio.parser import parse_html_lessons
+from dsa_practice_studio.importers import parse_csv_lessons
 from dsa_practice_studio.utils import now_iso, slugify
 
 
@@ -189,12 +188,6 @@ def duplicate_sheet_entry(source_sheet_id, new_label):
     return entry
 
 
-def regenerate_sheet_from_html(sheet_id):
-    sheet_id = resolve_sheet_id(sheet_id)
-    refreshed = _refresh_from_html(sheet_id)
-    return refreshed
-
-
 def get_state_path(sheet_id):
     sheet_id = resolve_sheet_id(sheet_id)
     if sheet_id == DEFAULT_SHEET_ID:
@@ -209,66 +202,13 @@ def get_lessons_path(sheet_id):
     return DATA_DIR / f"lessons_{sheet_id}.json"
 
 
-def get_sheet_html_path(sheet_id):
+def get_sheet_sample_path(sheet_id):
     sheet_id = resolve_sheet_id(sheet_id)
     sheet = SHEETS.get(sheet_id, {})
-    html_path = sheet.get("html")
-    if html_path and Path(html_path).exists():
-        return html_path
-    if sheet_id == "striver":
-        fallback = BASE_DIR / "ref_file.html"
-        if fallback.exists():
-            return fallback
-    return html_path
-
-
-def _needs_reparse(sheet_id, lessons):
-    if sheet_id == DEFAULT_SHEET_ID:
-        return False
-    if not lessons:
-        return False
-    units = {str(lesson.get("unit", "")).strip().lower() for lesson in lessons}
-    if len(units) <= 1:
-        only = next(iter(units)) if units else ""
-        if only in {"", "imported", "general"}:
-            return True
-    return False
-
-
-def _lesson_sources(lessons):
-    return {lesson.get("source") for lesson in lessons if isinstance(lesson, dict)}
-
-
-def _should_refresh_from_html(sheet_id, lessons, lessons_path):
-    if sheet_id not in SHEETS:
-        return False
-    html_path = get_sheet_html_path(sheet_id)
-    if not html_path or not Path(html_path).exists():
-        return False
-    if not lessons:
-        return True
-    sources = _lesson_sources(lessons)
-    if sources == {"import"}:
-        return False
-    if None in sources:
-        return True
-    try:
-        return Path(html_path).stat().st_mtime > lessons_path.stat().st_mtime
-    except FileNotFoundError:
-        return True
-
-
-def _refresh_from_html(sheet_id):
-    html_path = get_sheet_html_path(sheet_id)
-    if not html_path or not Path(html_path).exists():
-        return None
-    html_text = Path(html_path).read_text(encoding="utf-8")
-    parsed = parse_html_lessons(html_text, None, None)
-    if not parsed:
-        return None
-    grouped, _ = apply_sheet_grouping(parsed, sheet_id)
-    save_lessons(grouped, sheet_id)
-    return grouped
+    sample_path = sheet.get("sample_csv")
+    if sample_path and Path(sample_path).exists():
+        return Path(sample_path)
+    return None
 
 
 def load_lessons(sheet_id=DEFAULT_SHEET_ID):
@@ -288,28 +228,14 @@ def load_lessons(sheet_id=DEFAULT_SHEET_ID):
         ]
         if len(cleaned) != len(lessons):
             save_lessons(cleaned, sheet_id)
-        if _should_refresh_from_html(sheet_id, cleaned, path):
-            refreshed = _refresh_from_html(sheet_id)
-            if refreshed is not None:
-                return refreshed
-        if _needs_reparse(sheet_id, cleaned):
-            html_path = get_sheet_html_path(sheet_id)
-            if html_path and Path(html_path).exists():
-                html_text = Path(html_path).read_text(encoding="utf-8")
-                parsed = parse_html_lessons(html_text, None, None)
-                if parsed:
-                    grouped, _ = apply_sheet_grouping(parsed, sheet_id)
-                    save_lessons(grouped, sheet_id)
-                    return grouped
         grouped, changed = apply_sheet_grouping(cleaned, sheet_id)
         if changed:
             save_lessons(grouped, sheet_id)
         return grouped
 
-    html_path = get_sheet_html_path(sheet_id)
-    if html_path and Path(html_path).exists():
-        html_text = Path(html_path).read_text(encoding="utf-8")
-        lessons = parse_html_lessons(html_text, None, None)
+    sample_path = get_sheet_sample_path(sheet_id)
+    if sample_path:
+        lessons = parse_csv_lessons(sample_path)
         if lessons:
             grouped, _ = apply_sheet_grouping(lessons, sheet_id)
             save_lessons(grouped, sheet_id)

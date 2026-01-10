@@ -15,8 +15,14 @@ QUESTION_EXTS = {".py", ".ipynb"}
 
 DEFAULT_SHEET_ID = "striver"
 SHEETS = {
-    "striver": {"name": "Striver A2Z", "html": BASE_DIR / "striver_ref_file.html"},
-    "algomaster": {"name": "AlgoMaster", "html": BASE_DIR / "algomaster_ref.html"},
+    "striver": {
+        "name": "Striver A2Z",
+        "sample_csv": BASE_DIR / "samples" / "striver_sample.csv",
+    },
+    "algomaster": {
+        "name": "AlgoMaster",
+        "sample_csv": BASE_DIR / "samples" / "algomaster_sample.csv",
+    },
 }
 
 ALGOMASTER_GROUPS = {

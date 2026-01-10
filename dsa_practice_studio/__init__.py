@@ -5,7 +5,6 @@ __all__ = [
     "service",
     "storage",
     "db",
-    "parser",
     "grouping",
     "importers",
 ]
