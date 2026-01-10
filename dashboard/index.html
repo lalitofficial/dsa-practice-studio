@@ -15,7 +15,7 @@
         <div class="brand">
           <div class="logo">DSA</div>
           <div class="brand-text">
-          <h1>DSA Practice Studio</h1>
+          <h1>Practice Studio</h1>
             <div class="sheet-switch">
               <span class="sheet-label">Sheets</span>
               <div class="sheet-tabs" id="sheetTabs"></div>
@@ -25,6 +25,7 @@
         <div class="top-actions">
           <button id="notesHubBtn" class="btn ghost" type="button">Notes</button>
           <a class="btn ghost" href="/revision">Revision</a>
+          <a class="btn ghost" href="/widgets">Widget Studio</a>
           <a id="adminBtn" class="btn ghost" href="/admin">Admin</a>
           <button
             id="settingsBtn"
@@ -45,13 +46,6 @@
             aria-label="Settings"
           >
             <div class="settings-header">Settings</div>
-            <div class="settings-section">
-              <div class="settings-section-title">Quick actions</div>
-              <div class="settings-actions">
-                <button id="syncBtn" class="btn ghost slim" type="button">Sync</button>
-                <button id="randomBtn" class="btn ghost slim" type="button">Pick random</button>
-              </div>
-            </div>
             <div class="settings-section">
               <div class="settings-section-title">Data tools</div>
               <div class="settings-actions">
@@ -90,6 +84,7 @@
                 <input type="checkbox" id="toggleZebra" />
               </label>
             </div>
+        
           </div>
         </div>
       </header>
@@ -175,8 +170,72 @@
             <div id="questionList" class="question-groups"></div>
           </section>
         </main>
+    </div>
+  </div>
+
+  <div id="widgetDialog" class="widget-dialog hidden" role="dialog" aria-label="Widget workbench">
+    <div class="widget-dialog-shell">
+      <header class="widget-dialog-header">
+        <div>
+          <h2 class="section-title">Widgets</h2>
+          <p class="panel-subtitle">
+            Control the three floating helpers you can access on this dashboard.
+          </p>
+        </div>
+        <button id="widgetDialogClose" class="btn icon-btn" type="button" aria-label="Close widgets">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6l-12 12" />
+          </svg>
+        </button>
+      </header>
+      <div class="widget-dialog-body">
+        <section class="widget-dialog-panel">
+          <div class="widget-dialog-actions">
+            <button id="widgetFocusButton" class="btn ghost slim" type="button">
+              Widget studio
+            </button>
+          </div>
+          <p class="widget-dialog-description">
+            Open this panel by dragging or clicking the floating <strong>W</strong> launcher. Every widget toggle,
+            timer preset, and overlay control is available here so the settings panel can stay focused on sheet layout.
+          </p>
+          <div class="widget-dialog-controls">
+            <label class="widget-dialog-control">
+              <span>Show clock</span>
+              <input type="checkbox" id="toggleClock" />
+            </label>
+            <label class="widget-dialog-control">
+              <span>Show timer</span>
+              <input type="checkbox" id="toggleTimer" />
+            </label>
+            <label class="widget-dialog-control">
+              <span>Show stopwatch</span>
+              <input type="checkbox" id="toggleStopwatch" />
+            </label>
+            <label class="widget-dialog-control">
+              <span>Timer preset</span>
+              <select id="timerMinutes">
+                <option value="15">15 min</option>
+                <option value="25">25 min</option>
+                <option value="45">45 min</option>
+                <option value="60">60 min</option>
+              </select>
+            </label>
+          </div>
+          <p class="widget-dialog-note">
+            Clock, timer, and stopwatch are the only floating widgets available for now—drag the
+            W button anywhere to keep the controls in reach.
+          </p>
+        </section>
       </div>
     </div>
+  </div>
+
+  <div id="widgetLauncher" class="widget-launcher" role="button" tabindex="0" aria-label="Open widget controls">
+    <span class="widget-launcher-icon">W</span>
+  </div>
+
+  <div id="widgetOverlay" class="widget-overlay hidden" aria-label="Active widgets"></div>
 
   <div id="notesModal" class="modal hidden" role="dialog" aria-label="Notes">
       <div class="modal-backdrop" id="notesBackdrop"></div>
