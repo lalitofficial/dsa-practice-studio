@@ -29,33 +29,122 @@
       </header>
 
       <div class="content">
-        <section class="revision-grid">
-          <div class="revision-card">
-            <div class="revision-card-header">
-              <div>
-                <h2 class="section-title">Notes</h2>
-                <p class="panel-subtitle" id="notesCount">0 notes</p>
-              </div>
+        <section class="revision-hero">
+          <div class="revision-hero-main">
+            <p class="kicker">Revision Command</p>
+            <h2>Review with intent</h2>
+            <p class="panel-subtitle">
+              Centralize starred questions, notes, and momentum in one space.
+            </p>
+            <div class="revision-hero-actions">
+              <a class="btn primary" href="/">Open Dashboard</a>
+              <a class="btn ghost" href="/admin">Admin Console</a>
             </div>
-            <div class="revision-search">
-              <label for="notesSearch">Search notes</label>
-              <input id="notesSearch" type="search" placeholder="Title or note text" />
-            </div>
-            <div id="notesList" class="revision-list"></div>
           </div>
+          <div class="revision-hero-stats">
+            <div class="stat-card">
+              <div class="stat-label">Notes</div>
+              <div class="stat-value" id="revisionNotesTotal">0</div>
+              <div class="stat-meta">With notes saved</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Bookmarked</div>
+              <div class="stat-value" id="revisionStarredTotal">0</div>
+              <div class="stat-meta">Starred items</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Todo</div>
+              <div class="stat-value" id="revisionTodoTotal">0</div>
+              <div class="stat-meta">Remaining in sheet</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Last Activity</div>
+              <div class="stat-value" id="revisionLastDone">-</div>
+              <div class="stat-meta">Most recent solve</div>
+            </div>
+          </div>
+        </section>
 
-          <div class="revision-card">
-            <div class="revision-card-header">
-              <div>
-                <h2 class="section-title">Bookmarked</h2>
-                <p class="panel-subtitle" id="starredCount">0 starred</p>
+        <section class="revision-controls">
+          <div class="revision-search">
+            <label for="revisionSearch">Search</label>
+            <input id="revisionSearch" type="search" placeholder="Title, unit, or notes" />
+          </div>
+          <div class="revision-filters">
+            <select id="revisionView">
+              <option value="all" selected>All views</option>
+              <option value="notes">Notes only</option>
+              <option value="starred">Bookmarked only</option>
+            </select>
+            <select id="revisionUnit"></select>
+            <select id="revisionDifficulty"></select>
+            <select id="revisionStatus">
+              <option value="all" selected>All status</option>
+              <option value="todo">Todo</option>
+              <option value="done">Done</option>
+            </select>
+            <button class="btn ghost" type="button" id="revisionClearBtn">Clear</button>
+          </div>
+        </section>
+
+        <section class="revision-layout">
+          <aside class="revision-focus">
+            <div class="revision-card focus-card">
+              <div class="focus-header">
+                <div>
+                  <h2 class="section-title">Focus Queue</h2>
+                  <p class="panel-subtitle" id="focusCount">0 items</p>
+                </div>
+                <div class="focus-controls">
+                  <select id="focusMode">
+                    <option value="mixed" selected>Mixed</option>
+                    <option value="notes">Notes</option>
+                    <option value="starred">Starred</option>
+                  </select>
+                  <select id="focusSort">
+                    <option value="order" selected>Sheet order</option>
+                    <option value="recent">Recent done</option>
+                    <option value="alpha">Alphabetical</option>
+                  </select>
+                  <select id="focusLimit">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                  </select>
+                </div>
               </div>
+              <div id="focusCard" class="focus-card-body"></div>
+              <div class="focus-actions">
+                <button class="btn ghost" type="button" id="focusPrevBtn">Prev</button>
+                <button class="btn ghost" type="button" id="focusNextBtn">Next</button>
+                <button class="btn primary" type="button" id="focusDoneBtn">Mark done</button>
+                <button class="btn ghost" type="button" id="focusStarBtn">Star</button>
+                <button class="btn ghost" type="button" id="focusShuffleBtn">Shuffle</button>
+              </div>
+              <div id="focusQueue" class="focus-queue"></div>
             </div>
-            <div class="revision-search">
-              <label for="starredSearch">Search bookmarked</label>
-              <input id="starredSearch" type="search" placeholder="Title or unit" />
+          </aside>
+
+          <div class="revision-grid" id="revisionLibrary">
+            <div class="revision-card" id="notesCard">
+              <div class="revision-card-header">
+                <div>
+                  <h2 class="section-title">Notes</h2>
+                  <p class="panel-subtitle" id="notesCount">0 notes</p>
+                </div>
+              </div>
+              <div id="notesList" class="revision-list"></div>
             </div>
-            <div id="starredList" class="revision-list"></div>
+
+            <div class="revision-card" id="starredCard">
+              <div class="revision-card-header">
+                <div>
+                  <h2 class="section-title">Bookmarked</h2>
+                  <p class="panel-subtitle" id="starredCount">0 starred</p>
+                </div>
+              </div>
+              <div id="starredList" class="revision-list"></div>
+            </div>
           </div>
         </section>
       </div>
