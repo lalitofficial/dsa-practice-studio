@@ -807,10 +807,14 @@ function applyLauncherPosition() {
   const widgetSettings = ensureWidgetSettings();
   const pos = widgetSettings.launcherPosition;
   if (pos && Number.isFinite(pos.x) && Number.isFinite(pos.y)) {
-    elements.widgetLauncher.style.left = `${pos.x}px`;
-    elements.widgetLauncher.style.top = `${pos.y}px`;
+    const next = clampLauncherPosition(pos.x, pos.y);
+    elements.widgetLauncher.style.left = `${next.x}px`;
+    elements.widgetLauncher.style.top = `${next.y}px`;
     elements.widgetLauncher.style.right = "auto";
     elements.widgetLauncher.style.bottom = "auto";
+    if (next.x !== pos.x || next.y !== pos.y) {
+      widgetSettings.launcherPosition = { x: next.x, y: next.y };
+    }
   } else {
     elements.widgetLauncher.style.removeProperty("left");
     elements.widgetLauncher.style.removeProperty("top");
