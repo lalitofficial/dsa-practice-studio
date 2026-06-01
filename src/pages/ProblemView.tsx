@@ -220,7 +220,7 @@ export default function ProblemView() {
               </div>
             ))}
 
-          <div className="shrink-0">
+          <div className="flex min-h-0 flex-1 flex-col">
             <div className="mb-1.5 flex items-center gap-1">
               {(["notes", "sketch"] as const).map((t) => (
                 <button
@@ -236,18 +236,18 @@ export default function ProblemView() {
                 </button>
               ))}
             </div>
-            {noteTab === "notes" ? (
-              <textarea
-                value={note}
-                onChange={(e) => onNoteChange(e.target.value)}
-                placeholder="Jot down the pattern, edge cases, time/space complexity…"
-                className="h-44 w-full resize-y rounded-xl border border-slate-200 bg-white p-3 text-sm outline-none focus:border-indigo-400 dark:border-slate-800 dark:bg-slate-900"
-              />
-            ) : (
-              <div className="h-72">
+            <div className="min-h-[20rem] flex-1">
+              {noteTab === "notes" ? (
+                <textarea
+                  value={note}
+                  onChange={(e) => onNoteChange(e.target.value)}
+                  placeholder="Jot down the pattern, edge cases, time/space complexity…"
+                  className="size-full resize-none rounded-xl border border-slate-200 bg-white p-3 text-sm leading-relaxed outline-none focus:border-indigo-400 dark:border-slate-800 dark:bg-slate-900"
+                />
+              ) : (
                 <Sketchpad key={problem.id} value={problem.sketch} onChange={onSketchChange} />
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
 
