@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "migrate": "node scripts/migrate.mjs",
-    "apply-statements": "node scripts/apply-statements.mjs"
+    "apply-statements": "node scripts/apply-statements.mjs",
+    "migrate-faang": "node scripts/migrate-faang.mjs"
   },
   "dependencies": {
     "@clerk/backend": "^1.21.0",
