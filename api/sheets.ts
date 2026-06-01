@@ -26,7 +26,7 @@ export default withAuth(async ({ req, res, userId }) => {
       .collection("problems")
       .aggregate([{ $group: { _id: "$sheetId", total: { $sum: 1 } } }])
       .toArray();
-    totalMap = new Map(totals.map((t) => [String(t._id), t.total as number]));
+    totalMap = new Map(totals.map((t) => [String(t._id), t.total as number] as [string, number]));
   }
 
   const doneMap = new Map(dones.map((d) => [d._id, d.done as number]));
@@ -36,7 +36,7 @@ export default withAuth(async ({ req, res, userId }) => {
       id: s._id,
       label: s.label,
       order: s.order ?? 0,
-      total: typeof s.total === "number" ? s.total : (totalMap?.get(s._id) ?? 0),
+      total: typeof s.total === "number" ? s.total : (totalMap?.get(String(s._id)) ?? 0),
       done: doneMap.get(s._id) ?? 0,
     })),
   });
