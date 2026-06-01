@@ -22,6 +22,18 @@ export interface Problem {
   note: string;
 }
 
+export interface SearchProblem {
+  id: string;
+  sheetId: string;
+  sheetLabel: string;
+  unit: string;
+  chapter: string;
+  title: string;
+  difficulty: string;
+  done: boolean;
+  starred: boolean;
+}
+
 export interface RevisionItem {
   id: string;
   sheetId: string;

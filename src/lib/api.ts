@@ -6,7 +6,14 @@ import {
   useQueryClient,
   type QueryClient,
 } from "@tanstack/react-query";
-import type { LeetCodeStatement, Problem, ProgressPatch, RevisionItem, Sheet } from "./types";
+import type {
+  LeetCodeStatement,
+  Problem,
+  ProgressPatch,
+  RevisionItem,
+  SearchProblem,
+  Sheet,
+} from "./types";
 
 class ApiError extends Error {
   status: number;
@@ -59,6 +66,17 @@ export function useProblems(sheetId: string | undefined) {
       fetcher<{ problems: Problem[] }>(`/api/problems?sheet=${encodeURIComponent(sheetId!)}`),
     select: (d) => d.problems,
     enabled: !!sheetId,
+  });
+}
+
+export function useAllProblems(enabled = true) {
+  const fetcher = useAuthedFetch();
+  return useQuery({
+    queryKey: ["all-problems"],
+    queryFn: () => fetcher<{ problems: SearchProblem[] }>("/api/all-problems"),
+    select: (d) => d.problems,
+    enabled,
+    staleTime: 5 * 60_000,
   });
 }
 

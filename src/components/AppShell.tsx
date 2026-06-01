@@ -1,7 +1,17 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { UserButton } from "@clerk/react";
 import { useTheme } from "../lib/theme";
+import { CommandPalette } from "./CommandPalette";
+
+function SearchIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3-3" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 function HomeIcon() {
   return (
@@ -45,6 +55,18 @@ function deskClass({ isActive }: { isActive: boolean }) {
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { isDark, toggle } = useTheme();
+  const [paletteOpen, setPaletteOpen] = useState(false);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPaletteOpen((o) => !o);
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -65,6 +87,21 @@ export function AppShell({ children }: { children: ReactNode }) {
           </nav>
 
           <div className="ml-auto flex items-center gap-2">
+            <button
+              onClick={() => setPaletteOpen(true)}
+              className="hidden items-center gap-2 rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-400 hover:bg-slate-100 sm:flex dark:border-slate-700 dark:hover:bg-slate-800"
+            >
+              <SearchIcon />
+              <span>Search</span>
+              <kbd className="rounded bg-slate-100 px-1 text-xs dark:bg-slate-800">⌘K</kbd>
+            </button>
+            <button
+              onClick={() => setPaletteOpen(true)}
+              className="grid size-9 place-items-center rounded-lg text-slate-600 hover:bg-slate-100 sm:hidden dark:text-slate-300 dark:hover:bg-slate-800"
+              aria-label="Search"
+            >
+              <SearchIcon />
+            </button>
             <button
               onClick={toggle}
               className="grid size-9 place-items-center rounded-lg text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
@@ -104,6 +141,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           <StarIcon /> Revision
         </NavLink>
       </nav>
+
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
     </div>
   );
 }
