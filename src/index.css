@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+/* Class-based dark mode (toggled by adding `.dark` to <html>). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior-y: none;
+}
+
+* {
+  scrollbar-width: thin;
+}
+
+/* Keep CodeMirror readable and tidy inside our rounded panels. */
+.cm-editor {
+  height: 100%;
+  font-size: 13px;
+}
+.cm-editor .cm-scroller {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+.cm-editor.cm-focused {
+  outline: none;
+}
