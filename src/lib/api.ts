@@ -55,6 +55,7 @@ export function useSheets() {
     queryKey: ["sheets"],
     queryFn: () => fetcher<{ sheets: Sheet[] }>("/api/sheets"),
     select: (d) => d.sheets,
+    staleTime: 5 * 60_000,
   });
 }
 
@@ -66,6 +67,7 @@ export function useProblems(sheetId: string | undefined) {
       fetcher<{ problems: Problem[] }>(`/api/problems?sheet=${encodeURIComponent(sheetId!)}`),
     select: (d) => d.problems,
     enabled: !!sheetId,
+    staleTime: 5 * 60_000,
   });
 }
 
@@ -87,6 +89,7 @@ export function useProblem(problemId: string | undefined) {
     queryFn: () => fetcher<{ problem: Problem }>(`/api/problem/${problemId}`),
     select: (d) => d.problem,
     enabled: !!problemId,
+    staleTime: 5 * 60_000,
   });
 }
 

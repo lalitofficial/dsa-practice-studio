@@ -130,7 +130,11 @@ async function main() {
   const order = await db.collection("sheets").countDocuments({});
   await db
     .collection("sheets")
-    .updateOne({ _id: "faang" }, { $set: { _id: "faang", label: "FAANG", source: "github", order } }, { upsert: true });
+    .updateOne(
+      { _id: "faang" },
+      { $set: { _id: "faang", label: "FAANG", source: "github", order, total: docs.length } },
+      { upsert: true },
+    );
 
   console.log(`✓ FAANG: upserted ${result.upsertedCount}, updated ${result.modifiedCount} (total ${docs.length})`);
   await client.close();

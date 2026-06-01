@@ -153,6 +153,10 @@ async function main() {
     .collection("problems")
     .aggregate([{ $group: { _id: "$sheetId", n: { $sum: 1 } } }])
     .toArray();
+  // Cache totals on sheet docs so /api/sheets needn't scan problems each request.
+  for (const c of counts) {
+    await db.collection("sheets").updateOne({ _id: c._id }, { $set: { total: c.n } });
+  }
   console.log("→ problems per sheet:", Object.fromEntries(counts.map((c) => [c._id, c.n])));
   console.log(`✓ migration complete (${totalProblems} problems processed)`);
 

@@ -3,8 +3,16 @@ import DOMPurify from "dompurify";
 import { marked } from "marked";
 import { Sketchpad } from "./Sketchpad";
 
+// Cache rendered markdown so unchanged blocks aren't re-parsed on every render.
+const mdCache = new Map<string, string>();
 function renderMd(text: string): string {
-  return DOMPurify.sanitize(marked.parse(text, { breaks: true, async: false }) as string);
+  let html = mdCache.get(text);
+  if (html === undefined) {
+    html = DOMPurify.sanitize(marked.parse(text, { breaks: true, async: false }) as string);
+    if (mdCache.size > 500) mdCache.clear();
+    mdCache.set(text, html);
+  }
+  return html;
 }
 
 // A block-based note: text and drawing blocks interleaved in one document.

@@ -6,12 +6,10 @@ export default withAuth(async ({ req, res, userId }) => {
   if (!ensureMethod(req, res, ["GET"])) return;
   const db = await getDb();
 
-  const [sheets, totals, dones] = await Promise.all([
+  // Per-user done counts (must be computed live). Sheet totals are precomputed
+  // on the sheet docs by the migrations, so we avoid scanning every problem here.
+  const [sheets, dones] = await Promise.all([
     db.collection("sheets").find({}).sort({ order: 1 }).toArray(),
-    db
-      .collection("problems")
-      .aggregate([{ $group: { _id: "$sheetId", total: { $sum: 1 } } }])
-      .toArray(),
     db
       .collection("userProblems")
       .aggregate([
@@ -21,7 +19,16 @@ export default withAuth(async ({ req, res, userId }) => {
       .toArray(),
   ]);
 
-  const totalMap = new Map(totals.map((t) => [t._id, t.total as number]));
+  // Fallback only if a sheet is missing its cached total.
+  let totalMap: Map<string, number> | null = null;
+  if (sheets.some((s) => typeof s.total !== "number")) {
+    const totals = await db
+      .collection("problems")
+      .aggregate([{ $group: { _id: "$sheetId", total: { $sum: 1 } } }])
+      .toArray();
+    totalMap = new Map(totals.map((t) => [String(t._id), t.total as number]));
+  }
+
   const doneMap = new Map(dones.map((d) => [d._id, d.done as number]));
 
   res.json({
@@ -29,7 +36,7 @@ export default withAuth(async ({ req, res, userId }) => {
       id: s._id,
       label: s.label,
       order: s.order ?? 0,
-      total: totalMap.get(s._id) ?? 0,
+      total: typeof s.total === "number" ? s.total : (totalMap?.get(s._id) ?? 0),
       done: doneMap.get(s._id) ?? 0,
     })),
   });
