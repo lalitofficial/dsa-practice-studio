@@ -1,22 +1,20 @@
 import { useEffect, useRef, useState } from "react";
+import getStroke from "perfect-freehand";
 import { useTheme } from "../lib/theme";
 
-// A small freehand scratchpad. Strokes are stored as vectors (normalized 0..1
-// coordinates) so they're compact, crisp at any size, and undoable. The pen
-// color "ink" renders with the current theme so sketches stay visible in both
-// light and dark mode.
-interface Point {
-  x: number;
-  y: number;
-}
+// Freehand draw canvas. Strokes are vectors (normalized 0..1 points + pressure)
+// rendered with perfect-freehand, which produces a smooth, variable-width
+// outline (pressure on stylus, velocity-simulated otherwise). Rendered at device
+// pixel ratio so it stays crisp on retina / iPad.
+type PFPoint = [number, number, number]; // x, y (0..1), pressure
 interface Stroke {
   color: string | null; // null = eraser, "ink" = theme foreground
   size: number;
-  points: Point[];
+  points: PFPoint[];
 }
 
 const COLORS = ["ink", "#0ea5e9", "#ef4444", "#22c55e", "#eab308", "#a855f7"];
-const SIZES = [2, 4, 8];
+const SIZES = [3, 6, 12];
 
 function parseStrokes(value?: string): Stroke[] {
   if (!value) return [];
@@ -26,6 +24,10 @@ function parseStrokes(value?: string): Stroke[] {
   } catch {
     return [];
   }
+}
+
+function hasRealPressure(points: PFPoint[]) {
+  return points.some((p) => p[2] != null && p[2] > 0 && p[2] !== 0.5);
 }
 
 export function Sketchpad({ value, onChange }: { value?: string; onChange: (json: string) => void }) {
@@ -38,7 +40,7 @@ export function Sketchpad({ value, onChange }: { value?: string; onChange: (json
   const drawingRef = useRef(false);
 
   const [color, setColor] = useState<string>("ink");
-  const [size, setSize] = useState<number>(4);
+  const [size, setSize] = useState<number>(6);
   const [eraser, setEraser] = useState(false);
   const [, force] = useState(0);
   const rerender = () => force((n) => n + 1);
@@ -48,44 +50,43 @@ export function Sketchpad({ value, onChange }: { value?: string; onChange: (json
     if (!c) return;
     const ctx = c.getContext("2d");
     if (!ctx) return;
+    const dpr = window.devicePixelRatio || 1;
     ctx.clearRect(0, 0, c.width, c.height);
-    ctx.lineJoin = "round";
-    ctx.lineCap = "round";
     for (const s of strokesRef.current) {
+      const pts = s.points.map((p) => [p[0] * c.width, p[1] * c.height, p[2]] as PFPoint);
+      const outline = getStroke(pts, {
+        size: s.size * dpr,
+        thinning: 0.6,
+        smoothing: 0.5,
+        streamline: 0.5,
+        simulatePressure: !hasRealPressure(s.points),
+        last: !drawingRef.current,
+      });
+      if (outline.length < 2) continue;
       if (s.color === null) {
         ctx.globalCompositeOperation = "destination-out";
-        ctx.strokeStyle = "rgba(0,0,0,1)";
+        ctx.fillStyle = "rgba(0,0,0,1)";
       } else {
         ctx.globalCompositeOperation = "source-over";
-        ctx.strokeStyle = s.color === "ink" ? ink : s.color;
+        ctx.fillStyle = s.color === "ink" ? ink : s.color;
       }
-      ctx.lineWidth = s.size;
       ctx.beginPath();
-      s.points.forEach((p, i) => {
-        const x = p.x * c.width;
-        const y = p.y * c.height;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      });
-      if (s.points.length === 1) {
-        const p = s.points[0];
-        ctx.arc(p.x * c.width, p.y * c.height, s.size / 2, 0, Math.PI * 2);
-        ctx.fillStyle = ctx.strokeStyle as string;
-        ctx.fill();
-      }
-      ctx.stroke();
+      ctx.moveTo(outline[0][0], outline[0][1]);
+      for (let i = 1; i < outline.length; i++) ctx.lineTo(outline[i][0], outline[i][1]);
+      ctx.closePath();
+      ctx.fill();
     }
     ctx.globalCompositeOperation = "source-over";
   };
 
-  // Size the canvas to its container and redraw on resize / theme change.
   useEffect(() => {
     const wrap = wrapRef.current;
     const c = canvasRef.current;
     if (!wrap || !c) return;
     const fit = () => {
-      c.width = wrap.clientWidth;
-      c.height = wrap.clientHeight;
+      const dpr = window.devicePixelRatio || 1;
+      c.width = Math.max(1, wrap.clientWidth * dpr);
+      c.height = Math.max(1, wrap.clientHeight * dpr);
       draw();
     };
     fit();
@@ -95,9 +96,9 @@ export function Sketchpad({ value, onChange }: { value?: string; onChange: (json
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDark]);
 
-  const pointFromEvent = (e: React.PointerEvent): Point => {
+  const pointFromEvent = (e: React.PointerEvent): PFPoint => {
     const r = canvasRef.current!.getBoundingClientRect();
-    return { x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height };
+    return [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height, e.pressure || 0.5];
   };
 
   const onPointerDown = (e: React.PointerEvent) => {
@@ -105,7 +106,7 @@ export function Sketchpad({ value, onChange }: { value?: string; onChange: (json
     drawingRef.current = true;
     strokesRef.current.push({
       color: eraser ? null : color,
-      size: eraser ? size * 3 : size,
+      size: eraser ? size * 2.5 : size,
       points: [pointFromEvent(e)],
     });
     draw();
@@ -118,6 +119,7 @@ export function Sketchpad({ value, onChange }: { value?: string; onChange: (json
   const endStroke = () => {
     if (!drawingRef.current) return;
     drawingRef.current = false;
+    draw();
     onChange(strokesRef.current.length ? JSON.stringify(strokesRef.current) : "");
   };
 
@@ -138,7 +140,7 @@ export function Sketchpad({ value, onChange }: { value?: string; onChange: (json
     active ? "ring-2 ring-offset-1 ring-indigo-500 dark:ring-offset-slate-900" : "ring-1 ring-slate-300 dark:ring-slate-700";
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+    <div className="flex h-full flex-col">
       <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 px-2 py-1.5 dark:border-slate-800">
         <div className="flex items-center gap-1">
           {COLORS.map((cVal) => (
@@ -164,7 +166,7 @@ export function Sketchpad({ value, onChange }: { value?: string; onChange: (json
               }`}
               title={`Pen size ${s}`}
             >
-              <span className="rounded-full bg-current" style={{ width: s + 2, height: s + 2 }} />
+              <span className="rounded-full bg-current" style={{ width: s, height: s }} />
             </button>
           ))}
         </div>

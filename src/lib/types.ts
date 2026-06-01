@@ -20,6 +20,7 @@ export interface Problem {
   done: boolean;
   starred: boolean;
   note: string;
+  noteDoc?: string;
   sketch?: string;
   statement?: string;
 }
@@ -53,6 +54,7 @@ export type ProgressPatch = {
   done?: boolean;
   starred?: boolean;
   note?: string;
+  noteDoc?: string;
   sketch?: string;
 };
 

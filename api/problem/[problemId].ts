@@ -34,6 +34,7 @@ export default withAuth(async ({ req, res, userId }) => {
       done: !!u?.done,
       starred: !!u?.starred,
       note: u?.note || "",
+      noteDoc: u?.noteDoc || "",
       sketch: u?.sketch || "",
       statement: p.statement || "",
     },

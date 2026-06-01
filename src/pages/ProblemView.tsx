@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { useLeetCodeStatement, useProblem, useProblems, useUpdateProgress } from "../lib/api";
 import { leetcodeSlug } from "../lib/leetcode";
 import { EditorPanel } from "../components/EditorPanel";
-import { Sketchpad } from "../components/Sketchpad";
+import { NoteBlocks } from "../components/NoteBlocks";
 import { CenteredMessage, DifficultyBadge, EmptyState, Spinner } from "../components/ui";
 
 function youtubeEmbed(url: string): string | null {
@@ -45,15 +45,7 @@ export default function ProblemView() {
     [problem?.statement],
   );
 
-  const [note, setNote] = useState("");
-  const [noteTab, setNoteTab] = useState<"notes" | "sketch">("notes");
   const noteTimer = useRef<ReturnType<typeof setTimeout>>();
-  const sketchTimer = useRef<ReturnType<typeof setTimeout>>();
-
-  useEffect(() => {
-    setNote(problem?.note ?? "");
-  }, [problem?.id, problem?.note]);
-  useEffect(() => setNoteTab("notes"), [problem?.id]);
 
   // Remember the last opened problem so the Dashboard can offer "Resume".
   useEffect(() => {
@@ -85,18 +77,11 @@ export default function ProblemView() {
   // When we have a readable statement, keep the video tucked away so it doesn't
   // spoil the attempt. Otherwise the video IS the content — show it open.
   const hasStatement = !!statementHtml;
-  const onNoteChange = (value: string) => {
-    setNote(value);
+  const onNoteDocChange = ({ json, text }: { json: string; text: string }) => {
     clearTimeout(noteTimer.current);
     noteTimer.current = setTimeout(() => {
-      update.mutate({ problemId: problem.id, sheetId, patch: { note: value } });
+      update.mutate({ problemId: problem.id, sheetId, patch: { noteDoc: json, note: text } });
     }, 700);
-  };
-  const onSketchChange = (json: string) => {
-    clearTimeout(sketchTimer.current);
-    sketchTimer.current = setTimeout(() => {
-      update.mutate({ problemId: problem.id, sheetId, patch: { sketch: json } });
-    }, 800);
   };
 
   const idx = siblings?.findIndex((p) => p.id === problem.id) ?? -1;
@@ -220,33 +205,19 @@ export default function ProblemView() {
               </div>
             ))}
 
-          <div className="flex min-h-0 flex-1 flex-col">
-            <div className="mb-1.5 flex items-center gap-1">
-              {(["notes", "sketch"] as const).map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setNoteTab(t)}
-                  className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
-                    noteTab === t
-                      ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300"
-                      : "text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
-                  }`}
-                >
-                  {t === "notes" ? "Notes" : "Sketch"}
-                </button>
-              ))}
+          <div className="flex min-h-[22rem] flex-1 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+            <div className="flex items-center border-b border-slate-200 px-3 py-2 dark:border-slate-800">
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                Notes
+              </span>
             </div>
-            <div className="min-h-[20rem] flex-1">
-              {noteTab === "notes" ? (
-                <textarea
-                  value={note}
-                  onChange={(e) => onNoteChange(e.target.value)}
-                  placeholder="Jot down the pattern, edge cases, time/space complexity…"
-                  className="size-full resize-none rounded-xl border border-slate-200 bg-white p-3 text-sm leading-relaxed outline-none focus:border-indigo-400 dark:border-slate-800 dark:bg-slate-900"
-                />
-              ) : (
-                <Sketchpad key={problem.id} value={problem.sketch} onChange={onSketchChange} />
-              )}
+            <div className="min-h-0 flex-1">
+              <NoteBlocks
+                key={problem.id}
+                docValue={problem.noteDoc}
+                noteText={problem.note}
+                onChange={onNoteDocChange}
+              />
             </div>
           </div>
         </div>

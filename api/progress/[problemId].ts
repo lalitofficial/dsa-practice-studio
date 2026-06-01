@@ -15,6 +15,7 @@ export default withAuth(async ({ req, res, userId }) => {
     done?: boolean;
     starred?: boolean;
     note?: string;
+    noteDoc?: string;
     sketch?: string;
   };
   const db = await getDb();
@@ -34,6 +35,7 @@ export default withAuth(async ({ req, res, userId }) => {
   }
   if (typeof body.starred === "boolean") set.starred = body.starred;
   if (typeof body.note === "string") set.note = body.note;
+  if (typeof body.noteDoc === "string") set.noteDoc = body.noteDoc;
   if (typeof body.sketch === "string") set.sketch = body.sketch;
 
   const update: Record<string, unknown> = { $set: set };
