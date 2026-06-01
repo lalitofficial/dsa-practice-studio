@@ -1,8 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { useProblem, useProblems, useUpdateProgress } from "../lib/api";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import DOMPurify from "dompurify";
+import { useLeetCodeStatement, useProblem, useProblems, useUpdateProgress } from "../lib/api";
+import { leetcodeSlug } from "../lib/leetcode";
 import { EditorPanel } from "../components/EditorPanel";
 import { CenteredMessage, DifficultyBadge, EmptyState, Spinner } from "../components/ui";
+import type { LeetCodeStatement } from "../lib/types";
 
 function youtubeEmbed(url: string): string | null {
   try {
@@ -25,6 +28,14 @@ export default function ProblemView() {
   const { data: problem, isLoading, isError } = useProblem(problemId);
   const { data: siblings } = useProblems(problem?.sheetId);
   const update = useUpdateProgress();
+  const navigate = useNavigate();
+
+  const slug = problem?.leetcodeUrl ? leetcodeSlug(problem.leetcodeUrl) : undefined;
+  const statementQuery = useLeetCodeStatement(slug);
+  const cleanHtml = useMemo(
+    () => (statementQuery.data?.content ? DOMPurify.sanitize(statementQuery.data.content) : ""),
+    [statementQuery.data],
+  );
 
   const [note, setNote] = useState("");
   const noteTimer = useRef<ReturnType<typeof setTimeout>>();
@@ -32,6 +43,16 @@ export default function ProblemView() {
   useEffect(() => {
     setNote(problem?.note ?? "");
   }, [problem?.id, problem?.note]);
+
+  // Remember the last opened problem so the Dashboard can offer "Resume".
+  useEffect(() => {
+    if (problem) {
+      localStorage.setItem(
+        "dsa-last",
+        JSON.stringify({ id: problem.id, title: problem.title, sheetId: problem.sheetId }),
+      );
+    }
+  }, [problem]);
 
   if (isLoading) {
     return (
@@ -45,6 +66,9 @@ export default function ProblemView() {
   }
 
   const sheetId = problem.sheetId;
+  const solutionsUrl = problem.leetcodeUrl
+    ? problem.leetcodeUrl.replace(/\/+$/, "") + "/solutions/"
+    : "";
   const onNoteChange = (value: string) => {
     setNote(value);
     clearTimeout(noteTimer.current);
@@ -86,23 +110,45 @@ export default function ProblemView() {
         >
           {problem.starred ? "★" : "☆"}
         </button>
-        <button
-          onClick={() => update.mutate({ problemId: problem.id, sheetId, patch: { done: !problem.done } })}
-          className={`ml-auto rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-            problem.done
-              ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
-              : "bg-indigo-500 text-white hover:bg-indigo-600"
-          }`}
-        >
-          {problem.done ? "✓ Solved" : "Mark as solved"}
-        </button>
+        <div className="ml-auto flex gap-2">
+          <button
+            onClick={() => update.mutate({ problemId: problem.id, sheetId, patch: { done: !problem.done } })}
+            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+              problem.done
+                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
+                : "bg-indigo-500 text-white hover:bg-indigo-600"
+            }`}
+          >
+            {problem.done ? "✓ Solved" : "Mark as solved"}
+          </button>
+          {next && (
+            <button
+              onClick={() => {
+                update.mutate({ problemId: problem.id, sheetId, patch: { done: true } });
+                navigate(`/problem/${next.id}`);
+              }}
+              className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+              title="Mark solved and go to the next problem"
+            >
+              Solved → Next
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Resource links */}
       <div className="flex flex-wrap gap-2">
         {problem.leetcodeUrl && (
           <ResourceLink href={problem.leetcodeUrl} className="bg-amber-500 text-white hover:bg-amber-600">
-            Open on LeetCode ↗
+            Solve on LeetCode ↗
+          </ResourceLink>
+        )}
+        {solutionsUrl && (
+          <ResourceLink
+            href={solutionsUrl}
+            className="border border-slate-300 text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+          >
+            LC Solutions ↗
           </ResourceLink>
         )}
         {problem.resourceUrl && (
@@ -120,12 +166,25 @@ export default function ProblemView() {
         )}
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 lg:h-[calc(100vh-15rem)] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         {/* Learn column */}
-        <div className="space-y-5">
+        <div className="flex min-h-0 flex-col gap-4 lg:overflow-y-auto lg:pr-1">
+          <StatementBlock
+            slug={slug}
+            statement={statementQuery.data}
+            loading={statementQuery.isLoading}
+            isError={statementQuery.isError}
+            cleanHtml={cleanHtml}
+            leetcodeUrl={problem.leetcodeUrl}
+            resourceUrl={problem.resourceUrl}
+          />
+
           {embed && (
-            <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
-              <div className="aspect-video">
+            <details className="shrink-0 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
+              <summary className="cursor-pointer select-none px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800/50">
+                Watch tutorial (optional — try solving first)
+              </summary>
+              <div className="aspect-video border-t border-slate-200 dark:border-slate-800">
                 <iframe
                   src={embed}
                   title="Tutorial video"
@@ -134,9 +193,10 @@ export default function ProblemView() {
                   allowFullScreen
                 />
               </div>
-            </div>
+            </details>
           )}
-          <div>
+
+          <div className="shrink-0">
             <label className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">
               Notes
             </label>
@@ -150,10 +210,102 @@ export default function ProblemView() {
         </div>
 
         {/* Code column */}
-        <div className="h-[60vh] lg:sticky lg:top-20 lg:h-[calc(100vh-10rem)]">
-          <EditorPanel problemId={problem.id} />
+        <div className="h-[70vh] lg:h-auto">
+          <EditorPanel problemId={problem.id} leetcodeUrl={problem.leetcodeUrl} />
         </div>
       </div>
+    </div>
+  );
+}
+
+function StatementBlock({
+  slug,
+  statement,
+  loading,
+  isError,
+  cleanHtml,
+  leetcodeUrl,
+  resourceUrl,
+}: {
+  slug?: string;
+  statement?: LeetCodeStatement;
+  loading: boolean;
+  isError: boolean;
+  cleanHtml: string;
+  leetcodeUrl: string;
+  resourceUrl: string;
+}) {
+  const card = "shrink-0 rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900";
+
+  // Concept lessons (Striver basics etc.) have no LeetCode problem.
+  if (!slug) {
+    return (
+      <div className={card}>
+        <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">Concept lesson</h2>
+        <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
+          This item teaches a concept rather than a single problem. Read the article and watch the
+          tutorial, then practice in the editor.
+        </p>
+        {resourceUrl && (
+          <a
+            href={resourceUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-3 inline-block rounded-lg bg-indigo-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-600"
+          >
+            Read the article ↗
+          </a>
+        )}
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className={`${card} flex items-center gap-3 text-sm text-slate-500`}>
+        <Spinner /> Loading problem…
+      </div>
+    );
+  }
+
+  if (isError || statement?.premium || !cleanHtml) {
+    return (
+      <div className={card}>
+        <p className="text-sm text-slate-500 dark:text-slate-400">
+          {statement?.premium
+            ? "This is a LeetCode Premium problem, so the statement can't be shown here."
+            : "Couldn't load the problem statement here."}
+        </p>
+        <a
+          href={leetcodeUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-3 inline-block rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600"
+        >
+          Read on LeetCode ↗
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div className={card}>
+      {statement && statement.tags.length > 0 && (
+        <div className="mb-3 flex flex-wrap gap-1.5">
+          {statement.tags.map((t) => (
+            <span
+              key={t}
+              className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+      )}
+      <div
+        className="lc-statement text-slate-700 dark:text-slate-300"
+        dangerouslySetInnerHTML={{ __html: cleanHtml }}
+      />
     </div>
   );
 }

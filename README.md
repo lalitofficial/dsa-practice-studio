@@ -6,8 +6,10 @@ synced across **phone, iPad, and Mac** from a single URL.
 
 - **Curated content** — Striver A→Z (455 problems) + AlgoMaster (300), grouped by topic, each
   with LeetCode / YouTube / article links and difficulty.
-- **Built-in editor** — CodeMirror with Python / C++ / Java / JavaScript tabs and autosave to your
-  account (write & save; run/submit on LeetCode via the link).
+- **Read & solve in-app** — the LeetCode problem statement is fetched and rendered right next to
+  the editor, so you can attempt it first-hand without leaving the app.
+- **Built-in editor** — CodeMirror with Python / C++ / Java / JavaScript tabs, autosave, full-screen
+  mode, font-size/word-wrap controls, and one-click "copy code → open on LeetCode".
 - **Your progress, everywhere** — done/star/notes per problem, synced via your login.
 - **Installable** — add it to your iPhone/iPad home screen (PWA).
 
@@ -102,6 +104,7 @@ api/                 Vercel serverless functions (Node + MongoDB + Clerk)
   progress/[id].ts   POST /api/progress/:id   (done / starred / note)
   solutions/[id].ts  GET|PUT /api/solutions/:id
   revision.ts        GET  /api/revision
+  leetcode/[slug].ts GET  /api/leetcode/:slug  (proxies LeetCode's public statement)
 src/
   pages/             Dashboard, SheetView, ProblemView, Revision
   components/        AppShell, EditorPanel, SignInScreen, ui atoms

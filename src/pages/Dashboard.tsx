@@ -3,6 +3,15 @@ import { useUser } from "@clerk/react";
 import { useSheets } from "../lib/api";
 import { CenteredMessage, EmptyState, ProgressRing, Spinner } from "../components/ui";
 
+function resumeTarget(): { id: string; title: string; sheetId: string } | null {
+  try {
+    const raw = localStorage.getItem("dsa-last");
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function Dashboard() {
   const { user } = useUser();
   const { data: sheets, isLoading, isError } = useSheets();
@@ -25,9 +34,10 @@ export default function Dashboard() {
   const done = sheets.reduce((acc, s) => acc + s.done, 0);
   const overall = total ? (done / total) * 100 : 0;
   const greeting = user?.firstName ? `Welcome back, ${user.firstName}` : "Welcome back";
+  const last = resumeTarget();
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto max-w-5xl space-y-8">
       <section className="flex flex-col items-center gap-5 rounded-2xl border border-slate-200 bg-white p-6 sm:flex-row sm:p-8 dark:border-slate-800 dark:bg-slate-900">
         <ProgressRing value={overall} size={104} stroke={10} />
         <div className="text-center sm:text-left">
@@ -40,6 +50,21 @@ export default function Dashboard() {
           </p>
         </div>
       </section>
+
+      {last && (
+        <Link
+          to={`/problem/${last.id}`}
+          className="flex items-center gap-3 rounded-2xl border border-indigo-200 bg-indigo-50 p-4 transition-colors hover:bg-indigo-100 dark:border-indigo-500/30 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20"
+        >
+          <span className="rounded-md bg-indigo-500 px-2 py-0.5 text-xs font-semibold text-white">
+            Resume
+          </span>
+          <span className="min-w-0 flex-1 truncate text-sm font-medium text-indigo-800 dark:text-indigo-200">
+            {last.title}
+          </span>
+          <span className="text-indigo-400">→</span>
+        </Link>
+      )}
 
       <section>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">

@@ -42,3 +42,11 @@ export type ProgressPatch = {
 };
 
 export type Language = "python" | "cpp" | "java" | "javascript";
+
+export interface LeetCodeStatement {
+  title: string;
+  difficulty: string;
+  content: string;
+  tags: string[];
+  premium: boolean;
+}

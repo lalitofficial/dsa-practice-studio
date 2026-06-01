@@ -63,7 +63,7 @@ export default function SheetView() {
     });
 
   return (
-    <div className="space-y-5">
+    <div className="mx-auto max-w-4xl space-y-5">
       <div>
         <Link to="/" className="text-sm text-slate-500 hover:text-indigo-600 dark:text-slate-400">
           ← All tracks

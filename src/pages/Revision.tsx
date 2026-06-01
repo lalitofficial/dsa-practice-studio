@@ -37,7 +37,7 @@ export default function Revision() {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="mx-auto max-w-5xl space-y-5">
       <div className="flex items-end justify-between gap-4">
         <h1 className="text-2xl font-bold">Revision</h1>
         <span className="text-sm text-slate-500 dark:text-slate-400">{items.length} items</span>

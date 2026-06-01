@@ -6,7 +6,7 @@ import {
   useQueryClient,
   type QueryClient,
 } from "@tanstack/react-query";
-import type { Problem, ProgressPatch, RevisionItem, Sheet } from "./types";
+import type { LeetCodeStatement, Problem, ProgressPatch, RevisionItem, Sheet } from "./types";
 
 class ApiError extends Error {
   status: number;
@@ -78,6 +78,17 @@ export function useRevision() {
     queryKey: ["revision"],
     queryFn: () => fetcher<{ items: RevisionItem[] }>("/api/revision"),
     select: (d) => d.items,
+  });
+}
+
+export function useLeetCodeStatement(slug: string | undefined) {
+  const fetcher = useAuthedFetch();
+  return useQuery({
+    queryKey: ["leetcode", slug],
+    queryFn: () => fetcher<LeetCodeStatement>(`/api/leetcode/${slug}`),
+    enabled: !!slug,
+    staleTime: Infinity,
+    retry: 0,
   });
 }
 

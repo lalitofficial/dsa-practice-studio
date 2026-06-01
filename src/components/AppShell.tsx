@@ -49,7 +49,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-950/80">
-        <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4">
+        <div className="mx-auto flex h-14 max-w-[1400px] items-center gap-2 px-4">
           <Link to="/" className="flex items-center gap-2 font-semibold">
             <span className="grid size-8 place-items-center rounded-lg bg-indigo-500 text-white">⌘</span>
             <span className="hidden sm:inline">DSA Mastery</span>
@@ -78,7 +78,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 pb-24 pt-6 sm:pb-10">{children}</main>
+      <main className="mx-auto max-w-[1400px] px-4 pb-24 pt-6 sm:pb-10">{children}</main>
 
       {/* Mobile bottom navigation */}
       <nav className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-2 border-t border-slate-200 bg-white/95 backdrop-blur sm:hidden dark:border-slate-800 dark:bg-slate-950/95">

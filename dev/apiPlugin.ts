@@ -20,6 +20,7 @@ const ROUTES: ApiRoute[] = [
   { pattern: /^\/api\/problem\/([^/]+)\/?$/, module: "/api/problem/[problemId].ts", param: "problemId" },
   { pattern: /^\/api\/progress\/([^/]+)\/?$/, module: "/api/progress/[problemId].ts", param: "problemId" },
   { pattern: /^\/api\/solutions\/([^/]+)\/?$/, module: "/api/solutions/[problemId].ts", param: "problemId" },
+  { pattern: /^\/api\/leetcode\/([^/]+)\/?$/, module: "/api/leetcode/[slug].ts", param: "slug" },
 ];
 
 function readBody(req: IncomingMessage): Promise<unknown> {

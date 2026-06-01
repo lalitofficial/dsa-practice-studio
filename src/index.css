@@ -19,14 +19,62 @@ body {
   scrollbar-width: thin;
 }
 
-/* Keep CodeMirror readable and tidy inside our rounded panels. */
+/* Make CodeMirror fill its container (the @uiw wrapper + the editor itself). */
+.cm-theme,
 .cm-editor {
   height: 100%;
-  font-size: 13px;
 }
 .cm-editor .cm-scroller {
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 }
 .cm-editor.cm-focused {
   outline: none;
+}
+
+/* Rendered LeetCode problem statement (sanitized HTML). */
+.lc-statement {
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+.lc-statement p {
+  margin: 0.6em 0;
+}
+.lc-statement pre {
+  margin: 0.7em 0;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(100, 116, 139, 0.14);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  font-size: 0.85em;
+}
+.lc-statement :not(pre) > code {
+  padding: 0.1em 0.35em;
+  border-radius: 0.3rem;
+  background: rgba(100, 116, 139, 0.18);
+  font-size: 0.85em;
+}
+.lc-statement ul,
+.lc-statement ol {
+  margin: 0.6em 0;
+  padding-left: 1.3em;
+}
+.lc-statement ul {
+  list-style: disc;
+}
+.lc-statement ol {
+  list-style: decimal;
+}
+.lc-statement strong {
+  font-weight: 600;
+}
+.lc-statement img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 0.5em 0;
+}
+.lc-statement a {
+  color: #6366f1;
+  text-decoration: underline;
 }
