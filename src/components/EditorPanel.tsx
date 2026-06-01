@@ -186,19 +186,18 @@ function EditorInner({
   const panel = (
     <div className="flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
       <div className="flex flex-wrap items-center gap-1 border-b border-slate-200 px-2 py-1.5 dark:border-slate-800">
-        {LANG_ORDER.map((l) => (
-          <button
-            key={l}
-            onClick={() => switchLang(l)}
-            className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
-              l === lang
-                ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300"
-                : "text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
-            }`}
-          >
-            {LANGS[l].label}
-          </button>
-        ))}
+        <select
+          value={lang}
+          onChange={(e) => switchLang(e.target.value as Language)}
+          className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-700 outline-none focus:border-indigo-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+          title="Language"
+        >
+          {LANG_ORDER.map((l) => (
+            <option key={l} value={l}>
+              {LANGS[l].label}
+            </option>
+          ))}
+        </select>
 
         <div className="ml-auto flex items-center gap-1">
           <button onClick={() => setFontSize((s) => Math.max(11, s - 1))} className={action} title="Smaller font">

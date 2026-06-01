@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import DOMPurify from "dompurify";
+import { marked } from "marked";
 import { Sketchpad } from "./Sketchpad";
+
+function renderMd(text: string): string {
+  return DOMPurify.sanitize(marked.parse(text, { breaks: true, async: false }) as string);
+}
 
 // A block-based note: text and drawing blocks interleaved in one document.
 // Persisted as JSON (`noteDoc`); the parent also derives plain text (from the
@@ -29,11 +35,17 @@ function AutoText({
   value,
   onChange,
   onFocus,
+  onEnter,
+  onBackspaceEmpty,
+  autoFocus,
   placeholder,
 }: {
   value: string;
   onChange: (v: string) => void;
   onFocus?: () => void;
+  onEnter?: () => void;
+  onBackspaceEmpty?: () => void;
+  autoFocus?: boolean;
   placeholder?: string;
 }) {
   const ref = useRef<HTMLTextAreaElement>(null);
@@ -45,6 +57,40 @@ function AutoText({
     }
   };
   useEffect(resize, [value]);
+  useEffect(() => {
+    if (autoFocus && ref.current) {
+      const el = ref.current;
+      el.focus();
+      const n = el.value.length;
+      el.setSelectionRange(n, n);
+    }
+  }, [autoFocus]);
+
+  // Wrap the selection (or caret) with a markdown marker, e.g. ** for bold.
+  const wrap = (marker: string) => {
+    const el = ref.current;
+    if (!el) return;
+    const s = el.selectionStart;
+    const e = el.selectionEnd;
+    const next = value.slice(0, s) + marker + value.slice(s, e) + marker + value.slice(e);
+    onChange(next);
+    requestAnimationFrame(() => {
+      if (!ref.current) return;
+      ref.current.focus();
+      ref.current.setSelectionRange(s + marker.length, e + marker.length);
+    });
+  };
+
+  const onKeyDown = (ev: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const mod = ev.metaKey || ev.ctrlKey;
+    const k = ev.key.toLowerCase();
+    if (mod && k === "b") return ev.preventDefault(), wrap("**");
+    if (mod && k === "i") return ev.preventDefault(), wrap("*");
+    if (mod && k === "e") return ev.preventDefault(), wrap("`");
+    if (ev.key === "Enter" && !ev.shiftKey) return ev.preventDefault(), onEnter?.();
+    if (ev.key === "Backspace" && value === "") return ev.preventDefault(), onBackspaceEmpty?.();
+  };
+
   return (
     <textarea
       ref={ref}
@@ -52,9 +98,10 @@ function AutoText({
       onChange={(e) => onChange(e.target.value)}
       onInput={resize}
       onFocus={onFocus}
+      onKeyDown={onKeyDown}
       placeholder={placeholder}
       rows={1}
-      className="w-full resize-none border-0 bg-transparent text-sm leading-relaxed outline-none antialiased"
+      className="w-full resize-none border-0 bg-transparent font-mono text-sm leading-relaxed outline-none antialiased"
     />
   );
 }
@@ -71,6 +118,13 @@ export function NoteBlocks({
   const [blocks, setBlocks] = useState<Block[]>(() => seed(docValue, noteText));
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [slashId, setSlashId] = useState<string | null>(null); // block showing the "/" menu
+  const [focusId, setFocusId] = useState<string | null>(null); // text block to focus next
+
+  // Make the first empty text block editable on open (no focus-steal).
+  useEffect(() => {
+    if (blocks.length === 1 && blocks[0].type === "text") setSelectedId(blocks[0].id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const commit = (next: Block[]) => {
     setBlocks(next);
@@ -118,6 +172,27 @@ export function NoteBlocks({
       type === "text" ? { id: uid(), type, text: "" } : { id: uid(), type, strokes: "" },
     ]);
   const removeBlock = (id: string) => commit(blocks.filter((b) => b.id !== id));
+  // Enter at the end of a text block -> new text block below (and focus it).
+  const addAfter = (id: string) => {
+    const i = blocks.findIndex((b) => b.id === id);
+    const nb: Block = { id: uid(), type: "text", text: "" };
+    setSlashId(null);
+    setSelectedId(nb.id);
+    setFocusId(nb.id);
+    commit([...blocks.slice(0, i + 1), nb, ...blocks.slice(i + 1)]);
+  };
+  // Backspace on an empty block -> delete it and focus the previous block.
+  const removeAndFocusPrev = (id: string) => {
+    if (blocks.length <= 1) return;
+    const i = blocks.findIndex((b) => b.id === id);
+    const neighbour = blocks[i - 1] ?? blocks[i + 1];
+    setSlashId(null);
+    if (neighbour) {
+      setSelectedId(neighbour.id);
+      if (neighbour.type === "text") setFocusId(neighbour.id);
+    }
+    commit(blocks.filter((b) => b.id !== id));
+  };
   const move = (id: string, dir: -1 | 1) => {
     const i = blocks.findIndex((b) => b.id === id);
     const j = i + dir;
@@ -170,11 +245,15 @@ export function NoteBlocks({
                 </div>
               )}
               {b.type === "text" ? (
+                selected ? (
                 <>
                   <AutoText
                     value={b.text}
                     onChange={(t) => updateText(b.id, t)}
                     onFocus={() => setSelectedId(b.id)}
+                    onEnter={() => addAfter(b.id)}
+                    onBackspaceEmpty={() => removeAndFocusPrev(b.id)}
+                    autoFocus={focusId === b.id}
                     placeholder="Write, or type / to add a block…"
                   />
                   {slashId === b.id && (
@@ -195,6 +274,21 @@ export function NoteBlocks({
                     </div>
                   )}
                 </>
+                ) : (
+                  <div
+                    onClick={() => {
+                      setSelectedId(b.id);
+                      setFocusId(b.id);
+                    }}
+                    className="md-rich cursor-text text-sm leading-relaxed text-slate-700 dark:text-slate-300"
+                  >
+                    {b.text.trim() ? (
+                      <div dangerouslySetInnerHTML={{ __html: renderMd(b.text) }} />
+                    ) : (
+                      <span className="text-slate-400">Empty — click to write, or / for blocks</span>
+                    )}
+                  </div>
+                )
               ) : (
                 <div
                   className={`overflow-hidden rounded-lg border ${

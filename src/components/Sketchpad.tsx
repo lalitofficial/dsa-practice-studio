@@ -64,9 +64,9 @@ export function Sketchpad({
       const pts = s.points.map((p) => [p[0] * c.width, p[1] * c.height, p[2]] as PFPoint);
       const outline = getStroke(pts, {
         size: s.size * dpr,
-        thinning: 0.6,
-        smoothing: 0.5,
-        streamline: 0.5,
+        thinning: 0.5,
+        smoothing: 0.7,
+        streamline: 0.65,
         simulatePressure: !hasRealPressure(s.points),
         last: !drawingRef.current,
       });
@@ -104,9 +104,9 @@ export function Sketchpad({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDark]);
 
-  const pointFromEvent = (e: React.PointerEvent): PFPoint => {
+  const pointFromXY = (clientX: number, clientY: number, pressure: number): PFPoint => {
     const r = canvasRef.current!.getBoundingClientRect();
-    return [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height, e.pressure || 0.5];
+    return [(clientX - r.left) / r.width, (clientY - r.top) / r.height, pressure || 0.5];
   };
 
   const onPointerDown = (e: React.PointerEvent) => {
@@ -115,13 +115,23 @@ export function Sketchpad({
     strokesRef.current.push({
       color: eraser ? null : color,
       size: eraser ? size * 2.5 : size,
-      points: [pointFromEvent(e)],
+      points: [pointFromXY(e.clientX, e.clientY, e.pressure)],
     });
     draw();
   };
   const onPointerMove = (e: React.PointerEvent) => {
     if (!drawingRef.current) return;
-    strokesRef.current[strokesRef.current.length - 1].points.push(pointFromEvent(e));
+    const stroke = strokesRef.current[strokesRef.current.length - 1];
+    // Coalesced events capture the high-frequency points the browser batched
+    // since the last frame — much smoother on fast strokes and stylus input.
+    const native = e.nativeEvent;
+    const coalesced =
+      typeof native.getCoalescedEvents === "function" ? native.getCoalescedEvents() : [];
+    if (coalesced.length) {
+      for (const ev of coalesced) stroke.points.push(pointFromXY(ev.clientX, ev.clientY, ev.pressure));
+    } else {
+      stroke.points.push(pointFromXY(e.clientX, e.clientY, e.pressure));
+    }
     draw();
   };
   const endStroke = () => {

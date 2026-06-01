@@ -25,6 +25,7 @@
     "@uiw/react-codemirror": "^4.23.7",
     "dockview": "^6.6.1",
     "dompurify": "^3.4.7",
+    "marked": "^18.0.4",
     "mongodb": "^6.12.0",
     "perfect-freehand": "^1.2.3",
     "react": "^18.3.1",
