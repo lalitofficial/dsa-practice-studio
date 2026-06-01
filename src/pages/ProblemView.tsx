@@ -69,6 +69,10 @@ export default function ProblemView() {
   const solutionsUrl = problem.leetcodeUrl
     ? problem.leetcodeUrl.replace(/\/+$/, "") + "/solutions/"
     : "";
+  // When we have a readable LeetCode statement, keep the video tucked away so it
+  // doesn't spoil the attempt. Otherwise (concept lessons / takeuforward-only
+  // problems, which can't be embedded), the video IS the content — show it open.
+  const hasStatement = !!cleanHtml;
   const onNoteChange = (value: string) => {
     setNote(value);
     clearTimeout(noteTimer.current);
@@ -179,22 +183,19 @@ export default function ProblemView() {
             resourceUrl={problem.resourceUrl}
           />
 
-          {embed && (
-            <details className="shrink-0 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
-              <summary className="cursor-pointer select-none px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800/50">
-                Watch tutorial (optional — try solving first)
-              </summary>
-              <div className="aspect-video border-t border-slate-200 dark:border-slate-800">
-                <iframe
-                  src={embed}
-                  title="Tutorial video"
-                  className="size-full"
-                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
+          {embed &&
+            (hasStatement ? (
+              <details className="shrink-0 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
+                <summary className="cursor-pointer select-none px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800/50">
+                  Watch tutorial (optional — try solving first)
+                </summary>
+                <VideoFrame embed={embed} bordered />
+              </details>
+            ) : (
+              <div className="shrink-0 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
+                <VideoFrame embed={embed} />
               </div>
-            </details>
-          )}
+            ))}
 
           <div className="shrink-0">
             <label className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">
@@ -241,10 +242,10 @@ function StatementBlock({
   if (!slug) {
     return (
       <div className={card}>
-        <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">Concept lesson</h2>
+        <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">Guided lesson</h2>
         <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
-          This item teaches a concept rather than a single problem. Read the article and watch the
-          tutorial, then practice in the editor.
+          This one links to a takeuforward tutorial (which can't be embedded here). Watch the video
+          below and open the article for the full explanation, then practice in the editor.
         </p>
         {resourceUrl && (
           <a
@@ -305,6 +306,20 @@ function StatementBlock({
       <div
         className="lc-statement text-slate-700 dark:text-slate-300"
         dangerouslySetInnerHTML={{ __html: cleanHtml }}
+      />
+    </div>
+  );
+}
+
+function VideoFrame({ embed, bordered = false }: { embed: string; bordered?: boolean }) {
+  return (
+    <div className={`aspect-video ${bordered ? "border-t border-slate-200 dark:border-slate-800" : ""}`}>
+      <iframe
+        src={embed}
+        title="Tutorial video"
+        className="size-full"
+        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
       />
     </div>
   );
