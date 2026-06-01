@@ -34,6 +34,7 @@ export default withAuth(async ({ req, res, userId }) => {
       done: !!u?.done,
       starred: !!u?.starred,
       note: u?.note || "",
+      statement: p.statement || "",
     },
   });
 });

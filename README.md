@@ -66,9 +66,11 @@ CLERK_SECRET_KEY="sk_test_..."
 
 ```bash
 npm install
-npm run migrate     # loads Striver + AlgoMaster into MongoDB (idempotent — safe to re-run)
+npm run migrate            # loads Striver + AlgoMaster into MongoDB (idempotent)
+npm run apply-statements   # adds in-app statements for Striver items without a LeetCode link
 ```
-You should see `problems per sheet: { striver: 455, algomaster: 300 }`.
+You should see `problems per sheet: { striver: 455, algomaster: 300 }` and
+`statements applied to 186 of 186 link-less problems`.
 
 ## 3. Run locally
 

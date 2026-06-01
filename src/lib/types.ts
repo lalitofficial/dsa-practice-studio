@@ -20,6 +20,7 @@ export interface Problem {
   done: boolean;
   starred: boolean;
   note: string;
+  statement?: string;
 }
 
 export interface SearchProblem {

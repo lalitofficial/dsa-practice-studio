@@ -5,7 +5,6 @@ import { useLeetCodeStatement, useProblem, useProblems, useUpdateProgress } from
 import { leetcodeSlug } from "../lib/leetcode";
 import { EditorPanel } from "../components/EditorPanel";
 import { CenteredMessage, DifficultyBadge, EmptyState, Spinner } from "../components/ui";
-import type { LeetCodeStatement } from "../lib/types";
 
 function youtubeEmbed(url: string): string | null {
   try {
@@ -35,6 +34,11 @@ export default function ProblemView() {
   const cleanHtml = useMemo(
     () => (statementQuery.data?.content ? DOMPurify.sanitize(statementQuery.data.content) : ""),
     [statementQuery.data],
+  );
+  // Our own authored statement (for problems that have no LeetCode link).
+  const storedHtml = useMemo(
+    () => (problem?.statement ? DOMPurify.sanitize(problem.statement) : ""),
+    [problem?.statement],
   );
 
   const [note, setNote] = useState("");
@@ -69,10 +73,11 @@ export default function ProblemView() {
   const solutionsUrl = problem.leetcodeUrl
     ? problem.leetcodeUrl.replace(/\/+$/, "") + "/solutions/"
     : "";
-  // When we have a readable LeetCode statement, keep the video tucked away so it
-  // doesn't spoil the attempt. Otherwise (concept lessons / takeuforward-only
-  // problems, which can't be embedded), the video IS the content — show it open.
-  const hasStatement = !!cleanHtml;
+  // Prefer the live LeetCode statement; fall back to our authored one.
+  const statementHtml = cleanHtml || storedHtml;
+  // When we have a readable statement, keep the video tucked away so it doesn't
+  // spoil the attempt. Otherwise the video IS the content — show it open.
+  const hasStatement = !!statementHtml;
   const onNoteChange = (value: string) => {
     setNote(value);
     clearTimeout(noteTimer.current);
@@ -175,10 +180,10 @@ export default function ProblemView() {
         <div className="flex min-h-0 flex-col gap-4 lg:overflow-y-auto lg:pr-1">
           <StatementBlock
             slug={slug}
-            statement={statementQuery.data}
-            loading={statementQuery.isLoading}
-            isError={statementQuery.isError}
-            cleanHtml={cleanHtml}
+            html={statementHtml}
+            tags={cleanHtml ? statementQuery.data?.tags : undefined}
+            loading={statementQuery.isLoading && !storedHtml}
+            premium={statementQuery.data?.premium}
             leetcodeUrl={problem.leetcodeUrl}
             resourceUrl={problem.resourceUrl}
           />
@@ -221,31 +226,63 @@ export default function ProblemView() {
 
 function StatementBlock({
   slug,
-  statement,
+  html,
+  tags,
   loading,
-  isError,
-  cleanHtml,
+  premium,
   leetcodeUrl,
   resourceUrl,
 }: {
   slug?: string;
-  statement?: LeetCodeStatement;
+  html: string;
+  tags?: string[];
   loading: boolean;
-  isError: boolean;
-  cleanHtml: string;
+  premium?: boolean;
   leetcodeUrl: string;
   resourceUrl: string;
 }) {
   const card = "shrink-0 rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900";
 
-  // Concept lessons (Striver basics etc.) have no LeetCode problem.
+  // We have a statement to show (LeetCode or authored).
+  if (html) {
+    return (
+      <div className={card}>
+        {tags && tags.length > 0 && (
+          <div className="mb-3 flex flex-wrap gap-1.5">
+            {tags.map((t) => (
+              <span
+                key={t}
+                className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        )}
+        <div
+          className="lc-statement text-slate-700 dark:text-slate-300"
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className={`${card} flex items-center gap-3 text-sm text-slate-500`}>
+        <Spinner /> Loading problem…
+      </div>
+    );
+  }
+
+  // No LeetCode link and no authored statement — a pure concept lesson.
   if (!slug) {
     return (
       <div className={card}>
         <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">Guided lesson</h2>
         <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
-          This one links to a takeuforward tutorial (which can't be embedded here). Watch the video
-          below and open the article for the full explanation, then practice in the editor.
+          Watch the video below and open the article for the full explanation, then practice in the
+          editor.
         </p>
         {resourceUrl && (
           <a
@@ -261,52 +298,22 @@ function StatementBlock({
     );
   }
 
-  if (loading) {
-    return (
-      <div className={`${card} flex items-center gap-3 text-sm text-slate-500`}>
-        <Spinner /> Loading problem…
-      </div>
-    );
-  }
-
-  if (isError || statement?.premium || !cleanHtml) {
-    return (
-      <div className={card}>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          {statement?.premium
-            ? "This is a LeetCode Premium problem, so the statement can't be shown here."
-            : "Couldn't load the problem statement here."}
-        </p>
-        <a
-          href={leetcodeUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-3 inline-block rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600"
-        >
-          Read on LeetCode ↗
-        </a>
-      </div>
-    );
-  }
-
+  // LeetCode link present but the statement couldn't be loaded (error / premium).
   return (
     <div className={card}>
-      {statement && statement.tags.length > 0 && (
-        <div className="mb-3 flex flex-wrap gap-1.5">
-          {statement.tags.map((t) => (
-            <span
-              key={t}
-              className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500 dark:bg-slate-800 dark:text-slate-400"
-            >
-              {t}
-            </span>
-          ))}
-        </div>
-      )}
-      <div
-        className="lc-statement text-slate-700 dark:text-slate-300"
-        dangerouslySetInnerHTML={{ __html: cleanHtml }}
-      />
+      <p className="text-sm text-slate-500 dark:text-slate-400">
+        {premium
+          ? "This is a LeetCode Premium problem, so the statement can't be shown here."
+          : "Couldn't load the problem statement here."}
+      </p>
+      <a
+        href={leetcodeUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="mt-3 inline-block rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600"
+      >
+        Read on LeetCode ↗
+      </a>
     </div>
   );
 }

@@ -9,7 +9,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "migrate": "node scripts/migrate.mjs"
+    "migrate": "node scripts/migrate.mjs",
+    "apply-statements": "node scripts/apply-statements.mjs"
   },
   "dependencies": {
     "@clerk/backend": "^1.21.0",
