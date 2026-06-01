@@ -70,6 +70,7 @@ export function NoteBlocks({
 }) {
   const [blocks, setBlocks] = useState<Block[]>(() => seed(docValue, noteText));
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [slashId, setSlashId] = useState<string | null>(null); // block showing the "/" menu
 
   const commit = (next: Block[]) => {
     setBlocks(next);
@@ -82,8 +83,33 @@ export function NoteBlocks({
     onChange({ json, text });
   };
 
-  const updateText = (id: string, text: string) =>
+  const updateText = (id: string, text: string) => {
     commit(blocks.map((b) => (b.id === id && b.type === "text" ? { ...b, text } : b)));
+    // Typing "/" on an (otherwise empty) block opens the insert menu.
+    if (text === "/") setSlashId(id);
+    else if (slashId === id) setSlashId(null);
+  };
+  // Insert a block via the "/" menu: clears the slash and adds the chosen type.
+  const insertViaSlash = (id: string, type: Block["type"]) => {
+    setSlashId(null);
+    const i = blocks.findIndex((b) => b.id === id);
+    if (i < 0) return;
+    let next: Block[] = blocks.map((b) =>
+      b.id === id && b.type === "text" ? { ...b, text: "" } : b,
+    );
+    if (type === "draw") {
+      const drawBlock: Block = { id: uid(), type: "draw", strokes: "" };
+      next = [...next.slice(0, i + 1), drawBlock, ...next.slice(i + 1)];
+      const last = next[next.length - 1];
+      if (last.type !== "text") next = [...next, { id: uid(), type: "text", text: "" }];
+      setSelectedId(drawBlock.id);
+    } else {
+      const textBlock: Block = { id: uid(), type: "text", text: "" };
+      next = [...next.slice(0, i + 1), textBlock, ...next.slice(i + 1)];
+      setSelectedId(textBlock.id);
+    }
+    commit(next);
+  };
   const updateDraw = (id: string, strokes: string) =>
     commit(blocks.map((b) => (b.id === id && b.type === "draw" ? { ...b, strokes } : b)));
   const addBlock = (type: Block["type"]) =>
@@ -109,7 +135,10 @@ export function NoteBlocks({
       <div
         className="min-h-0 flex-1 space-y-1 overflow-y-auto p-2"
         onClick={(e) => {
-          if (e.target === e.currentTarget) setSelectedId(null);
+          if (e.target === e.currentTarget) {
+            setSelectedId(null);
+            setSlashId(null);
+          }
         }}
       >
         {blocks.map((b, i) => {
@@ -141,12 +170,31 @@ export function NoteBlocks({
                 </div>
               )}
               {b.type === "text" ? (
-                <AutoText
-                  value={b.text}
-                  onChange={(t) => updateText(b.id, t)}
-                  onFocus={() => setSelectedId(b.id)}
-                  placeholder="Write your thoughts — patterns, edge cases, complexity…"
-                />
+                <>
+                  <AutoText
+                    value={b.text}
+                    onChange={(t) => updateText(b.id, t)}
+                    onFocus={() => setSelectedId(b.id)}
+                    placeholder="Write, or type / to add a block…"
+                  />
+                  {slashId === b.id && (
+                    <div className="absolute left-2 top-9 z-20 w-44 rounded-lg border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-700 dark:bg-slate-800">
+                      <p className="px-2 py-1 text-[11px] uppercase tracking-wide text-slate-400">Add block</p>
+                      <button
+                        onClick={() => insertViaSlash(b.id, "text")}
+                        className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700"
+                      >
+                        ¶ Text
+                      </button>
+                      <button
+                        onClick={() => insertViaSlash(b.id, "draw")}
+                        className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700"
+                      >
+                        ✎ Drawing
+                      </button>
+                    </div>
+                  )}
+                </>
               ) : (
                 <div
                   className={`overflow-hidden rounded-lg border ${
