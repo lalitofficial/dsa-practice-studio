@@ -70,16 +70,16 @@ You should see `problems per sheet: { striver: 455, algomaster: 300 }`.
 
 ## 3. Run locally
 
-The app and the `/api` functions are served together by the Vercel CLI:
-
 ```bash
-npm i -g vercel      # one time
-vercel dev           # http://localhost:3000
+npm run dev          # http://localhost:5173
 ```
-Sign in, pick a track, solve, take notes, type code → reload and everything persists.
+That's it — the UI **and** the `/api` functions run together. In dev, a small Vite plugin
+(`dev/apiPlugin.ts`) executes the same `/api` handlers in-process against your MongoDB + Clerk,
+so no Vercel CLI or login is needed locally. Sign in, pick a track, solve, take notes, type code →
+reload and everything persists.
 
-> `npm run dev` runs only the UI (Vite, port 5173); the `/api` routes won't exist without
-> `vercel dev`. Use `vercel dev` for full local development.
+> Production uses the real Vercel serverless functions (the identical handlers). If you prefer to
+> mirror that locally you can also `npm i -g vercel && vercel dev`, but it's not required.
 
 ## 4. Deploy
 
