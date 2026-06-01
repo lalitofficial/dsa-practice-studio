@@ -10,7 +10,8 @@ synced across **phone, iPad, and Mac** from a single URL.
   the editor, so you can attempt it first-hand without leaving the app.
 - **Built-in editor** — CodeMirror with Python / C++ / Java / JavaScript tabs, autosave, full-screen
   mode, font-size/word-wrap controls, and one-click "copy code → open on LeetCode".
-- **Your progress, everywhere** — done/star/notes per problem, synced via your login.
+- **Your progress, everywhere** — done/star, text notes, and a freehand **sketch pad** per
+  problem, synced via your login.
 - **Installable** — add it to your iPhone/iPad home screen (PWA).
 
 ## Cost: $0

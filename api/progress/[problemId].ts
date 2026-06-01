@@ -11,7 +11,12 @@ export default withAuth(async ({ req, res, userId }) => {
     res.status(400).json({ error: "Invalid problem id" });
     return;
   }
-  const body = (req.body ?? {}) as { done?: boolean; starred?: boolean; note?: string };
+  const body = (req.body ?? {}) as {
+    done?: boolean;
+    starred?: boolean;
+    note?: string;
+    sketch?: string;
+  };
   const db = await getDb();
 
   const problem = await db.collection("problems").findOne({ _id: new ObjectId(problemId) });
@@ -29,6 +34,7 @@ export default withAuth(async ({ req, res, userId }) => {
   }
   if (typeof body.starred === "boolean") set.starred = body.starred;
   if (typeof body.note === "string") set.note = body.note;
+  if (typeof body.sketch === "string") set.sketch = body.sketch;
 
   const update: Record<string, unknown> = { $set: set };
   if (Object.keys(unset).length) update.$unset = unset;
@@ -44,6 +50,7 @@ export default withAuth(async ({ req, res, userId }) => {
       done: !!saved?.done,
       starred: !!saved?.starred,
       note: saved?.note || "",
+      sketch: saved?.sketch || "",
       lastDoneAt: saved?.lastDoneAt || "",
     },
   });

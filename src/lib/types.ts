@@ -20,6 +20,7 @@ export interface Problem {
   done: boolean;
   starred: boolean;
   note: string;
+  sketch?: string;
   statement?: string;
 }
 
@@ -52,6 +53,7 @@ export type ProgressPatch = {
   done?: boolean;
   starred?: boolean;
   note?: string;
+  sketch?: string;
 };
 
 export type Language = "python" | "cpp" | "java" | "javascript";

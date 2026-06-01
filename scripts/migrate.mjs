@@ -61,6 +61,22 @@ function labelFor(sheetId) {
   return sheetId.charAt(0).toUpperCase() + sheetId.slice(1);
 }
 
+// Drop malformed YouTube links (a valid video id is exactly 11 chars), so the
+// study view never shows a broken embed.
+function cleanYouTube(url) {
+  if (!url) return "";
+  try {
+    const u = new URL(url);
+    let id = u.hostname.includes("youtu.be")
+      ? u.pathname.slice(1).split("/")[0]
+      : u.searchParams.get("v") ||
+        (u.pathname.startsWith("/embed/") ? u.pathname.split("/embed/")[1] : "");
+    return /^[A-Za-z0-9_-]{11}$/.test(id) ? url : "";
+  } catch {
+    return "";
+  }
+}
+
 function toProblem(lesson, sheetId, sheetLabel) {
   return {
     sheetId,
@@ -70,7 +86,7 @@ function toProblem(lesson, sheetId, sheetLabel) {
     unit: String(lesson.unit || "General").trim(),
     chapter: String(lesson.chapter || "General").trim(),
     leetcodeUrl: lesson.leetcode_url || lesson.url || "",
-    youtubeUrl: lesson.youtube_url || "",
+    youtubeUrl: cleanYouTube(lesson.youtube_url || ""),
     resourceUrl: lesson.resource_url || "",
     difficulty: lesson.difficulty || "",
     order: Number.isFinite(lesson.order) ? lesson.order : 0,

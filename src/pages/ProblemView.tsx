@@ -4,6 +4,7 @@ import DOMPurify from "dompurify";
 import { useLeetCodeStatement, useProblem, useProblems, useUpdateProgress } from "../lib/api";
 import { leetcodeSlug } from "../lib/leetcode";
 import { EditorPanel } from "../components/EditorPanel";
+import { Sketchpad } from "../components/Sketchpad";
 import { CenteredMessage, DifficultyBadge, EmptyState, Spinner } from "../components/ui";
 
 function youtubeEmbed(url: string): string | null {
@@ -21,6 +22,9 @@ function youtubeEmbed(url: string): string | null {
     return null;
   }
 }
+
+const ghostLink =
+  "border border-slate-200 text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800";
 
 export default function ProblemView() {
   const { problemId } = useParams();
@@ -42,11 +46,14 @@ export default function ProblemView() {
   );
 
   const [note, setNote] = useState("");
+  const [noteTab, setNoteTab] = useState<"notes" | "sketch">("notes");
   const noteTimer = useRef<ReturnType<typeof setTimeout>>();
+  const sketchTimer = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
     setNote(problem?.note ?? "");
   }, [problem?.id, problem?.note]);
+  useEffect(() => setNoteTab("notes"), [problem?.id]);
 
   // Remember the last opened problem so the Dashboard can offer "Resume".
   useEffect(() => {
@@ -84,6 +91,12 @@ export default function ProblemView() {
     noteTimer.current = setTimeout(() => {
       update.mutate({ problemId: problem.id, sheetId, patch: { note: value } });
     }, 700);
+  };
+  const onSketchChange = (json: string) => {
+    clearTimeout(sketchTimer.current);
+    sketchTimer.current = setTimeout(() => {
+      update.mutate({ problemId: problem.id, sheetId, patch: { sketch: json } });
+    }, 800);
   };
 
   const idx = siblings?.findIndex((p) => p.id === problem.id) ?? -1;
@@ -156,29 +169,26 @@ export default function ProblemView() {
       {/* Resource links */}
       <div className="flex flex-wrap gap-2">
         {problem.leetcodeUrl && (
-          <ResourceLink href={problem.leetcodeUrl} className="bg-amber-500 text-white hover:bg-amber-600">
+          <ResourceLink
+            href={problem.leetcodeUrl}
+            className="border border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-500/40 dark:text-amber-300 dark:hover:bg-amber-500/10"
+          >
             Solve on LeetCode ↗
           </ResourceLink>
         )}
         {solutionsUrl && (
-          <ResourceLink
-            href={solutionsUrl}
-            className="border border-slate-300 text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
-          >
-            LC Solutions ↗
+          <ResourceLink href={solutionsUrl} className={ghostLink}>
+            Solutions ↗
           </ResourceLink>
         )}
         {problem.resourceUrl && (
-          <ResourceLink
-            href={problem.resourceUrl}
-            className="border border-slate-300 text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
-          >
+          <ResourceLink href={problem.resourceUrl} className={ghostLink}>
             Article ↗
           </ResourceLink>
         )}
         {problem.youtubeUrl && !embed && (
-          <ResourceLink href={problem.youtubeUrl} className="bg-rose-500 text-white hover:bg-rose-600">
-            Watch on YouTube ↗
+          <ResourceLink href={problem.youtubeUrl} className={ghostLink}>
+            Video ↗
           </ResourceLink>
         )}
       </div>
@@ -211,15 +221,33 @@ export default function ProblemView() {
             ))}
 
           <div className="shrink-0">
-            <label className="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-300">
-              Notes
-            </label>
-            <textarea
-              value={note}
-              onChange={(e) => onNoteChange(e.target.value)}
-              placeholder="Jot down the pattern, edge cases, time/space complexity…"
-              className="h-40 w-full resize-y rounded-xl border border-slate-200 bg-white p-3 text-sm outline-none focus:border-indigo-400 dark:border-slate-800 dark:bg-slate-900"
-            />
+            <div className="mb-1.5 flex items-center gap-1">
+              {(["notes", "sketch"] as const).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setNoteTab(t)}
+                  className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                    noteTab === t
+                      ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300"
+                      : "text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+                  }`}
+                >
+                  {t === "notes" ? "Notes" : "Sketch"}
+                </button>
+              ))}
+            </div>
+            {noteTab === "notes" ? (
+              <textarea
+                value={note}
+                onChange={(e) => onNoteChange(e.target.value)}
+                placeholder="Jot down the pattern, edge cases, time/space complexity…"
+                className="h-44 w-full resize-y rounded-xl border border-slate-200 bg-white p-3 text-sm outline-none focus:border-indigo-400 dark:border-slate-800 dark:bg-slate-900"
+              />
+            ) : (
+              <div className="h-72">
+                <Sketchpad key={problem.id} value={problem.sketch} onChange={onSketchChange} />
+              </div>
+            )}
           </div>
         </div>
 
@@ -370,7 +398,7 @@ function ResourceLink({
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${className}`}
+      className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${className}`}
     >
       {children}
     </a>
