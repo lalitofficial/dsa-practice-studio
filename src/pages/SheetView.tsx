@@ -63,7 +63,7 @@ export default function SheetView() {
     });
 
   return (
-    <div className="mx-auto max-w-4xl space-y-5">
+    <div className="mx-auto max-w-5xl space-y-6">
       <div>
         <Link to="/" className="text-sm text-slate-500 hover:text-indigo-600 dark:text-slate-400">
           ← All tracks
@@ -123,13 +123,13 @@ export default function SheetView() {
               >
                 <button
                   onClick={() => toggleUnit(unit)}
-                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                  className="flex w-full items-center gap-3 px-5 py-4 text-left hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 >
                   <span className={`text-slate-400 transition-transform ${isCollapsed ? "" : "rotate-90"}`}>
                     ▶
                   </span>
-                  <span className="font-semibold">{unit}</span>
-                  <span className="ml-auto text-xs text-slate-500 dark:text-slate-400">
+                  <span className="text-base font-semibold">{unit}</span>
+                  <span className="ml-auto text-sm text-slate-500 dark:text-slate-400">
                     {unitDone}/{unitProblems.length}
                   </span>
                 </button>
@@ -137,7 +137,7 @@ export default function SheetView() {
                   <div className="border-t border-slate-100 dark:border-slate-800">
                     {[...chapters.entries()].map(([chapter, items]) => (
                       <div key={chapter}>
-                        <p className="bg-slate-50 px-4 py-1.5 text-xs font-medium uppercase tracking-wide text-slate-400 dark:bg-slate-800/40">
+                        <p className="bg-slate-50 px-5 py-2 text-sm font-medium uppercase tracking-wide text-slate-400 dark:bg-slate-800/40">
                           {chapter}
                         </p>
                         <ul>
@@ -189,17 +189,17 @@ function Segmented({
 function ProblemRow({ problem, sheetId }: { problem: Problem; sheetId: string }) {
   const update = useUpdateProgress();
   return (
-    <li className="flex items-center gap-3 border-t border-slate-100 px-4 py-2.5 first:border-t-0 dark:border-slate-800">
+    <li className="flex items-center gap-4 border-t border-slate-100 px-5 py-3.5 first:border-t-0 dark:border-slate-800">
       <input
         type="checkbox"
         checked={problem.done}
         onChange={() => update.mutate({ problemId: problem.id, sheetId, patch: { done: !problem.done } })}
-        className="size-4 shrink-0 cursor-pointer accent-indigo-500"
+        className="size-5 shrink-0 cursor-pointer accent-indigo-500"
         aria-label={problem.done ? "Mark as not done" : "Mark as done"}
       />
       <Link
         to={`/problem/${problem.id}`}
-        className={`min-w-0 flex-1 truncate text-sm hover:text-indigo-600 dark:hover:text-indigo-400 ${
+        className={`min-w-0 flex-1 truncate text-[15px] hover:text-indigo-600 dark:hover:text-indigo-400 ${
           problem.done ? "text-slate-400 line-through" : ""
         }`}
       >
@@ -208,7 +208,7 @@ function ProblemRow({ problem, sheetId }: { problem: Problem; sheetId: string })
       <DifficultyBadge value={problem.difficulty} />
       <button
         onClick={() => update.mutate({ problemId: problem.id, sheetId, patch: { starred: !problem.starred } })}
-        className={`shrink-0 text-lg leading-none ${
+        className={`shrink-0 text-xl leading-none ${
           problem.starred ? "text-amber-400" : "text-slate-300 hover:text-amber-400 dark:text-slate-600"
         }`}
         aria-label={problem.starred ? "Unstar" : "Star"}

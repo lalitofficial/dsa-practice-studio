@@ -28,10 +28,12 @@ function seed(docValue?: string, noteText?: string): Block[] {
 function AutoText({
   value,
   onChange,
+  onFocus,
   placeholder,
 }: {
   value: string;
   onChange: (v: string) => void;
+  onFocus?: () => void;
   placeholder?: string;
 }) {
   const ref = useRef<HTMLTextAreaElement>(null);
@@ -49,6 +51,7 @@ function AutoText({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       onInput={resize}
+      onFocus={onFocus}
       placeholder={placeholder}
       rows={1}
       className="w-full resize-none border-0 bg-transparent text-sm leading-relaxed outline-none antialiased"
@@ -66,6 +69,7 @@ export function NoteBlocks({
   onChange: (doc: { json: string; text: string }) => void;
 }) {
   const [blocks, setBlocks] = useState<Block[]>(() => seed(docValue, noteText));
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const commit = (next: Block[]) => {
     setBlocks(next);
@@ -102,38 +106,59 @@ export function NoteBlocks({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-2">
-        {blocks.map((b, i) => (
-          <div key={b.id} className="group relative rounded-lg px-2 py-1 hover:bg-slate-50 dark:hover:bg-slate-800/40">
-            <div className="absolute right-1 top-1 z-10 hidden items-center gap-0.5 rounded-md border border-slate-200 bg-white/90 p-0.5 backdrop-blur group-hover:flex dark:border-slate-700 dark:bg-slate-900/90">
-              <button className={ctrlBtn} title="Move up" onClick={() => move(b.id, -1)} disabled={i === 0}>
-                ↑
-              </button>
-              <button
-                className={ctrlBtn}
-                title="Move down"
-                onClick={() => move(b.id, 1)}
-                disabled={i === blocks.length - 1}
-              >
-                ↓
-              </button>
-              <button className={ctrlBtn} title="Delete block" onClick={() => removeBlock(b.id)}>
-                ✕
-              </button>
+      <div
+        className="min-h-0 flex-1 space-y-1 overflow-y-auto p-2"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) setSelectedId(null);
+        }}
+      >
+        {blocks.map((b, i) => {
+          const selected = selectedId === b.id;
+          return (
+            <div
+              key={b.id}
+              onClick={() => setSelectedId(b.id)}
+              className={`relative rounded-lg px-2 py-1.5 transition-colors ${
+                selected ? "bg-slate-50 ring-1 ring-indigo-300 dark:bg-slate-800/50 dark:ring-indigo-500/40" : ""
+              }`}
+            >
+              {selected && (
+                <div className="absolute right-1 top-1 z-10 flex items-center gap-0.5 rounded-md border border-slate-200 bg-white/95 p-0.5 backdrop-blur dark:border-slate-700 dark:bg-slate-900/95">
+                  <button className={ctrlBtn} title="Move up" onClick={() => move(b.id, -1)} disabled={i === 0}>
+                    ↑
+                  </button>
+                  <button
+                    className={ctrlBtn}
+                    title="Move down"
+                    onClick={() => move(b.id, 1)}
+                    disabled={i === blocks.length - 1}
+                  >
+                    ↓
+                  </button>
+                  <button className={ctrlBtn} title="Delete block" onClick={() => removeBlock(b.id)}>
+                    ✕
+                  </button>
+                </div>
+              )}
+              {b.type === "text" ? (
+                <AutoText
+                  value={b.text}
+                  onChange={(t) => updateText(b.id, t)}
+                  onFocus={() => setSelectedId(b.id)}
+                  placeholder="Write your thoughts — patterns, edge cases, complexity…"
+                />
+              ) : (
+                <div
+                  className={`overflow-hidden rounded-lg border ${
+                    selected ? "h-64 border-slate-200 dark:border-slate-700" : "h-48 border-slate-200/70 dark:border-slate-800"
+                  }`}
+                >
+                  <Sketchpad value={b.strokes} onChange={(s) => updateDraw(b.id, s)} readOnly={!selected} />
+                </div>
+              )}
             </div>
-            {b.type === "text" ? (
-              <AutoText
-                value={b.text}
-                onChange={(t) => updateText(b.id, t)}
-                placeholder="Write your thoughts — patterns, edge cases, complexity…"
-              />
-            ) : (
-              <div className="h-56 overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800">
-                <Sketchpad value={b.strokes} onChange={(s) => updateDraw(b.id, s)} />
-              </div>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
       <div className="flex items-center gap-2 border-t border-slate-200 px-2 py-1.5 dark:border-slate-800">
         <button

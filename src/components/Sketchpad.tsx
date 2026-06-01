@@ -30,7 +30,15 @@ function hasRealPressure(points: PFPoint[]) {
   return points.some((p) => p[2] != null && p[2] > 0 && p[2] !== 0.5);
 }
 
-export function Sketchpad({ value, onChange }: { value?: string; onChange: (json: string) => void }) {
+export function Sketchpad({
+  value,
+  onChange,
+  readOnly = false,
+}: {
+  value?: string;
+  onChange: (json: string) => void;
+  readOnly?: boolean;
+}) {
   const { isDark } = useTheme();
   const ink = isDark ? "#e2e8f0" : "#0f172a";
 
@@ -141,6 +149,7 @@ export function Sketchpad({ value, onChange }: { value?: string; onChange: (json
 
   return (
     <div className="flex h-full flex-col">
+      {!readOnly && (
       <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 px-2 py-1.5 dark:border-slate-800">
         <div className="flex items-center gap-1">
           {COLORS.map((cVal) => (
@@ -195,15 +204,16 @@ export function Sketchpad({ value, onChange }: { value?: string; onChange: (json
           </button>
         </div>
       </div>
+      )}
       <div ref={wrapRef} className="min-h-0 flex-1">
         <canvas
           ref={canvasRef}
-          className="block size-full touch-none"
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={endStroke}
-          onPointerLeave={endStroke}
-          onPointerCancel={endStroke}
+          className={`block size-full ${readOnly ? "" : "cursor-crosshair touch-none"}`}
+          onPointerDown={readOnly ? undefined : onPointerDown}
+          onPointerMove={readOnly ? undefined : onPointerMove}
+          onPointerUp={readOnly ? undefined : endStroke}
+          onPointerLeave={readOnly ? undefined : endStroke}
+          onPointerCancel={readOnly ? undefined : endStroke}
         />
       </div>
     </div>
