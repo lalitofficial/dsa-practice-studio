@@ -112,6 +112,14 @@ export default function ProblemView() {
       <div className="flex flex-wrap items-center gap-3">
         <h1 className="text-2xl font-bold">{problem.title}</h1>
         <DifficultyBadge value={problem.difficulty} />
+        {!problem.leetcodeUrl && (
+          <span
+            className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+            title="This problem isn't on LeetCode — statement provided in-app"
+          >
+            Not on LeetCode
+          </span>
+        )}
         <button
           onClick={() => update.mutate({ problemId: problem.id, sheetId, patch: { starred: !problem.starred } })}
           className={`text-2xl leading-none ${problem.starred ? "text-amber-400" : "text-slate-300 hover:text-amber-400 dark:text-slate-600"}`}
