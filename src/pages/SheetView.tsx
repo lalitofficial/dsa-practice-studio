@@ -69,8 +69,20 @@ export default function SheetView() {
           ← All tracks
         </Link>
         <div className="mt-2 flex items-end justify-between gap-4">
-          <h1 className="text-2xl font-bold">{sheet?.label ?? sheetId}</h1>
-          <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-2xl font-bold">{sheet?.label ?? sheetId}</h1>
+            {sheet?.sourceUrl && (
+              <a
+                href={sheet.sourceUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs font-medium text-indigo-600 hover:underline dark:text-indigo-400"
+              >
+                Source ↗
+              </a>
+            )}
+          </div>
+          <span className="shrink-0 text-sm font-medium text-slate-500 dark:text-slate-400">
             {done}/{problems.length} · {pct}%
           </span>
         </div>

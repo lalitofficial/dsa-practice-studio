@@ -132,7 +132,16 @@ async function main() {
     .collection("sheets")
     .updateOne(
       { _id: "faang" },
-      { $set: { _id: "faang", label: "FAANG", source: "github", order, total: docs.length } },
+      {
+        $set: {
+          _id: "faang",
+          label: "FAANG",
+          source: "github",
+          order,
+          total: docs.length,
+          sourceUrl: "https://github.com/ombharatiya/FAANG-Coding-Interview-Questions",
+        },
+      },
       { upsert: true },
     );
 

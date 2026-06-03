@@ -38,6 +38,7 @@ export default withAuth(async ({ req, res, userId }) => {
       order: s.order ?? 0,
       total: typeof s.total === "number" ? s.total : (totalMap?.get(String(s._id)) ?? 0),
       done: doneMap.get(s._id) ?? 0,
+      sourceUrl: s.sourceUrl || "",
     })),
   });
 });

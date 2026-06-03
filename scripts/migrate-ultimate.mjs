@@ -56,7 +56,7 @@ async function main() {
       leetcodeUrl: isLeet ? it.url : "",
       resourceUrl: isLeet ? "" : it.url,
       youtubeUrl: "",
-      difficulty: "",
+      difficulty: it.difficulty || "",
       statement: isLeet ? "" : externalStatement(it.url, it.remarks, it.companies),
       companies: it.companies || "",
       remarks: it.remarks || "",
@@ -78,7 +78,17 @@ async function main() {
   const order = await db.collection("sheets").countDocuments({ _id: { $ne: "ultimate" } });
   await db.collection("sheets").updateOne(
     { _id: "ultimate" },
-    { $set: { _id: "ultimate", label: "Ultimate DSA Sheet", source: "sheet", order, total: docs.length } },
+    {
+      $set: {
+        _id: "ultimate",
+        label: "Ultimate DSA Sheet",
+        source: "sheet",
+        order,
+        total: docs.length,
+        sourceUrl:
+          "https://docs.google.com/spreadsheets/d/1Or6lZt6b8hrE2mJxiWazlXfMwBEm3JASKN512Vk41Do/edit?gid=0#gid=0",
+      },
+    },
     { upsert: true },
   );
 

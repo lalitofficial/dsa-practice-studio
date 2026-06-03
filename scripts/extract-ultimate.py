@@ -18,6 +18,20 @@ src = sys.argv[1] if len(sys.argv) > 1 else "Ultimate DSA Sheet.xlsx"
 wb = openpyxl.load_workbook(src, data_only=True)
 ws = wb["Sheet1"]
 
+# Difficulty is color-coded on the Topics (D) cell, matching the legend
+# (D5=Easy, D6=Medium, D7=Hard).
+DIFF = {"FFD9EAD3": "Easy", "FFB6D7A8": "Medium", "FF93C47D": "Hard"}
+
+
+def difficulty_of(cell):
+    try:
+        rgb = cell.fill.fgColor.rgb
+        if isinstance(rgb, str):
+            return DIFF.get(rgb.upper(), "")
+    except Exception:
+        pass
+    return ""
+
 out = []
 n = 0
 for r in range(20, ws.max_row + 1):
@@ -36,6 +50,7 @@ for r in range(20, ws.max_row + 1):
             "topic": str(topic).strip() if topic else "General",
             "title": str(title).strip(),
             "url": (link or "").strip(),
+            "difficulty": difficulty_of(ws.cell(r, 4)),
             "companies": str(companies).strip(),
             "remarks": str(remarks).strip(),
         }

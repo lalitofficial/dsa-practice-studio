@@ -4,6 +4,7 @@ export interface Sheet {
   order: number;
   total: number;
   done: number;
+  sourceUrl?: string;
 }
 
 export interface Problem {
