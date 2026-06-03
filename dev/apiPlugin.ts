@@ -18,6 +18,7 @@ const ROUTES: ApiRoute[] = [
   { pattern: /^\/api\/problems\/?$/, module: "/api/problems.ts" },
   { pattern: /^\/api\/all-problems\/?$/, module: "/api/all-problems.ts" },
   { pattern: /^\/api\/run\/?$/, module: "/api/run.ts" },
+  { pattern: /^\/api\/reader\/?$/, module: "/api/reader.ts" },
   { pattern: /^\/api\/revision\/?$/, module: "/api/revision.ts" },
   { pattern: /^\/api\/problem\/([^/]+)\/?$/, module: "/api/problem/[problemId].ts", param: "problemId" },
   { pattern: /^\/api\/progress\/([^/]+)\/?$/, module: "/api/progress/[problemId].ts", param: "problemId" },

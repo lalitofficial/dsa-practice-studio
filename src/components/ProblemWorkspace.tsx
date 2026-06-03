@@ -1,4 +1,5 @@
-import { createContext, useContext, type FC, type ReactNode } from "react";
+import { createContext, useContext, useMemo, useState, type FC, type ReactNode } from "react";
+import DOMPurify from "dompurify";
 import {
   DockviewReact,
   themeGithubDark,
@@ -10,9 +11,19 @@ import "dockview/dist/styles/dockview.css";
 import { EditorPanel } from "./EditorPanel";
 import { NoteBlocks } from "./NoteBlocks";
 import { Spinner } from "./ui";
+import { useReader } from "../lib/api";
 import { leetcodeSlug } from "../lib/leetcode";
 import { useTheme } from "../lib/theme";
 import type { Problem } from "../lib/types";
+
+function isGfgArticle(u: string): boolean {
+  try {
+    const h = new URL(u).hostname;
+    return h.endsWith("geeksforgeeks.org") && !h.startsWith("practice.");
+  } catch {
+    return false;
+  }
+}
 
 interface WorkspaceCtx {
   problem: Problem;
@@ -39,6 +50,7 @@ const LAYOUT_KEY = "dsa-dock-v2";
 const QuestionPanel: FC<IDockviewPanelProps> = () => {
   const c = useWorkspace();
   const slug = c.problem.leetcodeUrl ? leetcodeSlug(c.problem.leetcodeUrl) : undefined;
+  const gfg = c.problem.resourceUrl && isGfgArticle(c.problem.resourceUrl) ? c.problem.resourceUrl : "";
   return (
     <div className="h-full overflow-y-auto bg-white p-4 dark:bg-slate-900">
       <StatementBlock
@@ -50,9 +62,59 @@ const QuestionPanel: FC<IDockviewPanelProps> = () => {
         leetcodeUrl={c.problem.leetcodeUrl}
         resourceUrl={c.problem.resourceUrl}
       />
+      {gfg && <GfgReader url={gfg} />}
     </div>
   );
 };
+
+function GfgReader({ url }: { url: string }) {
+  const [open, setOpen] = useState(false);
+  const { data, isLoading, isError } = useReader(url, open);
+  const html = useMemo(() => (data?.html ? DOMPurify.sanitize(data.html) : ""), [data]);
+  return (
+    <div className="mt-3 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm font-medium text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800/50"
+      >
+        <span className="text-slate-400">{open ? "▾" : "▸"}</span>
+        Read the GeeksforGeeks article in-app
+        <span className="text-xs font-normal text-amber-600 dark:text-amber-400">(includes the solution)</span>
+      </button>
+      {open && (
+        <div className="border-t border-slate-200 p-3 dark:border-slate-800">
+          {isLoading ? (
+            <div className="flex items-center gap-2 text-sm text-slate-500">
+              <Spinner /> Loading article…
+            </div>
+          ) : isError || !html ? (
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Couldn't load it here.{" "}
+              <a className="text-indigo-600 underline dark:text-indigo-400" href={url} target="_blank" rel="noreferrer">
+                Open on GeeksforGeeks ↗
+              </a>
+            </p>
+          ) : (
+            <>
+              <div
+                className="lc-statement text-slate-700 dark:text-slate-300"
+                dangerouslySetInnerHTML={{ __html: html }}
+              />
+              <a
+                className="mt-3 inline-block text-xs text-indigo-600 hover:underline dark:text-indigo-400"
+                href={url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Source: GeeksforGeeks ↗
+              </a>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 const SolutionsPanel: FC<IDockviewPanelProps> = () => {
   const c = useWorkspace();

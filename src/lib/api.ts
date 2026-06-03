@@ -130,6 +130,20 @@ export function useRunCode() {
   });
 }
 
+export function useReader(url: string | undefined, enabled: boolean) {
+  const fetcher = useAuthedFetch();
+  return useQuery({
+    queryKey: ["reader", url],
+    queryFn: () =>
+      fetcher<{ html: string; title: string; source: string }>(
+        `/api/reader?url=${encodeURIComponent(url!)}`,
+      ),
+    enabled: enabled && !!url,
+    staleTime: Infinity,
+    retry: 0,
+  });
+}
+
 export function useSolutions(problemId: string | undefined) {
   const fetcher = useAuthedFetch();
   return useQuery({
