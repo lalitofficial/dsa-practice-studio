@@ -1,9 +1,13 @@
 import * as cheerio from "cheerio";
 import { withAuth, ensureMethod } from "./_lib/http";
 
-// GET /api/reader?url=<geeksforgeeks article> -> extracted article HTML.
-// Restricted to geeksforgeeks.org article pages (SSRF guard; practice.* is a
-// client-rendered SPA with no server content). The client sanitizes the HTML.
+// GET /api/reader?url=<geeksforgeeks article> -> { statementHtml, solutionHtml }.
+// Splits the article at the first "approach/solution" heading so the problem
+// statement and the solution can live in separate panels. Restricted to
+// geeksforgeeks.org articles (SSRF guard; practice.* is a client-rendered SPA).
+const SOL =
+  /approach|solution|algorithm|implementation|naive|efficient|optimal|pseudo|intuition|\bsteps?\b|\bcode\b|\busing\b|method/i;
+
 function allowed(u: string): boolean {
   try {
     const url = new URL(u);
@@ -40,10 +44,26 @@ export default withAuth(async ({ req, res }) => {
     el.find(
       "script,style,iframe,ins,noscript,nav,header,footer,form,button,.gfg-ad,.three_dots,.article-meta,.articleHead,.improved",
     ).remove();
-    const html = el.html() || "";
+
+    const full = el.html() || "";
+    // Split at the first heading that looks like a solution/approach.
+    const solHead = el
+      .find("h1,h2,h3,h4")
+      .toArray()
+      .find((n) => SOL.test($(n).text().trim()));
+    let statementHtml = full;
+    let solutionHtml = "";
+    if (solHead) {
+      const headingHtml = $.html(solHead);
+      const pos = full.indexOf(headingHtml);
+      if (pos > 0) {
+        statementHtml = full.slice(0, pos);
+        solutionHtml = full.slice(pos);
+      }
+    }
     const title = ($("h1").first().text() || $("title").text() || "").trim();
     res.setHeader("Cache-Control", "private, max-age=86400");
-    res.json({ html, title, source: url });
+    res.json({ title, statementHtml, solutionHtml, source: url });
   } catch (err) {
     res.status(502).json({ error: "Reader failed", detail: String((err as Error)?.message).slice(0, 200) });
   }

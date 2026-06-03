@@ -135,7 +135,7 @@ export function useReader(url: string | undefined, enabled: boolean) {
   return useQuery({
     queryKey: ["reader", url],
     queryFn: () =>
-      fetcher<{ html: string; title: string; source: string }>(
+      fetcher<{ title: string; statementHtml: string; solutionHtml: string; source: string }>(
         `/api/reader?url=${encodeURIComponent(url!)}`,
       ),
     enabled: enabled && !!url,

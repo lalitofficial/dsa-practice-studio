@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState, type FC, type ReactNode } from "react";
+import { createContext, useContext, useMemo, type FC, type ReactNode } from "react";
 import DOMPurify from "dompurify";
 import {
   DockviewReact,
@@ -53,65 +53,80 @@ const QuestionPanel: FC<IDockviewPanelProps> = () => {
   const gfg = c.problem.resourceUrl && isGfgArticle(c.problem.resourceUrl) ? c.problem.resourceUrl : "";
   return (
     <div className="h-full overflow-y-auto bg-white p-4 dark:bg-slate-900">
-      <StatementBlock
-        slug={slug}
-        html={c.statementHtml}
-        tags={c.tags}
-        loading={c.statementLoading}
-        premium={c.premium}
-        leetcodeUrl={c.problem.leetcodeUrl}
-        resourceUrl={c.problem.resourceUrl}
-      />
-      {gfg && <GfgReader url={gfg} />}
+      {gfg ? (
+        <GfgStatement url={gfg} />
+      ) : (
+        <StatementBlock
+          slug={slug}
+          html={c.statementHtml}
+          tags={c.tags}
+          loading={c.statementLoading}
+          premium={c.premium}
+          leetcodeUrl={c.problem.leetcodeUrl}
+          resourceUrl={c.problem.resourceUrl}
+        />
+      )}
     </div>
   );
 };
 
-function GfgReader({ url }: { url: string }) {
-  const [open, setOpen] = useState(false);
-  const { data, isLoading, isError } = useReader(url, open);
-  const html = useMemo(() => (data?.html ? DOMPurify.sanitize(data.html) : ""), [data]);
+// Problem statement from a GeeksforGeeks article (shown in the Question panel).
+function GfgStatement({ url }: { url: string }) {
+  const { data, isLoading, isError } = useReader(url, true);
+  const html = useMemo(
+    () => (data?.statementHtml ? DOMPurify.sanitize(data.statementHtml) : ""),
+    [data],
+  );
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-3 text-sm text-slate-500">
+        <Spinner /> Loading problem…
+      </div>
+    );
+  }
+  if (isError || !html) {
+    return (
+      <p className="text-sm text-slate-500 dark:text-slate-400">
+        Couldn't load the statement here.{" "}
+        <a className="text-indigo-600 underline dark:text-indigo-400" href={url} target="_blank" rel="noreferrer">
+          Open on GeeksforGeeks ↗
+        </a>
+      </p>
+    );
+  }
   return (
-    <div className="mt-3 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm font-medium text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800/50"
+    <div>
+      <div className="lc-statement text-slate-700 dark:text-slate-300" dangerouslySetInnerHTML={{ __html: html }} />
+      <a
+        className="mt-3 inline-block text-xs text-indigo-600 hover:underline dark:text-indigo-400"
+        href={url}
+        target="_blank"
+        rel="noreferrer"
       >
-        <span className="text-slate-400">{open ? "▾" : "▸"}</span>
-        Read the GeeksforGeeks article in-app
-        <span className="text-xs font-normal text-amber-600 dark:text-amber-400">(includes the solution)</span>
-      </button>
-      {open && (
-        <div className="border-t border-slate-200 p-3 dark:border-slate-800">
-          {isLoading ? (
-            <div className="flex items-center gap-2 text-sm text-slate-500">
-              <Spinner /> Loading article…
-            </div>
-          ) : isError || !html ? (
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              Couldn't load it here.{" "}
-              <a className="text-indigo-600 underline dark:text-indigo-400" href={url} target="_blank" rel="noreferrer">
-                Open on GeeksforGeeks ↗
-              </a>
-            </p>
-          ) : (
-            <>
-              <div
-                className="lc-statement text-slate-700 dark:text-slate-300"
-                dangerouslySetInnerHTML={{ __html: html }}
-              />
-              <a
-                className="mt-3 inline-block text-xs text-indigo-600 hover:underline dark:text-indigo-400"
-                href={url}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Source: GeeksforGeeks ↗
-              </a>
-            </>
-          )}
-        </div>
-      )}
+        Source: GeeksforGeeks ↗
+      </a>
+    </div>
+  );
+}
+
+// The solution/approach from the same article (shown in the Solutions panel).
+function GfgSolution({ url }: { url: string }) {
+  const { data, isLoading } = useReader(url, true);
+  const html = useMemo(() => (data?.solutionHtml ? DOMPurify.sanitize(data.solutionHtml) : ""), [data]);
+  if (isLoading) {
+    return (
+      <div className="mt-2 flex items-center gap-3 text-sm text-slate-500">
+        <Spinner /> Loading solution…
+      </div>
+    );
+  }
+  if (!html) return null;
+  return (
+    <div className="mt-1">
+      <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+        GeeksforGeeks solution
+      </h3>
+      <div className="lc-statement text-slate-700 dark:text-slate-300" dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );
 }
@@ -155,6 +170,7 @@ const SolutionsPanel: FC<IDockviewPanelProps> = () => {
           </a>
         )}
       </div>
+      {isGfgArticle(p.resourceUrl) && <GfgSolution url={p.resourceUrl} />}
     </div>
   );
 };
