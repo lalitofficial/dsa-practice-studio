@@ -18,6 +18,9 @@ dist/
 .vercel/
 *.tsbuildinfo
 
+# Source sheets (extracted into scripts/*.json, which IS committed)
+*.xlsx
+
 # One-time import sources (provide your own locally)
 *_ref*.html
 *_ref*.txt

@@ -4,8 +4,8 @@ A focused, distraction-free place to master Data Structures & Algorithms — cur
 a built-in code editor that autosaves your solutions, notes, stars, and a revision hub, all
 synced across **phone, iPad, and Mac** from a single URL.
 
-- **Curated content** — Striver A→Z (455) + AlgoMaster (300) grouped by topic, and a **FAANG**
-  sheet (353) grouped by company, each with LeetCode / YouTube / article links and difficulty.
+- **Curated content** — Striver A→Z (455) + AlgoMaster (300) + Ultimate DSA Sheet (375) grouped by
+  topic, and a **FAANG** sheet (353) grouped by company — each with LeetCode / article / video links.
 - **Read & solve in-app** — the LeetCode problem statement is fetched and rendered right next to
   the editor, so you can attempt it first-hand without leaving the app.
 - **Built-in editor** — CodeMirror with Python / C++ / Java / JavaScript tabs, autosave, full-screen
@@ -70,6 +70,7 @@ npm install
 npm run migrate            # loads Striver + AlgoMaster into MongoDB (idempotent)
 npm run apply-statements   # adds in-app statements for Striver items without a LeetCode link
 npm run migrate-faang      # optional: adds the FAANG company-wise sheet (353 problems)
+npm run migrate-ultimate   # optional: adds the Ultimate DSA Sheet (375 problems, by topic)
 ```
 You should see `problems per sheet: { striver: 455, algomaster: 300 }` and
 `statements applied to 186 of 186 link-less problems`.

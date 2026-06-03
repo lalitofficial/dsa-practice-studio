@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "migrate": "node scripts/migrate.mjs",
     "apply-statements": "node scripts/apply-statements.mjs",
-    "migrate-faang": "node scripts/migrate-faang.mjs"
+    "migrate-faang": "node scripts/migrate-faang.mjs",
+    "migrate-ultimate": "node scripts/migrate-ultimate.mjs"
   },
   "dependencies": {
     "@clerk/backend": "^1.21.0",
