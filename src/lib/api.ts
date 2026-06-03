@@ -113,6 +113,23 @@ export function useLeetCodeStatement(slug: string | undefined) {
   });
 }
 
+export interface RunResult {
+  compileOutput: string;
+  stdout: string;
+  stderr: string;
+  output: string;
+  code: number | null;
+  signal: string | null;
+}
+
+export function useRunCode() {
+  const fetcher = useAuthedFetch();
+  return useMutation({
+    mutationFn: (vars: { language: string; code: string; stdin: string }) =>
+      fetcher<RunResult>("/api/run", { method: "POST", body: JSON.stringify(vars) }),
+  });
+}
+
 export function useSolutions(problemId: string | undefined) {
   const fetcher = useAuthedFetch();
   return useQuery({

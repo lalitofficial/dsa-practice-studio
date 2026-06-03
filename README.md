@@ -8,8 +8,10 @@ synced across **phone, iPad, and Mac** from a single URL.
   topic, and a **FAANG** sheet (353) grouped by company — each with LeetCode / article / video links.
 - **Read & solve in-app** — the LeetCode problem statement is fetched and rendered right next to
   the editor, so you can attempt it first-hand without leaving the app.
-- **Built-in editor** — CodeMirror with Python / C++ / Java / JavaScript tabs, autosave, full-screen
-  mode, font-size/word-wrap controls, and one-click "copy code → open on LeetCode".
+- **Built-in editor + runner** — CodeMirror (Python / C++ / Java / JavaScript), autosave, full-screen,
+  font-size/word-wrap, and a **Run** button (⌘/Ctrl+Enter) that compiles & runs your code with custom
+  stdin and shows the output. Execution goes through Wandbox (free public compiler service) — no
+  server to host. Plus one-click "copy code → open on LeetCode".
 - **Your progress, everywhere** — done/star, text notes, and a freehand **sketch pad** per
   problem, synced via your login.
 - **Installable** — add it to your iPhone/iPad home screen (PWA).

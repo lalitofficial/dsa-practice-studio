@@ -6,7 +6,7 @@ import { cpp } from "@codemirror/lang-cpp";
 import { java } from "@codemirror/lang-java";
 import { javascript } from "@codemirror/lang-javascript";
 import { githubDark, githubLight } from "@uiw/codemirror-theme-github";
-import { useSaveSolution, useSolutions } from "../lib/api";
+import { useRunCode, useSaveSolution, useSolutions } from "../lib/api";
 import { useTheme } from "../lib/theme";
 import { Spinner } from "./ui";
 import type { Language } from "../lib/types";
@@ -89,6 +89,9 @@ function EditorInner({
     return Number.isFinite(v) && v >= 11 && v <= 24 ? v : 14;
   });
   const [wrap, setWrap] = useState<boolean>(() => localStorage.getItem(WRAP_KEY) === "1");
+  const run = useRunCode();
+  const [consoleOpen, setConsoleOpen] = useState(false);
+  const [stdin, setStdin] = useState("");
 
   useEffect(() => localStorage.setItem(FONT_KEY, String(fontSize)), [fontSize]);
   useEffect(() => localStorage.setItem(WRAP_KEY, wrap ? "1" : "0"), [wrap]);
@@ -154,6 +157,11 @@ function EditorInner({
     if (leetcodeUrl) window.open(leetcodeUrl, "_blank", "noopener,noreferrer");
   };
 
+  const runCode = () => {
+    setConsoleOpen(true);
+    run.mutate({ language: lang, code: draftsRef.current[lang] ?? value, stdin });
+  };
+
   // Esc exits fullscreen; Cmd/Ctrl+S force-saves (and blocks the browser dialog).
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -162,11 +170,15 @@ function EditorInner({
         e.preventDefault();
         flush(lang, draftsRef.current[lang] ?? value);
       }
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault();
+        runCode();
+      }
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fullscreen, lang, value]);
+  }, [fullscreen, lang, value, stdin]);
 
   const extensions = useMemo(() => {
     const list: unknown[] = [LANGS[lang].ext()];
@@ -177,6 +189,20 @@ function EditorInner({
 
   const dirty = value !== (savedMap[lang] ?? starterFor(lang));
   const status = save.isPending ? "Saving…" : dirty ? "Unsaved" : "Saved";
+
+  const runOutput = run.isError
+    ? (run.error as Error)?.message || "Run failed"
+    : run.data
+      ? [
+          run.data.compileOutput && `# compile\n${run.data.compileOutput}`,
+          run.data.stdout,
+          run.data.stderr && `# stderr\n${run.data.stderr}`,
+        ]
+          .filter(Boolean)
+          .join("\n") || "(no output)"
+      : run.isPending
+        ? "Running…"
+        : "";
 
   const action =
     "rounded-md px-2 py-1 text-xs font-medium text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800";
@@ -198,6 +224,14 @@ function EditorInner({
             </option>
           ))}
         </select>
+        <button
+          onClick={runCode}
+          disabled={run.isPending}
+          className="ml-1 rounded-md bg-emerald-600 px-3 py-1 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+          title="Run (⌘/Ctrl+Enter)"
+        >
+          {run.isPending ? "Running…" : "▶ Run"}
+        </button>
 
         <div className="ml-auto flex items-center gap-1">
           <button onClick={() => setFontSize((s) => Math.max(11, s - 1))} className={action} title="Smaller font">
@@ -253,6 +287,51 @@ function EditorInner({
           basicSetup={{ tabSize: 2, highlightActiveLine: true, autocompletion: true }}
         />
       </div>
+
+      {consoleOpen && (
+        <div className="flex h-48 shrink-0 flex-col border-t border-slate-200 dark:border-slate-800">
+          <div className="flex items-center gap-2 border-b border-slate-200 px-3 py-1.5 text-xs dark:border-slate-800">
+            <span className="font-semibold text-slate-600 dark:text-slate-300">Console</span>
+            {run.isPending && <span className="text-slate-400">running…</span>}
+            {!run.isPending && run.data && (
+              <span
+                className={
+                  run.data.code === 0
+                    ? "text-emerald-600 dark:text-emerald-400"
+                    : "text-rose-600 dark:text-rose-400"
+                }
+              >
+                exit {run.data.code}
+                {run.data.signal ? ` (${run.data.signal})` : ""}
+              </span>
+            )}
+            <button
+              onClick={() => setConsoleOpen(false)}
+              className="ml-auto text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+              title="Close console"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="grid min-h-0 flex-1 grid-cols-2 divide-x divide-slate-200 dark:divide-slate-800">
+            <div className="flex min-h-0 flex-col">
+              <span className="px-2 pt-1 text-[10px] uppercase tracking-wide text-slate-400">Input (stdin)</span>
+              <textarea
+                value={stdin}
+                onChange={(e) => setStdin(e.target.value)}
+                placeholder="Input passed to your program…"
+                className="min-h-0 flex-1 resize-none bg-transparent p-2 font-mono text-xs outline-none"
+              />
+            </div>
+            <div className="flex min-h-0 flex-col">
+              <span className="px-2 pt-1 text-[10px] uppercase tracking-wide text-slate-400">Output</span>
+              <pre className="min-h-0 flex-1 overflow-auto whitespace-pre-wrap p-2 font-mono text-xs text-slate-700 dark:text-slate-300">
+                {runOutput}
+              </pre>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
