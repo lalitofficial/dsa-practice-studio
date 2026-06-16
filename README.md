@@ -1,176 +1,133 @@
-<p align="center">
-  <img
-    src="assets/banner.svg"
-    width="960"
-    height="190"
-    alt="DSA Practice Studio banner"
-  />
-</p>
+# DSA Mastery Studio
 
-<p align="center">
-  <img src="https://img.shields.io/badge/python-3.9%2B-3776AB?logo=python&logoColor=white" alt="Python 3.9+" />
-  <img src="https://img.shields.io/badge/flask-2.2%2B-000000?logo=flask&logoColor=white" alt="Flask" />
-  <img src="https://img.shields.io/badge/local--first-yes-2EA44F" alt="Local-first" />
-  <img src="https://img.shields.io/badge/samples-striver%20%7C%20algomaster-0B5FFF" alt="Samples" />
-</p>
+A focused, distraction-free place to master Data Structures & Algorithms — curated tracks,
+a built-in code editor that autosaves your solutions, notes, stars, and a revision hub, all
+synced across **phone, iPad, and Mac** from a single URL.
 
-<p align="center">
-  Local-first LeetCode practice dashboard with sample Striver and AlgoMaster sheets.
-</p>
+- **Curated content** — Striver A→Z (455) + AlgoMaster (300) + Ultimate DSA Sheet (375) grouped by
+  topic, and a **FAANG** sheet (353) grouped by company — each with LeetCode / article / video links.
+- **Read & solve in-app** — the LeetCode problem statement is fetched and rendered right next to
+  the editor, so you can attempt it first-hand without leaving the app.
+- **Built-in editor + runner** — CodeMirror (Python / C++ / Java / JavaScript), autosave, full-screen,
+  font-size/word-wrap, and a **Run** button (⌘/Ctrl+Enter) that compiles & runs your code with custom
+  stdin and shows the output. Execution goes through Wandbox (free public compiler service) — no
+  server to host. Plus one-click "copy code → open on LeetCode".
+- **Your progress, everywhere** — done/star, text notes, and a freehand **sketch pad** per
+  problem, synced via your login.
+- **Installable** — add it to your iPhone/iPad home screen (PWA).
 
-<p align="center">
-  DSA Practice Studio is a LeetCode study tracker built for intentional practice: sync unit progress, log notes, and lean on floating focus widgets while staying entirely local-first.
-</p>
+## Cost: $0
 
-<p align="center">
-  ⭐ <strong>Find this helpful?</strong> Please star the repo so others can discover the LeetCode workflow and we can keep improving the dashboard.
-</p>
+Everything runs on free tiers — no server to rent:
 
-## Table of contents
+| Piece | Service | Tier |
+| --- | --- | --- |
+| App UI + API | **Vercel** (Hobby) | Free, no card |
+| Database | **MongoDB Atlas** (M0) | Free, 512 MB |
+| Login | **Clerk** | Free up to 10k users |
+| Domain | your own | already owned |
 
-- [Features](#features)
-- [Quickstart](#quickstart)
-- [Usage guide](#usage-guide)
-- [Widget studio](#widget-studio)
-- [Revision panel](#revision-panel)
-- [Admin console](#admin-console)
-- [Tracking logic](#tracking-logic)
-- [Import & export](#import--export)
-- [CLI](#cli)
-- [Data storage](#data-storage)
-- [Project layout](#project-layout)
-- [Contributing](#contributing)
-
-## Features
-
-- Multi-sheet LeetCode/DSA reviews (Striver + AlgoMaster) with a persistent sheet switcher.
-- Unit-chapter grouping, adjustable filters, and streak-friendly progress tracking for purposeful practice.
-- Star, note, and categorize questions with easy access to the notes hub and bookmarked revisions.
-- Widget overlay (clock, timer, stopwatch) plus the draggable `W` launcher keep focus helpers visible on screen.
-- Import/export flows across UI and CLI (CSV/Excel + JSON) so work stays synchronized and sharable.
-- Local-first storage in SQLite and JSON keeps your data private and git-ignored while also being exportable.
+```
+Phone / iPad / Mac ─► your domain (Vercel)
+                        ├─ React SPA (static)           ← Clerk login
+                        └─ /api/* serverless functions  ─► MongoDB Atlas
+                              ▲ verifies the Clerk token
+```
 
 ## Tech stack
 
-- Python 3.9+
-- Flask
-- SQLite (unit status + UI/view state)
-- JSON (questions, notes, progress)
-- OpenPyXL (Excel import)
-- Vanilla HTML/CSS/JS dashboard
+React 18 + Vite + TypeScript + Tailwind v4 · TanStack Query · Clerk · CodeMirror 6 ·
+Vercel serverless functions (Node) · MongoDB driver.
 
-## Quickstart
+---
+
+## 1. Get free accounts & keys
+
+### MongoDB Atlas
+1. Create a free **M0** cluster at [mongodb.com/atlas](https://www.mongodb.com/atlas).
+2. **Database Access** → add a user (username + password).
+3. **Network Access** → add `0.0.0.0/0` (allow from anywhere) for simplicity.
+4. **Connect → Drivers** → copy the connection string (`mongodb+srv://…`).
+
+### Clerk
+1. Create an app at [dashboard.clerk.com](https://dashboard.clerk.com).
+2. **API Keys** → copy the **Publishable key** (`pk_…`) and **Secret key** (`sk_…`).
+
+### Configure env
+```bash
+cp .env.example .env.local
+```
+Fill in `.env.local`:
+```
+MONGODB_URI="mongodb+srv://USER:PASSWORD@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority"
+MONGODB_DB="dsa_studio"
+VITE_CLERK_PUBLISHABLE_KEY="pk_test_..."
+CLERK_SECRET_KEY="sk_test_..."
+```
+
+## 2. Install & load the content
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python3 app.py
+npm install
+npm run migrate            # loads Striver + AlgoMaster into MongoDB (idempotent)
+npm run apply-statements   # adds in-app statements for Striver items without a LeetCode link
+npm run migrate-faang      # optional: adds the FAANG company-wise sheet (353 problems)
+npm run migrate-ultimate   # optional: adds the Ultimate DSA Sheet (375 problems, by topic)
 ```
+You should see `problems per sheet: { striver: 455, algomaster: 300 }` and
+`statements applied to 186 of 186 link-less problems`.
 
-Open `http://127.0.0.1:8000`, switch sheets using the header tabs, and revisit the bundled `samples/` directory whenever you want to reset the workspace.
-
-## Usage guide
-
-### Dashboard (learner view)
-
-- Switch sheets from the header tabs and keep your streak by unlocking the next chapter.
-- Use the search bar + filters to focus on units, statuses, or difficulty and widen the pace with zero lag.
-- Mark questions done, star the ones you want to revisit, and jot notes inline to track context.
-- Use the Notes modal to edit every saved note and keep all thoughts exportable.
-- Gray link icons signal a missing URL so you can flag what needs research.
-- Click the floating `W` launcher in the bottom-right corner. The widget dialog exposes the clock, timer, stopwatch toggles, your timer preset, and the overlay display—every helper runs independently while the overlay can be hidden when you want a clean workspace.
-
-### Revision panel
-
-- Review all notes and starred questions in one place at `/revision`.
-- Use search to filter notes or bookmarked questions.
-- Unstar items when you are done with them.
-
-### Admin console
-
-- `/admin` hosts the command center and configuration tools.
-- Tracking panel shows momentum, heatmap, and sheet health.
-- Sheet Management handles create/rename/import/export and bulk actions.
-- Unit Management refactors unit/chapter names and bulk difficulty.
-- UI Management controls labels, layout, themes, and link fallback rules.
-- Troubleshooting provides health checks and recovery actions.
-
-### Tracking logic
-
-- Heatmap counts only questions marked done.
-- Heatmap scope is the currently active sheet.
-- Momentum counts solved items over the last 7 days.
-
-### Import & export
-
-- Import is CSV or Excel only.
-- Export any sheet as CSV or JSON.
-- UI settings can be exported/imported as JSON in Admin → UI Management.
-
-## Widget studio
-
-- Visit `/widgets` or tap the Widget Studio link to read how the floating `W` launcher, clock, timer, and stopwatch work together on the dashboard.
-- The dialog keeps every widget toggle, timer preset, and overlay visibility control in one place, and the overlay keeps the draggable cards in sync with the inline start/pause/reset actions.
-- Only the built-in widgets shipping today (clock, timer, stopwatch) are supported, but the studio page will grow with future helper types and catalog entries.
-
-### CLI
+## 3. Run locally
 
 ```bash
-python3 tracker.py list --sheet striver
-python3 tracker.py done 1 --sheet algomaster
-python3 tracker.py url 1 https://leetcode.com/problems/two-sum/ --sheet striver
-python3 tracker.py stats --sheet algomaster
+npm run dev          # http://localhost:5173
 ```
+That's it — the UI **and** the `/api` functions run together. In dev, a small Vite plugin
+(`dev/apiPlugin.ts`) executes the same `/api` handlers in-process against your MongoDB + Clerk,
+so no Vercel CLI or login is needed locally. Sign in, pick a track, solve, take notes, type code →
+reload and everything persists.
 
-Run `python3 tracker.py --help` to see all options.
+> Production uses the real Vercel serverless functions (the identical handlers). If you prefer to
+> mirror that locally you can also `npm i -g vercel && vercel dev`, but it's not required.
 
-## Import sheets (one-time)
+## 4. Deploy
 
-Import is CSV/Excel only. The bundled sample sheets live in `samples/` and can be
-re-imported any time if you want to reset to defaults.
+1. Push this repo to GitHub.
+2. Import it at [vercel.com/new](https://vercel.com/new) (framework auto-detected as Vite).
+3. In **Project → Settings → Environment Variables**, add the same four vars from `.env.local`.
+4. Deploy. Then **Settings → Domains** → add your domain and follow the DNS instructions.
+5. In Clerk, add your production domain under **Domains** so login works there too.
 
-### CSV / Excel format
+Open the URL on your phone and iPad — same login, same progress.
 
-Column order:
-
-1) Unit name
-2) Chapter name
-3) Question name
-4) LeetCode link (optional)
-5) YouTube link (optional)
-6) Default note (optional)
-7) Difficulty (optional: Easy/Medium/Hard)
-8) Starred (optional: yes/no)
-
-Only columns 1-3 are required.
-
-```bash
-python3 tracker.py import-table samples/striver_sample.csv --sheet striver
-python3 tracker.py import-table samples/algomaster_sample.csv --sheet algomaster
-python3 tracker.py import-table /path/to/sheet.xlsx --sheet striver --sheet-name "Sheet1"
-```
-
-Sample templates live in `samples/`.
-
-If you want to reset a sheet, delete its state files from `.dsa_practice_studio/` and
-re-run the import.
-
-## Data storage
-
-Progress, notes, and imported lessons live in `.dsa_practice_studio/` JSON files.
-UI preferences, view state, and unit completion live in `.dsa_practice_studio/tracker.db`.
-All data is local and ignored by git.
-
-## Project layout
+## Project structure
 
 ```
-dsa_practice_studio/   # Python package (parsers, storage, web, CLI)
-dashboard/         # UI assets
-app.py             # UI entrypoint (thin wrapper)
-tracker.py         # CLI entrypoint (thin wrapper)
+api/                 Vercel serverless functions (Node + MongoDB + Clerk)
+  _lib/              shared db connection + auth helpers (underscore = not an endpoint)
+  sheets.ts          GET  /api/sheets
+  problems.ts        GET  /api/problems?sheet=<id>
+  problem/[id].ts    GET  /api/problem/:id
+  progress/[id].ts   POST /api/progress/:id   (done / starred / note)
+  solutions/[id].ts  GET|PUT /api/solutions/:id
+  revision.ts        GET  /api/revision
+  leetcode/[slug].ts GET  /api/leetcode/:slug  (proxies LeetCode's public statement)
+src/
+  pages/             Dashboard, SheetView, ProblemView, Revision
+  components/        AppShell, EditorPanel, SignInScreen, ui atoms
+  lib/               api hooks (TanStack Query), types, theme
+scripts/migrate.mjs  one-time content migration
+legacy/              the original Flask + vanilla-JS app, archived for reference
 ```
 
-## Contributing
+## Data model (MongoDB)
 
-See `CONTRIBUTING.md` for setup and workflow notes. Please validate locally with `pip install -r requirements.txt` (and `pip install -e .` if you change Python modules) before submitting a branch, document architectural changes in the README or an ADR, and open a pull request for review so we can sync on widget/interface updates.
+- `problems` — curated content (global): sheet, unit, chapter, title, links, difficulty.
+- `sheets` — sheet registry with labels.
+- `userProblems` — per-user `{ done, starred, note }`, keyed by `(userId, problemId)`.
+- `solutions` — per-user saved code, keyed by `(userId, problemId, language)`.
+
+## Adding / re-importing content
+
+Edit the JSON the migration reads (`.striver_tracker/*.json`) or extend `scripts/migrate.mjs`,
+then re-run `npm run migrate`. It upserts by `(sheetId, slug)`, so re-running never duplicates.

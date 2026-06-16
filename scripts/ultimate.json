@@ -1,0 +1,3377 @@
+[
+  {
+    "index": 1,
+    "topic": "Arrays",
+    "title": "Maximum and Minimum Element in an Array",
+    "url": "https://www.geeksforgeeks.org/maximum-and-minimum-in-an-array/",
+    "difficulty": "Easy",
+    "companies": "ABCO Accolite Amazon Cisco Hike Microsoft Snapdeal VMWare Google Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 2,
+    "topic": "Arrays",
+    "title": "Reverse the Array",
+    "url": "https://www.geeksforgeeks.org/write-a-program-to-reverse-an-array-or-string/",
+    "difficulty": "Easy",
+    "companies": "Infosys Moonfrog Labs",
+    "remarks": ""
+  },
+  {
+    "index": 3,
+    "topic": "Arrays",
+    "title": "Maximum-Subarray",
+    "url": "https://leetcode.com/problems/maximum-subarray/",
+    "difficulty": "Easy",
+    "companies": "Microsoft + Facebook Interview Qs",
+    "remarks": "use Kadane's Algorithm"
+  },
+  {
+    "index": 4,
+    "topic": "Arrays",
+    "title": "Contains Duplicate",
+    "url": "https://leetcode.com/problems/contains-duplicate/",
+    "difficulty": "Easy",
+    "companies": "Amazon Interview Qs",
+    "remarks": ""
+  },
+  {
+    "index": 5,
+    "topic": "Arrays",
+    "title": "Chocolate Distribution Problem",
+    "url": "https://www.geeksforgeeks.org/chocolate-distribution-problem/",
+    "difficulty": "Easy",
+    "companies": "Amazon Interview Qs",
+    "remarks": ""
+  },
+  {
+    "index": 6,
+    "topic": "Arrays",
+    "title": "Search an Element in a Sorted and Pivoted Array",
+    "url": "https://www.geeksforgeeks.org/search-an-element-in-a-sorted-and-pivoted-array/",
+    "difficulty": "Easy",
+    "companies": "Microsoft Google Adobe Amazon D-E-Shaw Flipkart Hike Intuit MakeMyTrip Paytm",
+    "remarks": ""
+  },
+  {
+    "index": 7,
+    "topic": "Arrays",
+    "title": "Next Permutation",
+    "url": "https://leetcode.com/problems/next-permutation/",
+    "difficulty": "Medium",
+    "companies": "Uber + Goldman Sachs + Adobe Interview Qs",
+    "remarks": ""
+  },
+  {
+    "index": 8,
+    "topic": "Arrays",
+    "title": "Best time to Buy and Sell Stock",
+    "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/",
+    "difficulty": "Medium",
+    "companies": "Amazon D-E-Shaw Directi Flipkart Goldman Sachs Intuit MakeMyTrip Microsoft Ola Cabs Oracle Paytm Pubmatic Quikr Salesforce Sapient Swiggy Walmart Media.net Google",
+    "remarks": ""
+  },
+  {
+    "index": 9,
+    "topic": "Arrays",
+    "title": "Repeat and Missing Number Array",
+    "url": "https://www.interviewbit.com/problems/repeat-and-missing-number-array/",
+    "difficulty": "Medium",
+    "companies": "Amazon Interview Qs",
+    "remarks": ""
+  },
+  {
+    "index": 10,
+    "topic": "Arrays",
+    "title": "Kth-Largest Element in an Array",
+    "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/",
+    "difficulty": "Medium",
+    "companies": "Amazon Microsoft Walmart Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 11,
+    "topic": "Arrays",
+    "title": "Trapping Rain Water",
+    "url": "https://leetcode.com/problems/trapping-rain-water/",
+    "difficulty": "Medium",
+    "companies": "Samsung Interview Qs",
+    "remarks": ""
+  },
+  {
+    "index": 12,
+    "topic": "Arrays",
+    "title": "Product of Array Except Self",
+    "url": "https://leetcode.com/problems/product-of-array-except-self/",
+    "difficulty": "Medium",
+    "companies": "Microsoft + Facebook Interview Qs",
+    "remarks": ""
+  },
+  {
+    "index": 13,
+    "topic": "Arrays",
+    "title": "Maximum Product Subarray",
+    "url": "https://leetcode.com/problems/maximum-product-subarray/",
+    "difficulty": "Medium",
+    "companies": "Amazon D-E-Shaw Microsoft Morgan Stanley OYO Rooms Google",
+    "remarks": ""
+  },
+  {
+    "index": 14,
+    "topic": "Arrays",
+    "title": "Find Minimum in Rotated Sorted Array",
+    "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/",
+    "difficulty": "Medium",
+    "companies": "Adobe Amazon Microsoft Morgan Stanley Samsung Snapdeal Times Internet",
+    "remarks": ""
+  },
+  {
+    "index": 15,
+    "topic": "Arrays",
+    "title": "Search in Rotated Sorted Array",
+    "url": "https://leetcode.com/problems/search-in-rotated-sorted-array/",
+    "difficulty": "Medium",
+    "companies": "Microsoft + Google + Apple Interview Qs",
+    "remarks": ""
+  },
+  {
+    "index": 16,
+    "topic": "Arrays",
+    "title": "3Sum",
+    "url": "https://leetcode.com/problems/3sum/",
+    "difficulty": "Medium",
+    "companies": "Adobe Amazon Microsoft Morgan Stanley Samsung Snapdeal Times Internet",
+    "remarks": ""
+  },
+  {
+    "index": 17,
+    "topic": "Arrays",
+    "title": "Container With Most Water",
+    "url": "https://leetcode.com/problems/container-with-most-water/",
+    "difficulty": "Medium",
+    "companies": "Flipkart + Dunzo Interview Qs",
+    "remarks": ""
+  },
+  {
+    "index": 18,
+    "topic": "Arrays",
+    "title": "Given Sum Pair",
+    "url": "https://www.geeksforgeeks.org/given-a-sorted-and-rotated-array-find-if-there-is-a-pair-with-a-given-sum/",
+    "difficulty": "Medium",
+    "companies": "Infosys + Amazon + Flipkart Interview Qs",
+    "remarks": ""
+  },
+  {
+    "index": 19,
+    "topic": "Arrays",
+    "title": "Kth - Smallest Element",
+    "url": "https://practice.geeksforgeeks.org/problems/kth-smallest-element5635/1",
+    "difficulty": "Medium",
+    "companies": "ABCO Accolite Amazon Cisco Hike Microsoft Snapdeal VMWare Google Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 20,
+    "topic": "Arrays",
+    "title": "Merge Overlapping Intervals",
+    "url": "https://www.geeksforgeeks.org/merging-intervals/",
+    "difficulty": "Medium",
+    "companies": "Google Interview Qs",
+    "remarks": ""
+  },
+  {
+    "index": 21,
+    "topic": "Arrays",
+    "title": "Find Minimum Number of Merge Operations to Make an Array Palindrome",
+    "url": "https://www.geeksforgeeks.org/find-minimum-number-of-merge-operations-to-make-an-array-palindrome/",
+    "difficulty": "Medium",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 22,
+    "topic": "Arrays",
+    "title": "Given an Array of Numbers Arrange the Numbers to Form the Biggest Number",
+    "url": "https://www.geeksforgeeks.org/given-an-array-of-numbers-arrange-the-numbers-to-form-the-biggest-number/",
+    "difficulty": "Medium",
+    "companies": "Barclays Interview Qs",
+    "remarks": ""
+  },
+  {
+    "index": 23,
+    "topic": "Arrays",
+    "title": "Space Optimization Using Bit Manipulations",
+    "url": "https://www.geeksforgeeks.org/space-optimization-using-bit-manipulations/",
+    "difficulty": "Medium",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 24,
+    "topic": "Arrays",
+    "title": "Subarray Sum Divisible K",
+    "url": "https://www.geeksforgeeks.org/longest-subarray-sum-divisible-k/",
+    "difficulty": "Hard",
+    "companies": "Snapdeal Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 25,
+    "topic": "Arrays",
+    "title": "Print all Possible Combinations of r Elements in a Given Array of Size n",
+    "url": "https://www.geeksforgeeks.org/print-all-possible-combinations-of-r-elements-in-a-given-array-of-size-n/",
+    "difficulty": "Hard",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 26,
+    "topic": "Arrays",
+    "title": "Mo's Algorithm",
+    "url": "https://www.geeksforgeeks.org/mos-algorithm-query-square-root-decomposition-set-1-introduction/",
+    "difficulty": "Hard",
+    "companies": "Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 27,
+    "topic": "Strings",
+    "title": "Valid Palindrome",
+    "url": "https://leetcode.com/problems/valid-palindrome/",
+    "difficulty": "Easy",
+    "companies": "Amazon Cisco D-E-Shaw Facebook FactSet Morgan Stanley Paytm Zoho",
+    "remarks": ""
+  },
+  {
+    "index": 28,
+    "topic": "Strings",
+    "title": "Valid Anagram",
+    "url": "https://leetcode.com/problems/valid-anagram/",
+    "difficulty": "Easy",
+    "companies": "Nagarro Media.net Directi Google Adobe Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 29,
+    "topic": "Strings",
+    "title": "Valid parentheses",
+    "url": "https://leetcode.com/problems/valid-parentheses/",
+    "difficulty": "Easy",
+    "companies": "Google Interview Qs",
+    "remarks": "use Stacks (if possible)"
+  },
+  {
+    "index": 30,
+    "topic": "Strings",
+    "title": "Remove Consecutive Characters",
+    "url": "https://practice.geeksforgeeks.org/problems/consecutive-elements2306/1",
+    "difficulty": "Easy",
+    "companies": "Samsung + Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 31,
+    "topic": "Strings",
+    "title": "Longest Common Prefix",
+    "url": "https://leetcode.com/problems/longest-common-prefix/",
+    "difficulty": "Easy",
+    "companies": "Adobe + Grofers + Dunzo Interview Qs",
+    "remarks": ""
+  },
+  {
+    "index": 32,
+    "topic": "Strings",
+    "title": "Convert a Sentence into its Equivalent Mobile Numeric Keypad Sequence",
+    "url": "https://www.geeksforgeeks.org/convert-sentence-equivalent-mobile-numeric-keypad-sequence/",
+    "difficulty": "Easy",
+    "companies": "Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 33,
+    "topic": "Strings",
+    "title": "Print all the Duplicates in the Input String",
+    "url": "https://www.geeksforgeeks.org/print-all-the-duplicates-in-the-input-string/",
+    "difficulty": "Easy",
+    "companies": "Ola + Amdocs IQ",
+    "remarks": ""
+  },
+  {
+    "index": 34,
+    "topic": "Strings",
+    "title": "Longest Substring without Repeating Characters",
+    "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
+    "difficulty": "Medium",
+    "companies": "Morgan Stanley + Amazon IQ",
+    "remarks": ""
+  },
+  {
+    "index": 35,
+    "topic": "Strings",
+    "title": "Longest Repeating Character Replacement",
+    "url": "https://leetcode.com/problems/longest-repeating-character-replacement/",
+    "difficulty": "Medium",
+    "companies": "Amazon Google",
+    "remarks": ""
+  },
+  {
+    "index": 36,
+    "topic": "Strings",
+    "title": "Group Anagrams",
+    "url": "https://leetcode.com/problems/group-anagrams/",
+    "difficulty": "Medium",
+    "companies": "Samsung + Adobe + Amazon Interview Qs",
+    "remarks": ""
+  },
+  {
+    "index": 37,
+    "topic": "Strings",
+    "title": "Longest Palindromic Substring",
+    "url": "https://leetcode.com/problems/longest-palindromic-substring/",
+    "difficulty": "Medium",
+    "companies": "Microsoft + Google + Samsung + Visa IQ",
+    "remarks": ""
+  },
+  {
+    "index": 38,
+    "topic": "Strings",
+    "title": "Palindromic Substrings",
+    "url": "https://leetcode.com/problems/palindromic-substrings/",
+    "difficulty": "Medium",
+    "companies": "Microsoft IQ",
+    "remarks": ""
+  },
+  {
+    "index": 39,
+    "topic": "Strings",
+    "title": "Next Permutation",
+    "url": "https://practice.geeksforgeeks.org/problems/next-permutation5226/1",
+    "difficulty": "Medium",
+    "companies": "Adobe + Goldman Sachs + Uber",
+    "remarks": ""
+  },
+  {
+    "index": 40,
+    "topic": "Strings",
+    "title": "Count Palindromic Subsequences",
+    "url": "https://practice.geeksforgeeks.org/problems/count-palindromic-subsequences/1",
+    "difficulty": "Medium",
+    "companies": "Myntra Interview Qs",
+    "remarks": ""
+  },
+  {
+    "index": 41,
+    "topic": "Strings",
+    "title": "Smallest Window in a String Containing all the Characters of Another String",
+    "url": "https://practice.geeksforgeeks.org/problems/smallest-window-in-a-string-containing-all-the-characters-of-another-string-1587115621/1",
+    "difficulty": "Medium",
+    "companies": "Microsoft + Amazon IQ",
+    "remarks": ""
+  },
+  {
+    "index": 42,
+    "topic": "Strings",
+    "title": "Wildcard String Matching",
+    "url": "https://practice.geeksforgeeks.org/problems/wildcard-string-matching1126/1",
+    "difficulty": "Medium",
+    "companies": "Microsoft + Amazon + Ola IQ",
+    "remarks": ""
+  },
+  {
+    "index": 43,
+    "topic": "Strings",
+    "title": "Longest Prefix Suffix",
+    "url": "https://practice.geeksforgeeks.org/problems/longest-prefix-suffix2527/1",
+    "difficulty": "Medium",
+    "companies": "Flipkart + Swiggy IQ",
+    "remarks": ""
+  },
+  {
+    "index": 44,
+    "topic": "Strings",
+    "title": "Rabin-Karp Algorithm for Pattern Searching",
+    "url": "https://www.geeksforgeeks.org/rabin-karp-algorithm-for-pattern-searching/",
+    "difficulty": "Medium",
+    "companies": "Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 45,
+    "topic": "Strings",
+    "title": "Transform One String to Another using Minimum Number of Given Operation",
+    "url": "https://www.geeksforgeeks.org/transform-one-string-to-another-using-minimum-number-of-given-operation/",
+    "difficulty": "Medium",
+    "companies": "Directi",
+    "remarks": ""
+  },
+  {
+    "index": 46,
+    "topic": "Strings",
+    "title": "Minimum Window Substring",
+    "url": "https://leetcode.com/problems/minimum-window-substring/",
+    "difficulty": "Hard",
+    "companies": "Amazon Google MakeMyTrip Streamoid Technologies Microsoft Media.net Atlassian Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 47,
+    "topic": "Strings",
+    "title": "Boyer Moore Algorithm for Pattern Searching",
+    "url": "https://www.geeksforgeeks.org/boyer-moore-algorithm-for-pattern-searching/",
+    "difficulty": "Hard",
+    "companies": "Amdocs",
+    "remarks": ""
+  },
+  {
+    "index": 48,
+    "topic": "Strings",
+    "title": "Word Wrap",
+    "url": "https://practice.geeksforgeeks.org/problems/word-wrap1646/1",
+    "difficulty": "Hard",
+    "companies": "Microsoft",
+    "remarks": "use Dynaming Programming"
+  },
+  {
+    "index": 49,
+    "topic": "2D Arrays",
+    "title": "Zigzag (or diagonal) Traversal of Matrix",
+    "url": "https://www.geeksforgeeks.org/zigzag-or-diagonal-traversal-of-matrix/",
+    "difficulty": "Medium",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 50,
+    "topic": "2D Arrays",
+    "title": "Set Matrix Zeroes",
+    "url": "https://leetcode.com/problems/set-matrix-zeroes/",
+    "difficulty": "Medium",
+    "companies": "Amazon Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 51,
+    "topic": "2D Arrays",
+    "title": "Spiral Matrix",
+    "url": "https://leetcode.com/problems/spiral-matrix/",
+    "difficulty": "Medium",
+    "companies": "Flipkart + Apple + Societe Generale IQ",
+    "remarks": ""
+  },
+  {
+    "index": 52,
+    "topic": "2D Arrays",
+    "title": "Rotate Image",
+    "url": "https://leetcode.com/problems/rotate-image/",
+    "difficulty": "Medium",
+    "companies": "Microsoft Paytm Samsung Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 53,
+    "topic": "2D Arrays",
+    "title": "Word Search",
+    "url": "https://leetcode.com/problems/word-search/",
+    "difficulty": "Medium",
+    "companies": "Google + Ola + Goldman Sachs IQ",
+    "remarks": ""
+  },
+  {
+    "index": 54,
+    "topic": "2D Arrays",
+    "title": "Find the Number of Islands | Set 1 (Using DFS)",
+    "url": "https://www.geeksforgeeks.org/find-number-of-islands/",
+    "difficulty": "Medium",
+    "companies": "Microsoft + Uber + Apple + Amazon IQ",
+    "remarks": "Read about DFS"
+  },
+  {
+    "index": 55,
+    "topic": "2D Arrays",
+    "title": "Given a Matrix of ‘O’ and ‘X’, Replace ‘O’ with ‘X’ if Surrounded by ‘X’",
+    "url": "https://www.geeksforgeeks.org/given-matrix-o-x-replace-o-x-surrounded-x/",
+    "difficulty": "Medium",
+    "companies": "Google",
+    "remarks": ""
+  },
+  {
+    "index": 56,
+    "topic": "2D Arrays",
+    "title": "Find a Common Element in all Rows of a Given Row-Wise Sorted Matrix",
+    "url": "https://www.geeksforgeeks.org/find-common-element-rows-row-wise-sorted-matrix/",
+    "difficulty": "Medium",
+    "companies": "MAQ Software Microsoft VMWare",
+    "remarks": ""
+  },
+  {
+    "index": 57,
+    "topic": "2D Arrays",
+    "title": "Create a Matrix with Alternating Rectangles of O and X",
+    "url": "https://www.geeksforgeeks.org/create-a-matrix-with-alternating-rectangles-of-0-and-x/",
+    "difficulty": "Medium",
+    "companies": "MAQ VMWare",
+    "remarks": ""
+  },
+  {
+    "index": 58,
+    "topic": "2D Arrays",
+    "title": "Maximum Size Rectangle of all 1s",
+    "url": "https://www.geeksforgeeks.org/maximum-size-rectangle-binary-sub-matrix-1s/",
+    "difficulty": "Hard",
+    "companies": "Amazon Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 59,
+    "topic": "Searching & Sorting",
+    "title": "Permute Two Arrays such that Sum of Every Pair is Greater or Equal to K",
+    "url": "https://www.geeksforgeeks.org/permute-two-arrays-sum-every-pair-greater-equal-k/",
+    "difficulty": "Easy",
+    "companies": "Samsung",
+    "remarks": ""
+  },
+  {
+    "index": 60,
+    "topic": "Searching & Sorting",
+    "title": "counting sort",
+    "url": "https://www.geeksforgeeks.org/counting-sort/",
+    "difficulty": "Easy",
+    "companies": "Samsung+ Morgan Stanley+ Snapdeal + EPAM Systems",
+    "remarks": ""
+  },
+  {
+    "index": 61,
+    "topic": "Searching & Sorting",
+    "title": "find common elements three sorted arrays",
+    "url": "https://www.geeksforgeeks.org/find-common-elements-three-sorted-arrays/",
+    "difficulty": "Easy",
+    "companies": "MAQ Software Microsoft VMWare",
+    "remarks": ""
+  },
+  {
+    "index": 62,
+    "topic": "Searching & Sorting",
+    "title": "Searching in an array where adjacent differ by at most k",
+    "url": "https://www.geeksforgeeks.org/searching-array-adjacent-differ-k/",
+    "difficulty": "Easy",
+    "companies": "TCS Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 63,
+    "topic": "Searching & Sorting",
+    "title": "ceiling in a sorted array",
+    "url": "https://www.geeksforgeeks.org/ceiling-in-a-sorted-array/",
+    "difficulty": "Easy",
+    "companies": "TCS",
+    "remarks": ""
+  },
+  {
+    "index": 64,
+    "topic": "Searching & Sorting",
+    "title": "Piar with given difference",
+    "url": "https://www.geeksforgeeks.org/find-a-pair-with-the-given-difference/",
+    "difficulty": "Easy",
+    "companies": "Amazon Visa",
+    "remarks": ""
+  },
+  {
+    "index": 65,
+    "topic": "Searching & Sorting",
+    "title": "majority element",
+    "url": "https://www.geeksforgeeks.org/majority-element/",
+    "difficulty": "Medium",
+    "companies": "Amazon+ Google",
+    "remarks": ""
+  },
+  {
+    "index": 66,
+    "topic": "Searching & Sorting",
+    "title": "count triplets with sum smaller that a given value",
+    "url": "https://www.geeksforgeeks.org/count-triplets-with-sum-smaller-that-a-given-value/",
+    "difficulty": "Medium",
+    "companies": "Amazon SAP Labs",
+    "remarks": ""
+  },
+  {
+    "index": 67,
+    "topic": "Searching & Sorting",
+    "title": "Maximum Sum Subsequence with no adjacent elements",
+    "url": "https://www.geeksforgeeks.org/maximum-sum-such-that-no-two-elements-are-adjacent/",
+    "difficulty": "Medium",
+    "companies": "Amazon FactSet Oxigen Wallet OYO Rooms Paytm Walmart Yahoo Adobe Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 68,
+    "topic": "Searching & Sorting",
+    "title": "Merge Sorted Arrays using O(1) Space",
+    "url": "https://www.geeksforgeeks.org/merge-two-sorted-arrays-o1-extra-space/",
+    "difficulty": "Medium",
+    "companies": "Amdocs Brocade Goldman Sachs Juniper Networks Linkedin Microsoft Quikr Snapdeal Synopsys Zoho Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 69,
+    "topic": "Searching & Sorting",
+    "title": "Inversion of Array",
+    "url": "https://practice.geeksforgeeks.org/problems/inversion-of-array-1587115620/1",
+    "difficulty": "Medium",
+    "companies": "Adobe Amazon BankBazaar Flipkart Microsoft Myntra MakeMyTrip",
+    "remarks": ""
+  },
+  {
+    "index": 70,
+    "topic": "Searching & Sorting",
+    "title": "Find Duplicates in O(n) Time and O(1) Extra Space",
+    "url": "https://www.geeksforgeeks.org/find-duplicates-in-on-time-and-constant-extra-space/",
+    "difficulty": "Medium",
+    "companies": "Amazon D-E-Shaw Flipkart Paytm Qualcomm Zoho",
+    "remarks": ""
+  },
+  {
+    "index": 71,
+    "topic": "Searching & Sorting",
+    "title": "Radix Sort",
+    "url": "https://www.geeksforgeeks.org/radix-sort/",
+    "difficulty": "Medium",
+    "companies": "Amazon+ Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 72,
+    "topic": "Searching & Sorting",
+    "title": "Product of Array except itself",
+    "url": "https://www.geeksforgeeks.org/a-product-array-puzzle/",
+    "difficulty": "Medium",
+    "companies": "Accolite Amazon D-E-Shaw Intuit Morgan Stanley Opera Microsoft Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 73,
+    "topic": "Searching & Sorting",
+    "title": "Make all Array Elements Equal",
+    "url": "https://www.geeksforgeeks.org/make-array-elements-equal-minimum-cost/",
+    "difficulty": "Medium",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 74,
+    "topic": "Searching & Sorting",
+    "title": "Check if Reversing a Sub Array Make the Array Sorted",
+    "url": "https://www.geeksforgeeks.org/check-reversing-sub-array-make-array-sorted/",
+    "difficulty": "Medium",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 75,
+    "topic": "Searching & Sorting",
+    "title": "Find Four Elements that Sum to a Given Value",
+    "url": "https://www.geeksforgeeks.org/find-four-elements-that-sum-to-a-given-value-set-2/",
+    "difficulty": "Hard",
+    "companies": "Adobe Amazon Google Microsoft OYO Rooms",
+    "remarks": ""
+  },
+  {
+    "index": 76,
+    "topic": "Searching & Sorting",
+    "title": "Median of Two Sorted Array with Different Size",
+    "url": "https://www.geeksforgeeks.org/median-of-two-sorted-arrays-of-different-sizes/",
+    "difficulty": "Hard",
+    "companies": "Amazon Samsung Microsoft Google",
+    "remarks": ""
+  },
+  {
+    "index": 77,
+    "topic": "Searching & Sorting",
+    "title": "Median of Stream of Integers Running Integers",
+    "url": "https://www.geeksforgeeks.org/median-of-stream-of-integers-running-integers/",
+    "difficulty": "Hard",
+    "companies": "Amazon + Google",
+    "remarks": ""
+  },
+  {
+    "index": 78,
+    "topic": "Searching & Sorting",
+    "title": "Print Subarrays with 0 Sum",
+    "url": "https://www.geeksforgeeks.org/print-all-subarrays-with-0-sum/",
+    "difficulty": "Hard",
+    "companies": "Paytm Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 79,
+    "topic": "Searching & Sorting",
+    "title": "Aggressive Cows",
+    "url": "https://www.spoj.com/problems/AGGRCOW/",
+    "difficulty": "Hard",
+    "companies": "Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 80,
+    "topic": "Searching & Sorting",
+    "title": "Allocate Minimum number of Pages",
+    "url": "https://practice.geeksforgeeks.org/problems/allocate-minimum-number-of-pages0937/1",
+    "difficulty": "Hard",
+    "companies": "Google Infosys Codenation Amazon Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 81,
+    "topic": "Searching & Sorting",
+    "title": "Minimum Swaps to Sort",
+    "url": "https://www.geeksforgeeks.org/minimum-number-swaps-required-sort-array/",
+    "difficulty": "Hard",
+    "companies": "Amazon + Google",
+    "remarks": ""
+  },
+  {
+    "index": 82,
+    "topic": "Backtracking",
+    "title": "Backtracking Set 2 Rat in a Maze",
+    "url": "https://www.geeksforgeeks.org/backttracking-set-2-rat-in-a-maze/",
+    "difficulty": "Medium",
+    "companies": "Microsoft Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 83,
+    "topic": "Backtracking",
+    "title": "Combinational Sum",
+    "url": "https://www.geeksforgeeks.org/combinational-sum/",
+    "difficulty": "Medium",
+    "companies": "Adobe Amazon Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 84,
+    "topic": "Backtracking",
+    "title": "Crossword-Puzzle",
+    "url": "https://www.hackerrank.com/challenges/crossword-puzzle/problem",
+    "difficulty": "Medium",
+    "companies": "Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 85,
+    "topic": "Backtracking",
+    "title": "Longest Possible Route in a Matrix with Hurdles",
+    "url": "https://www.geeksforgeeks.org/longest-possible-route-in-a-matrix-with-hurdles/",
+    "difficulty": "Medium",
+    "companies": "Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 86,
+    "topic": "Backtracking",
+    "title": "Printing all solutions in N-Queen Problem",
+    "url": "https://www.geeksforgeeks.org/printing-solutions-n-queen-problem/",
+    "difficulty": "Medium",
+    "companies": "Accolite Amazon Amdocs D-E-Shaw MAQ Software Twitter Visa Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 87,
+    "topic": "Backtracking",
+    "title": "Solve the Sudoku",
+    "url": "https://practice.geeksforgeeks.org/problems/solve-the-sudoku-1587115621/1",
+    "difficulty": "Medium",
+    "companies": "Amazon Directi Flipkart MakeMyTrip MAQ Software Microsoft Ola Cabs Oracle PayPal Zoho",
+    "remarks": ""
+  },
+  {
+    "index": 88,
+    "topic": "Backtracking",
+    "title": "Partition Equal Subset Sum",
+    "url": "https://practice.geeksforgeeks.org/problems/subset-sum-problem2014/1",
+    "difficulty": "Medium",
+    "companies": "Amazon + Adobe + Accolite + Traveloka",
+    "remarks": ""
+  },
+  {
+    "index": 89,
+    "topic": "Backtracking",
+    "title": "M Coloring Problem",
+    "url": "https://practice.geeksforgeeks.org/problems/m-coloring-problem-1587115620/1",
+    "difficulty": "Medium",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 90,
+    "topic": "Backtracking",
+    "title": "Knight Tour",
+    "url": "https://www.geeksforgeeks.org/backtracking-set-1-the-knights-tour-problem/",
+    "difficulty": "Hard",
+    "companies": "IBM",
+    "remarks": ""
+  },
+  {
+    "index": 91,
+    "topic": "Backtracking",
+    "title": "Soduko",
+    "url": "https://www.geeksforgeeks.org/backtracking-set-7-suduku/",
+    "difficulty": "Hard",
+    "companies": "Amazon + Adobe + Accolite + Traveloka",
+    "remarks": ""
+  },
+  {
+    "index": 92,
+    "topic": "Backtracking",
+    "title": "Remove Invalid Parentheses",
+    "url": "https://www.geeksforgeeks.org/remove-invalid-parentheses/",
+    "difficulty": "Hard",
+    "companies": "Uber",
+    "remarks": ""
+  },
+  {
+    "index": 93,
+    "topic": "Backtracking",
+    "title": "Word Break Problem using Backtracking",
+    "url": "https://www.geeksforgeeks.org/word-break-problem-using-backtracking/",
+    "difficulty": "Hard",
+    "companies": "",
+    "remarks": ""
+  },
+  {
+    "index": 94,
+    "topic": "Backtracking",
+    "title": "Print all Palindromic Partitions of a String",
+    "url": "https://www.geeksforgeeks.org/print-palindromic-partitions-string/",
+    "difficulty": "Hard",
+    "companies": "Facebook Amazon Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 95,
+    "topic": "Backtracking",
+    "title": "Find Shortest Safe Route in a Path with Landmines",
+    "url": "https://www.geeksforgeeks.org/find-shortest-safe-route-in-a-path-with-landmines/",
+    "difficulty": "Hard",
+    "companies": "Facebook Amazon Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 96,
+    "topic": "Backtracking",
+    "title": "Partition of Set into K Subsets with Equal Sum",
+    "url": "https://www.geeksforgeeks.org/partition-set-k-subsets-equal-sum/",
+    "difficulty": "Hard",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 97,
+    "topic": "Backtracking",
+    "title": "Backtracking set-7 hamiltonian cycle",
+    "url": "https://www.geeksforgeeks.org/backtracking-set-7-hamiltonian-cycle/",
+    "difficulty": "Hard",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 98,
+    "topic": "Backtracking",
+    "title": "tug-of-war",
+    "url": "https://www.geeksforgeeks.org/tug-of-war/",
+    "difficulty": "Hard",
+    "companies": "Google",
+    "remarks": ""
+  },
+  {
+    "index": 99,
+    "topic": "Backtracking",
+    "title": "Maximum Possible Number by doing at most K swaps",
+    "url": "https://www.geeksforgeeks.org/find-maximum-number-possible-by-doing-at-most-k-swaps/",
+    "difficulty": "Hard",
+    "companies": "Amazon + Adobe + Accolite + Traveloka",
+    "remarks": ""
+  },
+  {
+    "index": 100,
+    "topic": "Backtracking",
+    "title": "Backtracking set-8 solving cryptarithmetic puzzles",
+    "url": "https://www.geeksforgeeks.org/backtracking-set-8-solving-cryptarithmetic-puzzles/",
+    "difficulty": "Hard",
+    "companies": "Goldman Sachs",
+    "remarks": ""
+  },
+  {
+    "index": 101,
+    "topic": "Backtracking",
+    "title": "Find paths from corner cell to middle cell in maze",
+    "url": "https://www.geeksforgeeks.org/find-paths-from-corner-cell-to-middle-cell-in-maze/",
+    "difficulty": "Hard",
+    "companies": "Meta",
+    "remarks": ""
+  },
+  {
+    "index": 102,
+    "topic": "Backtracking",
+    "title": "Arithmetic Expressions",
+    "url": "https://www.hackerrank.com/challenges/arithmetic-expressions/problem",
+    "difficulty": "Hard",
+    "companies": "Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 103,
+    "topic": "Linked List",
+    "title": "Reverse Linked List",
+    "url": "https://leetcode.com/problems/reverse-linked-list/",
+    "difficulty": "Easy",
+    "companies": "Sprinklr",
+    "remarks": ""
+  },
+  {
+    "index": 104,
+    "topic": "Linked List",
+    "title": "Linked List Cycle",
+    "url": "https://leetcode.com/problems/linked-list-cycle/",
+    "difficulty": "Easy",
+    "companies": "Accolite Amazon D-E-Shaw Hike Lybrate Mahindra Comviva MakeMyTrip MAQ Software OYO Rooms Paytm Qualcomm Samsung SAP Labs Snapdeal Veritas VMWare Walmart Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 105,
+    "topic": "Linked List",
+    "title": "Merge Two Sorted Lists",
+    "url": "https://leetcode.com/problems/merge-two-sorted-lists/",
+    "difficulty": "Easy",
+    "companies": "Accolite Amazon Belzabar Brocade FactSet Flipkart MakeMyTrip Microsoft OATS Systems Oracle Samsung Synopsys Zoho",
+    "remarks": ""
+  },
+  {
+    "index": 106,
+    "topic": "Linked List",
+    "title": "Delete without Head node",
+    "url": "https://www.geeksforgeeks.org/given-only-a-pointer-to-a-node-to-be-deleted-in-a-singly-linked-list-how-do-you-delete-it/",
+    "difficulty": "Easy",
+    "companies": "Amazon Goldman Sachs Kritikal Solutions Microsoft Samsung Visa",
+    "remarks": ""
+  },
+  {
+    "index": 107,
+    "topic": "Linked List",
+    "title": "Remove duplicates from an unsorted linked list",
+    "url": "https://www.geeksforgeeks.org/remove-duplicates-from-an-unsorted-linked-list/",
+    "difficulty": "Easy",
+    "companies": "Amazon Intuit",
+    "remarks": ""
+  },
+  {
+    "index": 108,
+    "topic": "Linked List",
+    "title": "Sort a linked list of 0s-1s-or-2s",
+    "url": "https://www.geeksforgeeks.org/sort-a-linked-list-of-0s-1s-or-2s/",
+    "difficulty": "Easy",
+    "companies": "Microsoft Amazon MakeMyTrip",
+    "remarks": ""
+  },
+  {
+    "index": 109,
+    "topic": "Linked List",
+    "title": "Multiply two numbers represented linked lists",
+    "url": "https://www.geeksforgeeks.org/multiply-two-numbers-represented-linked-lists/",
+    "difficulty": "Easy",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 110,
+    "topic": "Linked List",
+    "title": "Remove nth node from end of list",
+    "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/",
+    "difficulty": "Medium",
+    "companies": "Accolite Adobe Amazon Citicorp Epic Systems FactSet Hike MAQ Software Monotype Solutions Morgan Stanley OYO Rooms Qualcomm Samsung Snapdeal Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 111,
+    "topic": "Linked List",
+    "title": "Reorder List",
+    "url": "https://leetcode.com/problems/reorder-list/",
+    "difficulty": "Medium",
+    "companies": "Amazon Microsoft OYO Rooms Intuit",
+    "remarks": ""
+  },
+  {
+    "index": 112,
+    "topic": "Linked List",
+    "title": "Detect and remove loop in a linked list",
+    "url": "https://www.geeksforgeeks.org/detect-and-remove-loop-in-a-linked-list/",
+    "difficulty": "Medium",
+    "companies": "Accolite Amazon D-E-Shaw Hike Lybrate Mahindra Comviva MakeMyTrip MAQ Software OYO Rooms Paytm Qualcomm Samsung SAP Labs Snapdeal Veritas VMWare Walmart Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 113,
+    "topic": "Linked List",
+    "title": "Write a Function to get the Intersection Point of two Linked Lists",
+    "url": "https://www.geeksforgeeks.org/write-a-function-to-get-the-intersection-point-of-two-linked-lists/",
+    "difficulty": "Medium",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 114,
+    "topic": "Linked List",
+    "title": "Flatten a linked list with next and child pointers",
+    "url": "https://www.geeksforgeeks.org/flatten-a-linked-list-with-next-and-child-pointers/",
+    "difficulty": "Medium",
+    "companies": "Google",
+    "remarks": ""
+  },
+  {
+    "index": 115,
+    "topic": "Linked List",
+    "title": "Linked list in zig-zag fashion",
+    "url": "https://www.geeksforgeeks.org/linked-list-in-zig-zag-fashion/",
+    "difficulty": "Medium",
+    "companies": "Micorsoft",
+    "remarks": ""
+  },
+  {
+    "index": 116,
+    "topic": "Linked List",
+    "title": "Reverse a doubly linked list",
+    "url": "https://practice.geeksforgeeks.org/problems/reverse-a-doubly-linked-list/1",
+    "difficulty": "Medium",
+    "companies": "Walmart",
+    "remarks": ""
+  },
+  {
+    "index": 117,
+    "topic": "Linked List",
+    "title": "Delete nodes which have a greater value on right side",
+    "url": "https://www.geeksforgeeks.org/delete-nodes-which-have-a-greater-value-on-right-side/",
+    "difficulty": "Medium",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 118,
+    "topic": "Linked List",
+    "title": "Segregate even and odd Elements in a Linked List",
+    "url": "https://www.geeksforgeeks.org/segregate-even-and-odd-elements-in-a-linked-list/",
+    "difficulty": "Medium",
+    "companies": "Walmart",
+    "remarks": ""
+  },
+  {
+    "index": 119,
+    "topic": "Linked List",
+    "title": "Point to next higher value node in a linked list with an Arbitrary Pointer",
+    "url": "https://www.geeksforgeeks.org/point-to-next-higher-value-node-in-a-linked-list-with-an-arbitrary-pointer/",
+    "difficulty": "Medium",
+    "companies": "GeekyAnts",
+    "remarks": ""
+  },
+  {
+    "index": 120,
+    "topic": "Linked List",
+    "title": "Rearrange a given linked list in place",
+    "url": "https://www.geeksforgeeks.org/rearrange-a-given-linked-list-in-place/",
+    "difficulty": "Medium",
+    "companies": "Ola Uber",
+    "remarks": ""
+  },
+  {
+    "index": 121,
+    "topic": "Linked List",
+    "title": "Sort Biotonic Doubly Linked Lists",
+    "url": "https://www.geeksforgeeks.org/sort-biotonic-doubly-linked-list/",
+    "difficulty": "Medium",
+    "companies": "Morgan Stanley",
+    "remarks": ""
+  },
+  {
+    "index": 122,
+    "topic": "Linked List",
+    "title": "Merge K Sorted Lists",
+    "url": "https://leetcode.com/problems/merge-k-sorted-lists/",
+    "difficulty": "Hard",
+    "companies": "Microsoft+ Ola+ eBay",
+    "remarks": ""
+  },
+  {
+    "index": 123,
+    "topic": "Linked List",
+    "title": "Merge sort for linked list",
+    "url": "https://www.geeksforgeeks.org/merge-sort-for-linked-list/",
+    "difficulty": "Hard",
+    "companies": "Accolite Adobe Amazon MAQ Software Microsoft Paytm Veritas",
+    "remarks": "Important"
+  },
+  {
+    "index": 124,
+    "topic": "Linked List",
+    "title": "Quicksort on singly-linked list",
+    "url": "https://www.geeksforgeeks.org/quicksort-on-singly-linked-list/",
+    "difficulty": "Hard",
+    "companies": "Paytm",
+    "remarks": "Important"
+  },
+  {
+    "index": 125,
+    "topic": "Linked List",
+    "title": "Sum of two linked lists",
+    "url": "https://www.geeksforgeeks.org/sum-of-two-linked-lists/",
+    "difficulty": "Hard",
+    "companies": "Accolite Amazon Flipkart MakeMyTrip Microsoft Morgan Stanley Qualcomm Snapdeal",
+    "remarks": ""
+  },
+  {
+    "index": 126,
+    "topic": "Linked List",
+    "title": "Flattening a linked list",
+    "url": "https://www.geeksforgeeks.org/flattening-a-linked-list/",
+    "difficulty": "Hard",
+    "companies": "24*7 Innovation Labs Amazon Drishti-Soft Flipkart Goldman Sachs Microsoft Paytm Payu Qualcomm Snapdeal Visa",
+    "remarks": ""
+  },
+  {
+    "index": 127,
+    "topic": "Linked List",
+    "title": "Clone a linked list with next and random Pointer",
+    "url": "https://www.geeksforgeeks.org/a-linked-list-with-next-and-arbit-pointer/",
+    "difficulty": "Hard",
+    "companies": "Triology",
+    "remarks": ""
+  },
+  {
+    "index": 128,
+    "topic": "Linked List",
+    "title": "Subtract two numbers represented as linked lists",
+    "url": "https://www.geeksforgeeks.org/subtract-two-numbers-represented-as-linked-lists/",
+    "difficulty": "Hard",
+    "companies": "Amazon Goldman Sachs",
+    "remarks": ""
+  },
+  {
+    "index": 129,
+    "topic": "Stacks & Queues",
+    "title": "Implement two stacks in an Array",
+    "url": "https://www.geeksforgeeks.org/implement-two-stacks-in-an-array/",
+    "difficulty": "Easy",
+    "companies": "24*7 Innovation Labs Microsoft Samsung Snapdeal",
+    "remarks": ""
+  },
+  {
+    "index": 130,
+    "topic": "Stacks & Queues",
+    "title": "Evaluation of Postfix Expression",
+    "url": "https://www.geeksforgeeks.org/stack-set-4-evaluation-postfix-expression/",
+    "difficulty": "Easy",
+    "companies": "Amazon + Google + Facebook",
+    "remarks": ""
+  },
+  {
+    "index": 131,
+    "topic": "Stacks & Queues",
+    "title": "Implement Stack using Queues",
+    "url": "https://leetcode.com/problems/implement-stack-using-queues/",
+    "difficulty": "Easy",
+    "companies": "Facebook",
+    "remarks": ""
+  },
+  {
+    "index": 132,
+    "topic": "Stacks & Queues",
+    "title": "Queue Reversal",
+    "url": "https://practice.geeksforgeeks.org/problems/queue-reversal/1",
+    "difficulty": "Easy",
+    "companies": "Amazon + Morgain Stanley",
+    "remarks": ""
+  },
+  {
+    "index": 133,
+    "topic": "Stacks & Queues",
+    "title": "Implement Stack Queue using Deque",
+    "url": "https://www.geeksforgeeks.org/implement-stack-queue-using-deque/",
+    "difficulty": "Easy",
+    "companies": "Microsoft +Atlassian",
+    "remarks": ""
+  },
+  {
+    "index": 134,
+    "topic": "Stacks & Queues",
+    "title": "Reverse first k elements of queue",
+    "url": "https://practice.geeksforgeeks.org/problems/reverse-first-k-elements-of-queue/1",
+    "difficulty": "Easy",
+    "companies": "Microsoft + Amdocs",
+    "remarks": ""
+  },
+  {
+    "index": 135,
+    "topic": "Stacks & Queues",
+    "title": "Design Stack with Middle Operation",
+    "url": "https://www.geeksforgeeks.org/design-a-stack-with-find-middle-operation/",
+    "difficulty": "Medium",
+    "companies": "MaQ Software",
+    "remarks": ""
+  },
+  {
+    "index": 136,
+    "topic": "Stacks & Queues",
+    "title": "Infix to Postfix",
+    "url": "https://www.geeksforgeeks.org/stack-set-2-infix-to-postfix/",
+    "difficulty": "Medium",
+    "companies": "Amazon + Samsung + Paytm + Vmware inc",
+    "remarks": ""
+  },
+  {
+    "index": 137,
+    "topic": "Stacks & Queues",
+    "title": "Design and Implement Special stack",
+    "url": "https://www.geeksforgeeks.org/design-and-implement-special-stack-data-structure/",
+    "difficulty": "Medium",
+    "companies": "Amazon Google Microsoft Visa Goldman Sachs",
+    "remarks": ""
+  },
+  {
+    "index": 138,
+    "topic": "Stacks & Queues",
+    "title": "Longest Valid String",
+    "url": "https://www.geeksforgeeks.org/length-of-the-longest-valid-substring/",
+    "difficulty": "Medium",
+    "companies": "Google Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 139,
+    "topic": "Stacks & Queues",
+    "title": "Find if an expression has duplicate parenthesis or not",
+    "url": "https://www.geeksforgeeks.org/find-expression-duplicate-parenthesis-not/",
+    "difficulty": "Medium",
+    "companies": "Flipkart Oracle OYO Rooms Snapdeal Walmart Yatra.com Microsoft Google",
+    "remarks": ""
+  },
+  {
+    "index": 140,
+    "topic": "Stacks & Queues",
+    "title": "Stack permutations check if an array is stack permutation of other",
+    "url": "https://www.geeksforgeeks.org/stack-permutations-check-if-an-array-is-stack-permutation-of-other/",
+    "difficulty": "Medium",
+    "companies": "Visa",
+    "remarks": ""
+  },
+  {
+    "index": 141,
+    "topic": "Stacks & Queues",
+    "title": "Count natural numbers whose permutation greater number",
+    "url": "https://www.geeksforgeeks.org/count-natural-numbers-whose-permutation-greater-number/",
+    "difficulty": "Medium",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 142,
+    "topic": "Stacks & Queues",
+    "title": "Sort a stack using Recursion",
+    "url": "https://www.geeksforgeeks.org/sort-a-stack-using-recursion/",
+    "difficulty": "Medium",
+    "companies": "Amazon Goldman Sachs IBM Intuit Kuliza Yahoo Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 143,
+    "topic": "Stacks & Queues",
+    "title": "Queue based approach for first non repeating character in a stream",
+    "url": "https://www.geeksforgeeks.org/queue-based-approach-for-first-non-repeating-character-in-a-stream/",
+    "difficulty": "Medium",
+    "companies": "Microsoft Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 144,
+    "topic": "Stacks & Queues",
+    "title": "The Celebrity Problem",
+    "url": "https://practice.geeksforgeeks.org/problems/the-celebrity-problem/1",
+    "difficulty": "Medium",
+    "companies": "Google + Visa + Apple",
+    "remarks": ""
+  },
+  {
+    "index": 145,
+    "topic": "Stacks & Queues",
+    "title": "Next larger Element",
+    "url": "https://practice.geeksforgeeks.org/problems/next-larger-element-1587115620/1",
+    "difficulty": "Medium",
+    "companies": "Visa",
+    "remarks": ""
+  },
+  {
+    "index": 146,
+    "topic": "Stacks & Queues",
+    "title": "Distance of nearest cell",
+    "url": "https://practice.geeksforgeeks.org/problems/distance-of-nearest-cell-having-1-1587115620/1",
+    "difficulty": "Medium",
+    "companies": "Flipkar + Facebook",
+    "remarks": ""
+  },
+  {
+    "index": 147,
+    "topic": "Stacks & Queues",
+    "title": "Rotten-oranges",
+    "url": "https://practice.geeksforgeeks.org/problems/rotten-oranges2536/1",
+    "difficulty": "Medium",
+    "companies": "Facebook",
+    "remarks": ""
+  },
+  {
+    "index": 148,
+    "topic": "Stacks & Queues",
+    "title": "Next smaller element",
+    "url": "https://www.geeksforgeeks.org/next-smaller-element/",
+    "difficulty": "Medium",
+    "companies": "Codenation",
+    "remarks": ""
+  },
+  {
+    "index": 149,
+    "topic": "Stacks & Queues",
+    "title": "Circular-tour",
+    "url": "https://practice.geeksforgeeks.org/problems/circular-tour/1",
+    "difficulty": "Medium",
+    "companies": "Codenation Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 150,
+    "topic": "Stacks & Queues",
+    "title": "Efficiently implement k-stacks single array",
+    "url": "https://www.geeksforgeeks.org/efficiently-implement-k-stacks-single-array/",
+    "difficulty": "Hard",
+    "companies": "Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 151,
+    "topic": "Stacks & Queues",
+    "title": "The celebrity problem",
+    "url": "http://geeksforgeeks.org/the-celebrity-problem/",
+    "difficulty": "Hard",
+    "companies": "Google + Visa + Apple",
+    "remarks": ""
+  },
+  {
+    "index": 152,
+    "topic": "Stacks & Queues",
+    "title": "Iterative tower of hanoi",
+    "url": "https://www.geeksforgeeks.org/iterative-tower-of-hanoi/",
+    "difficulty": "Hard",
+    "companies": "Microsoft Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 153,
+    "topic": "Stacks & Queues",
+    "title": "Find the maximum of minimums for every window size in a given array",
+    "url": "https://www.geeksforgeeks.org/find-the-maximum-of-minimums-for-every-window-size-in-a-given-array/",
+    "difficulty": "Hard",
+    "companies": "Amazon Microsoft Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 154,
+    "topic": "Stacks & Queues",
+    "title": "lru cache implementation",
+    "url": "https://www.geeksforgeeks.org/lru-cache-implementation/",
+    "difficulty": "Hard",
+    "companies": "Microsoft + Uber + Alibaba",
+    "remarks": ""
+  },
+  {
+    "index": 155,
+    "topic": "Stacks & Queues",
+    "title": "Find a tour that visits all stations",
+    "url": "https://www.geeksforgeeks.org/find-a-tour-that-visits-all-stations/",
+    "difficulty": "Hard",
+    "companies": "Uber",
+    "remarks": ""
+  },
+  {
+    "index": 156,
+    "topic": "Greedy",
+    "title": "Activity selection problem greedy algo",
+    "url": "https://www.geeksforgeeks.org/activity-selection-problem-greedy-algo-1/",
+    "difficulty": "Easy",
+    "companies": "Facebook Morgan Stanley Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 157,
+    "topic": "Greedy",
+    "title": "Greedy algorithm to find minimum number of coins",
+    "url": "https://www.geeksforgeeks.org/greedy-algorithm-to-find-minimum-number-of-coins/",
+    "difficulty": "Easy",
+    "companies": "Accolite Amazon Morgan Stanley Oracle Paytm Samsung Snapdeal Synopsys Visa Microsoft Google",
+    "remarks": ""
+  },
+  {
+    "index": 158,
+    "topic": "Greedy",
+    "title": "Minimum sum two numbers formed digits array-2",
+    "url": "https://www.geeksforgeeks.org/minimum-sum-two-numbers-formed-digits-array-2/",
+    "difficulty": "Easy",
+    "companies": "Google",
+    "remarks": ""
+  },
+  {
+    "index": 159,
+    "topic": "Greedy",
+    "title": "Minimum sum absolute difference pairs two arrays",
+    "url": "https://www.geeksforgeeks.org/minimum-sum-absolute-difference-pairs-two-arrays/",
+    "difficulty": "Easy",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 160,
+    "topic": "Greedy",
+    "title": "Find maximum height pyramid from the given array of objects",
+    "url": "https://www.geeksforgeeks.org/find-maximum-height-pyramid-from-the-given-array-of-objects/",
+    "difficulty": "Easy",
+    "companies": "Flipkart Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 161,
+    "topic": "Greedy",
+    "title": "Minimum cost for acquiring all coins with k extra coins allowed with every coin",
+    "url": "https://www.geeksforgeeks.org/minimum-cost-for-acquiring-all-coins-with-k-extra-coins-allowed-with-every-coin/",
+    "difficulty": "Easy",
+    "companies": "",
+    "remarks": ""
+  },
+  {
+    "index": 162,
+    "topic": "Greedy",
+    "title": "Find maximum equal sum of every three stacks",
+    "url": "http://geeksforgeeks.org/find-maximum-sum-possible-equal-sum-three-stacks/",
+    "difficulty": "Easy",
+    "companies": "Microsoft Amazon Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 163,
+    "topic": "Greedy",
+    "title": "Job sequencing problem",
+    "url": "https://www.geeksforgeeks.org/job-sequencing-problem/",
+    "difficulty": "Medium",
+    "companies": "Microsoft + Acolite",
+    "remarks": ""
+  },
+  {
+    "index": 164,
+    "topic": "Greedy",
+    "title": "Greedy algorithm egyptian fraction",
+    "url": "https://www.geeksforgeeks.org/greedy-algorithm-egyptian-fraction/",
+    "difficulty": "Medium",
+    "companies": "",
+    "remarks": ""
+  },
+  {
+    "index": 165,
+    "topic": "Greedy",
+    "title": "Fractional knapsack problem",
+    "url": "https://www.geeksforgeeks.org/fractional-knapsack-problem/",
+    "difficulty": "Medium",
+    "companies": "Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 166,
+    "topic": "Greedy",
+    "title": "Maximum length chain of pairs",
+    "url": "https://www.geeksforgeeks.org/maximum-length-chain-of-pairs-dp-20/",
+    "difficulty": "Medium",
+    "companies": "Amazon Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 167,
+    "topic": "Greedy",
+    "title": "Find smallest number with given number of digits and digit sum",
+    "url": "https://www.geeksforgeeks.org/find-smallest-number-with-given-number-of-digits-and-digit-sum/",
+    "difficulty": "Medium",
+    "companies": "MAQ Software OYO Rooms",
+    "remarks": ""
+  },
+  {
+    "index": 168,
+    "topic": "Greedy",
+    "title": "Maximize sum of consecutive differences circular-array",
+    "url": "https://www.geeksforgeeks.org/maximize-sum-consecutive-differences-circular-array/",
+    "difficulty": "Medium",
+    "companies": "Maccafe",
+    "remarks": ""
+  },
+  {
+    "index": 169,
+    "topic": "Greedy",
+    "title": "paper-cut minimum number squares",
+    "url": "https://www.geeksforgeeks.org/paper-cut-minimum-number-squares/",
+    "difficulty": "Medium",
+    "companies": "Google",
+    "remarks": ""
+  },
+  {
+    "index": 170,
+    "topic": "Greedy",
+    "title": "Lexicographically smallest array-k consecutive swaps",
+    "url": "http://geeksforgeeks.org/lexicographically-smallest-array-k-consecutive-swaps/",
+    "difficulty": "Medium",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 171,
+    "topic": "Greedy",
+    "title": "Problems-CHOCOLA",
+    "url": "https://www.spoj.com/problems/CHOCOLA/",
+    "difficulty": "Medium",
+    "companies": "Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 172,
+    "topic": "Greedy",
+    "title": "Find minimum time to finish all jobs with given constraints",
+    "url": "https://www.geeksforgeeks.org/find-minimum-time-to-finish-all-jobs-with-given-constraints/",
+    "difficulty": "Hard",
+    "companies": "",
+    "remarks": ""
+  },
+  {
+    "index": 173,
+    "topic": "Greedy",
+    "title": "Job sequencing using disjoint set union",
+    "url": "https://www.geeksforgeeks.org/job-sequencing-using-disjoint-set-union/",
+    "difficulty": "Hard",
+    "companies": "Samsung",
+    "remarks": ""
+  },
+  {
+    "index": 174,
+    "topic": "Greedy",
+    "title": "Rearrange characters string such that no two adjacent are same",
+    "url": "https://www.geeksforgeeks.org/rearrange-characters-string-no-two-adjacent/",
+    "difficulty": "Hard",
+    "companies": "Amazon Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 175,
+    "topic": "Greedy",
+    "title": "Minimum edges to reverse to make path from a source to a destination",
+    "url": "https://www.geeksforgeeks.org/minimum-edges-reverse-make-path-source-destination/",
+    "difficulty": "Hard",
+    "companies": "",
+    "remarks": ""
+  },
+  {
+    "index": 176,
+    "topic": "Greedy",
+    "title": "Minimize Cash Flow among a given set of friends who have borrowed money from each other",
+    "url": "https://www.geeksforgeeks.org/minimize-cash-flow-among-given-set-friends-borrowed-money/",
+    "difficulty": "Hard",
+    "companies": "",
+    "remarks": ""
+  },
+  {
+    "index": 177,
+    "topic": "Greedy",
+    "title": "Minimum Cost to cut a board into squares",
+    "url": "https://www.geeksforgeeks.org/minimum-cost-cut-board-squares/",
+    "difficulty": "Hard",
+    "companies": "Maccafe",
+    "remarks": ""
+  },
+  {
+    "index": 178,
+    "topic": "Binary Trees",
+    "title": "Maximum Depth of Binary Tree",
+    "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree/",
+    "difficulty": "Easy",
+    "companies": "Amazon Cadence India CouponDunia D-E-Shaw FactSet FreeCharge MakeMyTrip",
+    "remarks": ""
+  },
+  {
+    "index": 179,
+    "topic": "Binary Trees",
+    "title": "Reverse Level Order Traversal",
+    "url": "https://practice.geeksforgeeks.org/problems/reverse-level-order-traversal/1",
+    "difficulty": "Easy",
+    "companies": "Amazon + Microsoft + flipkart + Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 180,
+    "topic": "Binary Trees",
+    "title": "Subtree of Another Tree",
+    "url": "https://leetcode.com/problems/subtree-of-another-tree/",
+    "difficulty": "Easy",
+    "companies": "Amazon + Microsoft + Facebook",
+    "remarks": ""
+  },
+  {
+    "index": 181,
+    "topic": "Binary Trees",
+    "title": "Invert Binary Tree",
+    "url": "https://leetcode.com/problems/invert-binary-tree/",
+    "difficulty": "Easy",
+    "companies": "Amazon Hike",
+    "remarks": ""
+  },
+  {
+    "index": 182,
+    "topic": "Binary Trees",
+    "title": "Binary Tree Level Order Traversal",
+    "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
+    "difficulty": "Easy",
+    "companies": "Accolite Adobe Amazon Cisco D-E-Shaw Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 183,
+    "topic": "Binary Trees",
+    "title": "Left View of Binary Tree",
+    "url": "https://practice.geeksforgeeks.org/problems/left-view-of-binary-tree/1",
+    "difficulty": "Easy",
+    "companies": "Microsoft + Adobe + Cisco Networking Academy",
+    "remarks": ""
+  },
+  {
+    "index": 184,
+    "topic": "Binary Trees",
+    "title": "Right View of Binary Tree",
+    "url": "https://practice.geeksforgeeks.org/problems/right-view-of-binary-tree/1",
+    "difficulty": "Easy",
+    "companies": "Amdocs",
+    "remarks": ""
+  },
+  {
+    "index": 185,
+    "topic": "Binary Trees",
+    "title": "ZigZag Tree Traversal",
+    "url": "https://practice.geeksforgeeks.org/problems/zigzag-tree-traversal/1",
+    "difficulty": "Easy",
+    "companies": "Amazon Cisco FactSet Hike Snapdeal Walmart Microsoft Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 186,
+    "topic": "Binary Trees",
+    "title": "Create a mirror tree from the given binary tree",
+    "url": "https://www.geeksforgeeks.org/create-a-mirror-tree-from-the-given-binary-tree/",
+    "difficulty": "Easy",
+    "companies": "Accolite Adobe Amazon Belzabar EBay Goldman Sachs Microsoft Morgan Stanley Myntra Ola Cabs Paytm",
+    "remarks": ""
+  },
+  {
+    "index": 187,
+    "topic": "Binary Trees",
+    "title": "Leaf at same level",
+    "url": "https://practice.geeksforgeeks.org/problems/leaf-at-same-level/1",
+    "difficulty": "Easy",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 188,
+    "topic": "Binary Trees",
+    "title": "Check for Balanced Tree",
+    "url": "https://practice.geeksforgeeks.org/problems/check-for-balanced-tree/1",
+    "difficulty": "Easy",
+    "companies": "Amazon Walmart Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 189,
+    "topic": "Binary Trees",
+    "title": "Transform to Sum Tree",
+    "url": "https://practice.geeksforgeeks.org/problems/transform-to-sum-tree/1",
+    "difficulty": "Easy",
+    "companies": "Amazon FactSet Microsoft Samsung Walmart",
+    "remarks": ""
+  },
+  {
+    "index": 190,
+    "topic": "Binary Trees",
+    "title": "Check if Tree is Isomorphic",
+    "url": "https://practice.geeksforgeeks.org/problems/check-if-tree-is-isomorphic/1",
+    "difficulty": "Easy",
+    "companies": "Amazon Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 191,
+    "topic": "Binary Trees",
+    "title": "Same Tree",
+    "url": "https://leetcode.com/problems/same-tree/",
+    "difficulty": "Easy",
+    "companies": "Amazon Microsoft Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 192,
+    "topic": "Binary Trees",
+    "title": "Construct Binary Tree from Preorder and Inorder Traversal",
+    "url": "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/",
+    "difficulty": "Medium",
+    "companies": "Accolite Amazon Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 193,
+    "topic": "Binary Trees",
+    "title": "Height of Binary Tree",
+    "url": "https://practice.geeksforgeeks.org/problems/height-of-binary-tree/1",
+    "difficulty": "Medium",
+    "companies": "Amazon Cadence India CouponDunia D-E-Shaw FactSet FreeCharge MakeMyTrip",
+    "remarks": ""
+  },
+  {
+    "index": 194,
+    "topic": "Binary Trees",
+    "title": "Diameter of a Binary Tree",
+    "url": "https://practice.geeksforgeeks.org/problems/diameter-of-binary-tree/1",
+    "difficulty": "Medium",
+    "companies": "Amazon Microsoft OYO Rooms",
+    "remarks": ""
+  },
+  {
+    "index": 195,
+    "topic": "Binary Trees",
+    "title": "Top View of Binary Tree",
+    "url": "https://practice.geeksforgeeks.org/problems/top-view-of-binary-tree/1",
+    "difficulty": "Medium",
+    "companies": "Microsoft + Adobe + Expedia Group",
+    "remarks": ""
+  },
+  {
+    "index": 196,
+    "topic": "Binary Trees",
+    "title": "Bottom View of Binary Tree",
+    "url": "https://practice.geeksforgeeks.org/problems/bottom-view-of-binary-tree/1",
+    "difficulty": "Medium",
+    "companies": "DE Shaw India",
+    "remarks": ""
+  },
+  {
+    "index": 197,
+    "topic": "Binary Trees",
+    "title": "Diagonal Traversal of Binary Tree",
+    "url": "https://www.geeksforgeeks.org/diagonal-traversal-of-binary-tree/",
+    "difficulty": "Medium",
+    "companies": "Amazon Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 198,
+    "topic": "Binary Trees",
+    "title": "Boundary Traversal of binary tree",
+    "url": "https://practice.geeksforgeeks.org/problems/boundary-traversal-of-binary-tree/1",
+    "difficulty": "Medium",
+    "companies": "Accolite Amazon FactSet Hike Kritikal Solutions",
+    "remarks": ""
+  },
+  {
+    "index": 199,
+    "topic": "Binary Trees",
+    "title": "Construct Binary Tree from String with Brackets",
+    "url": "https://www.geeksforgeeks.org/construct-binary-tree-string-bracket-representation/",
+    "difficulty": "Medium",
+    "companies": "Microsoft Morgan Stanley OYO Rooms Payu Samsung Snapdeal Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 200,
+    "topic": "Binary Trees",
+    "title": "Minimum swap required to convert binary tree to binary search tree",
+    "url": "https://www.geeksforgeeks.org/minimum-swap-required-convert-binary-tree-binary-search-tree/",
+    "difficulty": "Medium",
+    "companies": "Adobe Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 201,
+    "topic": "Binary Trees",
+    "title": "Duplicate subtree in Binary Tree",
+    "url": "https://practice.geeksforgeeks.org/problems/duplicate-subtree-in-binary-tree/1",
+    "difficulty": "Medium",
+    "companies": "Google",
+    "remarks": ""
+  },
+  {
+    "index": 202,
+    "topic": "Binary Trees",
+    "title": "Check if a given graph is tree or not",
+    "url": "https://www.geeksforgeeks.org/check-given-graph-tree/",
+    "difficulty": "Medium",
+    "companies": "Microsoft Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 203,
+    "topic": "Binary Trees",
+    "title": "Lowest Common Ancestor in a Binary Tree",
+    "url": "https://practice.geeksforgeeks.org/problems/lowest-common-ancestor-in-a-binary-tree/1",
+    "difficulty": "Medium",
+    "companies": "Accolite Amazon American Express Cisco Expedia Flipkart MakeMyTrip Microsoft OYO Room",
+    "remarks": ""
+  },
+  {
+    "index": 204,
+    "topic": "Binary Trees",
+    "title": "Min distance between two given nodes of a Binary Tree",
+    "url": "https://practice.geeksforgeeks.org/problems/min-distance-between-two-given-nodes-of-a-binary-tree/1",
+    "difficulty": "Medium",
+    "companies": "Amazon Linkedin MakeMyTrip Ola Cabs Qualcomm Samsung",
+    "remarks": ""
+  },
+  {
+    "index": 205,
+    "topic": "Binary Trees",
+    "title": "Duplicate Subtrees",
+    "url": "https://practice.geeksforgeeks.org/problems/duplicate-subtrees/1",
+    "difficulty": "Medium",
+    "companies": "Ola",
+    "remarks": ""
+  },
+  {
+    "index": 206,
+    "topic": "Binary Trees",
+    "title": "Kth ancestor of a node in binary tree",
+    "url": "https://www.geeksforgeeks.org/kth-ancestor-node-binary-tree-set-2/",
+    "difficulty": "Medium",
+    "companies": "Josh Technology Group",
+    "remarks": ""
+  },
+  {
+    "index": 207,
+    "topic": "Binary Trees",
+    "title": "Binary Tree Maximum Path Sum",
+    "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/",
+    "difficulty": "Hard",
+    "companies": "Samsung + Facebook",
+    "remarks": ""
+  },
+  {
+    "index": 208,
+    "topic": "Binary Trees",
+    "title": "Serialize and Deserialize Binary Tree",
+    "url": "https://leetcode.com/problems/serialize-and-deserialize-binary-tree/",
+    "difficulty": "Hard",
+    "companies": "Flipkart InMobi Linkedin MAQ Software Microsoft Paytm Quikr Yahoo",
+    "remarks": ""
+  },
+  {
+    "index": 209,
+    "topic": "Binary Trees",
+    "title": "Binary Tree to DLL",
+    "url": "https://practice.geeksforgeeks.org/problems/binary-tree-to-dll/1",
+    "difficulty": "Hard",
+    "companies": "Accolite Amazon Goldman Sachs Microsoft Morgan Stanley Salesforce Snapdeal",
+    "remarks": ""
+  },
+  {
+    "index": 210,
+    "topic": "Binary Trees",
+    "title": "Print all k-sum paths in a binary tree",
+    "url": "https://www.geeksforgeeks.org/print-k-sum-paths-binary-tree/",
+    "difficulty": "Hard",
+    "companies": "Accolite Amazon Goldman Sachs",
+    "remarks": ""
+  },
+  {
+    "index": 211,
+    "topic": "Binary Search Trees",
+    "title": "Lowest Common Ancestor of a Binary Search Tree",
+    "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/",
+    "difficulty": "Easy",
+    "companies": "Accolite Amazon Flipkart MAQ Software Microsoft Samsung Synopsys",
+    "remarks": ""
+  },
+  {
+    "index": 212,
+    "topic": "Binary Search Trees",
+    "title": "Binary Search Tree | Set 1 (Search and Insertion)",
+    "url": "https://www.geeksforgeeks.org/binary-search-tree-set-1-search-and-insertion/",
+    "difficulty": "Easy",
+    "companies": "Accolite Amazon Microsoft Paytm Samsung",
+    "remarks": ""
+  },
+  {
+    "index": 213,
+    "topic": "Binary Search Trees",
+    "title": "Minimum element in BST",
+    "url": "https://practice.geeksforgeeks.org/problems/minimum-element-in-bst/1",
+    "difficulty": "Easy",
+    "companies": "Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 214,
+    "topic": "Binary Search Trees",
+    "title": "Predecessor and Successor",
+    "url": "https://practice.geeksforgeeks.org/problems/predecessor-and-successor/1",
+    "difficulty": "Easy",
+    "companies": "Google + Adobe + Goladman Sachs + Direct",
+    "remarks": ""
+  },
+  {
+    "index": 215,
+    "topic": "Binary Search Trees",
+    "title": "Check whether BST contains Dead End",
+    "url": "https://practice.geeksforgeeks.org/problems/check-whether-bst-contains-dead-end/1",
+    "difficulty": "Easy",
+    "companies": "Walmart",
+    "remarks": ""
+  },
+  {
+    "index": 216,
+    "topic": "Binary Search Trees",
+    "title": "Binary Tree to BST",
+    "url": "https://practice.geeksforgeeks.org/problems/binary-tree-to-bst/1",
+    "difficulty": "Easy",
+    "companies": "HSBC",
+    "remarks": ""
+  },
+  {
+    "index": 217,
+    "topic": "Binary Search Trees",
+    "title": "Kth largest element in BST",
+    "url": "https://practice.geeksforgeeks.org/problems/kth-largest-element-in-bst/1",
+    "difficulty": "Easy",
+    "companies": "Accolite Amazon Samsung SAP Labs Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 218,
+    "topic": "Binary Search Trees",
+    "title": "Validate Binary Search Tree",
+    "url": "https://leetcode.com/problems/validate-binary-search-tree/",
+    "difficulty": "Medium",
+    "companies": "OYO Rooms Qualcomm Samsung Snapdeal VMWare Walmart Wooker",
+    "remarks": ""
+  },
+  {
+    "index": 219,
+    "topic": "Binary Search Trees",
+    "title": "Kth Smallest Element in a BST",
+    "url": "https://leetcode.com/problems/kth-smallest-element-in-a-bst/",
+    "difficulty": "Medium",
+    "companies": "Accolite Amazon Google",
+    "remarks": ""
+  },
+  {
+    "index": 220,
+    "topic": "Binary Search Trees",
+    "title": "Delete Node in a BST",
+    "url": "https://leetcode.com/problems/delete-node-in-a-bst/",
+    "difficulty": "Medium",
+    "companies": "Delete Node in a BST",
+    "remarks": ""
+  },
+  {
+    "index": 221,
+    "topic": "Binary Search Trees",
+    "title": "Flatten BST to sorted list",
+    "url": "https://www.geeksforgeeks.org/flatten-bst-to-sorted-list-increasing-order/",
+    "difficulty": "Medium",
+    "companies": "Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 222,
+    "topic": "Binary Search Trees",
+    "title": "Preorder to Postorder",
+    "url": "https://practice.geeksforgeeks.org/problems/preorder-to-postorder4423/1",
+    "difficulty": "Medium",
+    "companies": "Amazon Linkedin Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 223,
+    "topic": "Binary Search Trees",
+    "title": "Count BST nodes that lie in a given range",
+    "url": "https://practice.geeksforgeeks.org/problems/count-bst-nodes-that-lie-in-a-given-range/1",
+    "difficulty": "Medium",
+    "companies": "D-E-Shaw Google",
+    "remarks": ""
+  },
+  {
+    "index": 224,
+    "topic": "Binary Search Trees",
+    "title": "Populate Inorder Successor for all Nodes",
+    "url": "https://practice.geeksforgeeks.org/problems/populate-inorder-successor-for-all-nodes/1",
+    "difficulty": "Medium",
+    "companies": "Sap labs",
+    "remarks": ""
+  },
+  {
+    "index": 225,
+    "topic": "Binary Search Trees",
+    "title": "Convert Normal BST to Balanced BST",
+    "url": "https://www.geeksforgeeks.org/convert-normal-bst-balanced-bst/",
+    "difficulty": "Medium",
+    "companies": "Paytm",
+    "remarks": ""
+  },
+  {
+    "index": 226,
+    "topic": "Binary Search Trees",
+    "title": "Merge two BSTs",
+    "url": "https://www.geeksforgeeks.org/merge-two-balanced-binary-search-trees/",
+    "difficulty": "Medium",
+    "companies": "DE Shaw India",
+    "remarks": ""
+  },
+  {
+    "index": 227,
+    "topic": "Binary Search Trees",
+    "title": "Given n appointments, find all conflicting appointments",
+    "url": "https://www.geeksforgeeks.org/given-n-appointments-find-conflicting-appointments/",
+    "difficulty": "Hard",
+    "companies": "Samsung",
+    "remarks": ""
+  },
+  {
+    "index": 228,
+    "topic": "Binary Search Trees",
+    "title": "Replace every element",
+    "url": "https://www.geeksforgeeks.org/replace-every-element-with-the-least-greater-element-on-its-right/",
+    "difficulty": "Hard",
+    "companies": "Samsung",
+    "remarks": ""
+  },
+  {
+    "index": 229,
+    "topic": "Binary Search Trees",
+    "title": "Construct BST from given preorder traversal",
+    "url": "https://www.geeksforgeeks.org/construct-bst-from-given-preorder-traversa/",
+    "difficulty": "Hard",
+    "companies": "Adobe Morgan Stanley Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 230,
+    "topic": "Binary Search Trees",
+    "title": "Find median of BST in O(n) time and O(1) space",
+    "url": "https://www.geeksforgeeks.org/find-median-bst-time-o1-space/",
+    "difficulty": "Hard",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 231,
+    "topic": "Binary Search Trees",
+    "title": "Largest BST in a Binary Tree",
+    "url": "https://www.geeksforgeeks.org/largest-bst-binary-tree-set-2/",
+    "difficulty": "Hard",
+    "companies": "Amazon D-E-Shaw Samsung Microsoft Flipkart",
+    "remarks": "Important"
+  },
+  {
+    "index": 232,
+    "topic": "Heaps & Hashing",
+    "title": "Choose k array elements such that difference of maximum and minimum is minimized",
+    "url": "https://www.geeksforgeeks.org/k-numbers-difference-maximum-minimum-k-number-minimized/",
+    "difficulty": "Medium",
+    "companies": "",
+    "remarks": ""
+  },
+  {
+    "index": 233,
+    "topic": "Heaps & Hashing",
+    "title": "Heap Sort",
+    "url": "https://www.geeksforgeeks.org/heap-sort/",
+    "difficulty": "Medium",
+    "companies": "Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 234,
+    "topic": "Heaps & Hashing",
+    "title": "Top K Frequent Elements",
+    "url": "https://leetcode.com/problems/top-k-frequent-elements/",
+    "difficulty": "Medium",
+    "companies": "Amazon Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 235,
+    "topic": "Heaps & Hashing",
+    "title": "k largest elements in an array",
+    "url": "https://www.geeksforgeeks.org/k-largestor-smallest-elements-in-an-array/",
+    "difficulty": "Medium",
+    "companies": "Amazon Microsoft Walmart Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 236,
+    "topic": "Heaps & Hashing",
+    "title": "Next Greater Element",
+    "url": "https://www.geeksforgeeks.org/next-greater-element/",
+    "difficulty": "Medium",
+    "companies": "Amazon + Microsoft + Flipkart + Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 237,
+    "topic": "Heaps & Hashing",
+    "title": "K’th Smallest/Largest Element in Unsorted Array",
+    "url": "https://www.geeksforgeeks.org/kth-smallestlargest-element-unsorted-array/",
+    "difficulty": "Medium",
+    "companies": "ABCO Accolite Amazon Cisco Hike Microsoft Snapdeal VMWare Google Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 238,
+    "topic": "Heaps & Hashing",
+    "title": "Find the maximum repeating number in O(n) time and O(1) extra space",
+    "url": "https://www.geeksforgeeks.org/find-the-maximum-repeating-number-in-ok-time/",
+    "difficulty": "Medium",
+    "companies": "Accolite Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 239,
+    "topic": "Heaps & Hashing",
+    "title": "K-th smallest element after removing some integers from natural numbers",
+    "url": "https://www.geeksforgeeks.org/k-th-smallest-element-removing-integers-natural-numbers/",
+    "difficulty": "Medium",
+    "companies": "ABCO Accolite Amazon Cisco Hike Microsoft Snapdeal VMWare Google Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 240,
+    "topic": "Heaps & Hashing",
+    "title": "Find k closest elements to a given value",
+    "url": "https://www.geeksforgeeks.org/find-k-closest-elements-given-value/",
+    "difficulty": "Medium",
+    "companies": "Amazon OYO Rooms",
+    "remarks": ""
+  },
+  {
+    "index": 241,
+    "topic": "Heaps & Hashing",
+    "title": "K’th largest element in a stream",
+    "url": "https://www.geeksforgeeks.org/kth-largest-element-in-a-stream/",
+    "difficulty": "Medium",
+    "companies": "Amazon Cisco Hike OYO Rooms Walmart Microsoft Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 242,
+    "topic": "Heaps & Hashing",
+    "title": "Connect Ropes",
+    "url": "https://www.geeksforgeeks.org/connect-n-ropes-minimum-cost/",
+    "difficulty": "Medium",
+    "companies": "Amazoon + Oyo + Goldman Sachs",
+    "remarks": ""
+  },
+  {
+    "index": 243,
+    "topic": "Heaps & Hashing",
+    "title": "Cuckoo Hashing",
+    "url": "https://www.geeksforgeeks.org/cuckoo-hashing/",
+    "difficulty": "Medium",
+    "companies": "Amaxon",
+    "remarks": ""
+  },
+  {
+    "index": 244,
+    "topic": "Heaps & Hashing",
+    "title": "Itinerary from a List of Tickets",
+    "url": "https://www.geeksforgeeks.org/find-itinerary-from-a-given-list-of-tickets/",
+    "difficulty": "Medium",
+    "companies": "Microsoft + Ola + eBay",
+    "remarks": ""
+  },
+  {
+    "index": 245,
+    "topic": "Heaps & Hashing",
+    "title": "Largest Subarray with 0 Sum",
+    "url": "http://geeksforgeeks.org/find-the-largest-subarray-with-0-sum/",
+    "difficulty": "Medium",
+    "companies": "Amazon MakeMyTrip Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 246,
+    "topic": "Heaps & Hashing",
+    "title": "Count distinct elements in every window of size k",
+    "url": "https://www.geeksforgeeks.org/count-distinct-elements-in-every-window-of-size-k/",
+    "difficulty": "Medium",
+    "companies": "Accolite Amazon Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 247,
+    "topic": "Heaps & Hashing",
+    "title": "Group Shifted Strings",
+    "url": "https://www.geeksforgeeks.org/group-shifted-string/",
+    "difficulty": "Medium",
+    "companies": "Oracle",
+    "remarks": ""
+  },
+  {
+    "index": 248,
+    "topic": "Heaps & Hashing",
+    "title": "Merge K Sorted lists",
+    "url": "https://leetcode.com/problems/merge-k-sorted-lists/",
+    "difficulty": "Hard",
+    "companies": "Microsoft + Ola + eBay",
+    "remarks": ""
+  },
+  {
+    "index": 249,
+    "topic": "Heaps & Hashing",
+    "title": "Find Median from Data Stream",
+    "url": "https://leetcode.com/problems/find-median-from-data-stream/",
+    "difficulty": "Hard",
+    "companies": "Adobe Amazon Apple Belzabar D-E-Shaw Facebook Flipkart Google Intuit Microsoft Morgan Stanley Ola Cabs Oracle Samsung SAP Labs Yahoo",
+    "remarks": ""
+  },
+  {
+    "index": 250,
+    "topic": "Heaps & Hashing",
+    "title": "Sliding Window Maximum",
+    "url": "https://www.geeksforgeeks.org/sliding-window-maximum-maximum-of-all-subarrays-of-size-k/",
+    "difficulty": "Hard",
+    "companies": "Amazon Directi Flipkart Microsoft Google",
+    "remarks": ""
+  },
+  {
+    "index": 251,
+    "topic": "Heaps & Hashing",
+    "title": "Find the smallest positive number",
+    "url": "https://www.geeksforgeeks.org/find-the-smallest-positive-number-missing-from-an-unsorted-array/",
+    "difficulty": "Hard",
+    "companies": "Accolite Amazon Samsung Snapdeal",
+    "remarks": ""
+  },
+  {
+    "index": 252,
+    "topic": "Heaps & Hashing",
+    "title": "Find Surpasser Count of each element in array",
+    "url": "https://www.geeksforgeeks.org/find-surpasser-count-of-each-element-in-array/",
+    "difficulty": "Hard",
+    "companies": "Amazon Morgan Stanley Ola Cabs SAP Labs",
+    "remarks": ""
+  },
+  {
+    "index": 253,
+    "topic": "Heaps & Hashing",
+    "title": "Tournament Tree and Binary Heap",
+    "url": "https://www.geeksforgeeks.org/tournament-tree-and-binary-heap/",
+    "difficulty": "Hard",
+    "companies": "Amazon Ola Cabs Samsung Synopsys Walmart Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 254,
+    "topic": "Heaps & Hashing",
+    "title": "Check for palindrome",
+    "url": "https://www.geeksforgeeks.org/online-algorithm-for-checking-palindrome-in-a-stream/",
+    "difficulty": "Hard",
+    "companies": "Amazon Cisco D-E-Shaw Facebook FactSet Morgan Stanley Paytm Zoho",
+    "remarks": ""
+  },
+  {
+    "index": 255,
+    "topic": "Heaps & Hashing",
+    "title": "Length of the largest subarray with contiguous elements",
+    "url": "https://www.geeksforgeeks.org/length-largest-subarray-contiguous-elements-set-2/",
+    "difficulty": "Hard",
+    "companies": "Amazon Intuit Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 256,
+    "topic": "Heaps & Hashing",
+    "title": "Palindrome Substring Queries",
+    "url": "https://www.geeksforgeeks.org/palindrome-substring-queries/",
+    "difficulty": "Hard",
+    "companies": "Amazon Morgan Stanley Ola Cabs SAP Labs",
+    "remarks": ""
+  },
+  {
+    "index": 257,
+    "topic": "Heaps & Hashing",
+    "title": "Subarray distinct elements",
+    "url": "https://www.geeksforgeeks.org/subarrays-distinct-elements/",
+    "difficulty": "Hard",
+    "companies": "Microsoft + Ola + eBay",
+    "remarks": ""
+  },
+  {
+    "index": 258,
+    "topic": "Heaps & Hashing",
+    "title": "Find the recurring function",
+    "url": "https://www.geeksforgeeks.org/find-recurring-sequence-fraction/",
+    "difficulty": "Hard",
+    "companies": "MAQ Software",
+    "remarks": ""
+  },
+  {
+    "index": 259,
+    "topic": "Heaps & Hashing",
+    "title": "K maximum sum combinations from two arrays",
+    "url": "https://www.geeksforgeeks.org/k-maximum-sum-combinations-two-arrays/",
+    "difficulty": "Hard",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 260,
+    "topic": "Graphs",
+    "title": "BFS",
+    "url": "https://practice.geeksforgeeks.org/problems/bfs-traversal-of-graph/1",
+    "difficulty": "Easy",
+    "companies": "Samsung + Delhivery + SAP Labs",
+    "remarks": ""
+  },
+  {
+    "index": 261,
+    "topic": "Graphs",
+    "title": "DFS",
+    "url": "https://www.geeksforgeeks.org/depth-first-search-or-dfs-for-a-graph/",
+    "difficulty": "Easy",
+    "companies": "Samsung + Intuit + Goldman Sachs",
+    "remarks": ""
+  },
+  {
+    "index": 262,
+    "topic": "Graphs",
+    "title": "Flood Fill Algorithm",
+    "url": "https://leetcode.com/problems/flood-fill/",
+    "difficulty": "Easy",
+    "companies": "Google + Adobe + Apple",
+    "remarks": ""
+  },
+  {
+    "index": 263,
+    "topic": "Graphs",
+    "title": "Number of Triangles",
+    "url": "https://www.geeksforgeeks.org/number-of-triangles-in-directed-and-undirected-graphs/",
+    "difficulty": "Easy",
+    "companies": "IBM",
+    "remarks": ""
+  },
+  {
+    "index": 264,
+    "topic": "Graphs",
+    "title": "Detect cycle in a graph",
+    "url": "https://www.geeksforgeeks.org/detect-cycle-in-a-graph/",
+    "difficulty": "Medium",
+    "companies": "Lenksart",
+    "remarks": ""
+  },
+  {
+    "index": 265,
+    "topic": "Graphs",
+    "title": "Detect cycle in an undirected graph",
+    "url": "https://practice.geeksforgeeks.org/problems/detect-cycle-in-an-undirected-graph/1",
+    "difficulty": "Medium",
+    "companies": "Samsung",
+    "remarks": ""
+  },
+  {
+    "index": 266,
+    "topic": "Graphs",
+    "title": "Rat in a Maze Problem",
+    "url": "https://practice.geeksforgeeks.org/problems/rat-in-a-maze-problem/1",
+    "difficulty": "Medium",
+    "companies": "Sharechat + Directi",
+    "remarks": ""
+  },
+  {
+    "index": 267,
+    "topic": "Graphs",
+    "title": "Steps by Knight",
+    "url": "https://practice.geeksforgeeks.org/problems/steps-by-knight5927/1",
+    "difficulty": "Medium",
+    "companies": "Samsung",
+    "remarks": ""
+  },
+  {
+    "index": 268,
+    "topic": "Graphs",
+    "title": "Clone graph",
+    "url": "https://leetcode.com/problems/clone-graph/",
+    "difficulty": "Medium",
+    "companies": "Google + MAQ Software + Apple + Facebook",
+    "remarks": ""
+  },
+  {
+    "index": 269,
+    "topic": "Graphs",
+    "title": "Number of Operations to Make Network Connected",
+    "url": "https://leetcode.com/problems/number-of-operations-to-make-network-connected/",
+    "difficulty": "Medium",
+    "companies": "Samsung",
+    "remarks": ""
+  },
+  {
+    "index": 270,
+    "topic": "Graphs",
+    "title": "Dijkstra’s shortest path algorithm",
+    "url": "https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/",
+    "difficulty": "Medium",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 271,
+    "topic": "Graphs",
+    "title": "Topological Sort",
+    "url": "https://practice.geeksforgeeks.org/problems/topological-sort/1",
+    "difficulty": "Medium",
+    "companies": "Amazon + Google + Flipkart + Oyo + Fipkart + Samsung",
+    "remarks": ""
+  },
+  {
+    "index": 272,
+    "topic": "Graphs",
+    "title": "Oliver and the Game",
+    "url": "https://www.hackerearth.com/practice/algorithms/graphs/topological-sort/practice-problems/algorithm/oliver-and-the-game-3/",
+    "difficulty": "Medium",
+    "companies": "Sharechat + Directi",
+    "remarks": ""
+  },
+  {
+    "index": 273,
+    "topic": "Graphs",
+    "title": "Minimum time taken by each job to be completed given by a Directed Acyclic Graph",
+    "url": "https://www.geeksforgeeks.org/minimum-time-taken-by-each-job-to-be-completed-given-by-a-directed-acyclic-graph/",
+    "difficulty": "Medium",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 274,
+    "topic": "Graphs",
+    "title": "Find whether it is possible to finish all tasks or not from given dependencies",
+    "url": "https://www.geeksforgeeks.org/find-whether-it-is-possible-to-finish-all-tasks-or-not-from-given-dependencies/",
+    "difficulty": "Medium",
+    "companies": "Directi + Sharechat",
+    "remarks": ""
+  },
+  {
+    "index": 275,
+    "topic": "Graphs",
+    "title": "Find the number of islands",
+    "url": "https://practice.geeksforgeeks.org/problems/find-the-number-of-islands/1",
+    "difficulty": "Medium",
+    "companies": "Razorpay",
+    "remarks": ""
+  },
+  {
+    "index": 276,
+    "topic": "Graphs",
+    "title": "Prim's Algo",
+    "url": "https://www.geeksforgeeks.org/prims-minimum-spanning-tree-mst-greedy-algo-5/",
+    "difficulty": "Medium",
+    "companies": "Visa",
+    "remarks": ""
+  },
+  {
+    "index": 277,
+    "topic": "Graphs",
+    "title": "Negative Weighted Cycle",
+    "url": "https://practice.geeksforgeeks.org/problems/negative-weight-cycle3504/1",
+    "difficulty": "Medium",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 278,
+    "topic": "Graphs",
+    "title": "Floyd Warshall",
+    "url": "https://practice.geeksforgeeks.org/problems/implementing-floyd-warshall2042/1",
+    "difficulty": "Medium",
+    "companies": "Google + Uber",
+    "remarks": ""
+  },
+  {
+    "index": 279,
+    "topic": "Graphs",
+    "title": "Graph Coloring",
+    "url": "https://www.geeksforgeeks.org/graph-coloring-applications/",
+    "difficulty": "Medium",
+    "companies": "Morgan Stanley",
+    "remarks": ""
+  },
+  {
+    "index": 280,
+    "topic": "Graphs",
+    "title": "Snakes and Ladders",
+    "url": "https://leetcode.com/problems/snakes-and-ladders/",
+    "difficulty": "Medium",
+    "companies": "Goldman Sachs +Makemytrip",
+    "remarks": ""
+  },
+  {
+    "index": 281,
+    "topic": "Graphs",
+    "title": "Kosaraju's Theorem",
+    "url": "https://practice.geeksforgeeks.org/problems/strongly-connected-components-kosarajus-algo/1",
+    "difficulty": "Medium",
+    "companies": "Paytm",
+    "remarks": ""
+  },
+  {
+    "index": 282,
+    "topic": "Graphs",
+    "title": "Journey to moon",
+    "url": "https://www.hackerrank.com/challenges/journey-to-the-moon/problem",
+    "difficulty": "Medium",
+    "companies": "Lenksart + Payload",
+    "remarks": ""
+  },
+  {
+    "index": 283,
+    "topic": "Graphs",
+    "title": "Vertex Cover",
+    "url": "https://www.geeksforgeeks.org/vertex-cover-problem-set-1-introduction-approximate-algorithm-2/",
+    "difficulty": "Medium",
+    "companies": "Intuit",
+    "remarks": ""
+  },
+  {
+    "index": 284,
+    "topic": "Graphs",
+    "title": "M Coloring Problem",
+    "url": "https://practice.geeksforgeeks.org/problems/m-coloring-problem-1587115620/1",
+    "difficulty": "Medium",
+    "companies": "Uber",
+    "remarks": ""
+  },
+  {
+    "index": 285,
+    "topic": "Graphs",
+    "title": "Cheapest Flights Within K Stops",
+    "url": "https://leetcode.com/problems/cheapest-flights-within-k-stops/description/",
+    "difficulty": "Medium",
+    "companies": "Uber + Paypal",
+    "remarks": ""
+  },
+  {
+    "index": 286,
+    "topic": "Graphs",
+    "title": "Find if there is a path of more than k length from a source",
+    "url": "https://www.geeksforgeeks.org/find-if-there-is-a-path-of-more-than-k-length-from-a-source/",
+    "difficulty": "Medium",
+    "companies": "Cisco + Intuit",
+    "remarks": ""
+  },
+  {
+    "index": 287,
+    "topic": "Graphs",
+    "title": "Bellman Ford",
+    "url": "https://www.geeksforgeeks.org/detect-negative-cycle-graph-bellman-ford/",
+    "difficulty": "Medium",
+    "companies": "Sharechat + Directi",
+    "remarks": ""
+  },
+  {
+    "index": 288,
+    "topic": "Graphs",
+    "title": "Bipartitie Graph",
+    "url": "https://www.geeksforgeeks.org/bipartite-graph/",
+    "difficulty": "Medium",
+    "companies": "Microsoft Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 289,
+    "topic": "Graphs",
+    "title": "Word-Ladder",
+    "url": "https://leetcode.com/problems/word-ladder/",
+    "difficulty": "Hard",
+    "companies": "Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 290,
+    "topic": "Graphs",
+    "title": "Allen Dictionary",
+    "url": "https://practice.geeksforgeeks.org/problems/alien-dictionary/1",
+    "difficulty": "Hard",
+    "companies": "Samsung",
+    "remarks": ""
+  },
+  {
+    "index": 291,
+    "topic": "Graphs",
+    "title": "Kruskals MST",
+    "url": "https://www.geeksforgeeks.org/kruskals-minimum-spanning-tree-algorithm-greedy-algo-2/",
+    "difficulty": "Hard",
+    "companies": "Amazon Cisco Samsung",
+    "remarks": "Important"
+  },
+  {
+    "index": 292,
+    "topic": "Graphs",
+    "title": "Total number spanning trees graph",
+    "url": "https://www.geeksforgeeks.org/total-number-spanning-trees-graph/",
+    "difficulty": "Hard",
+    "companies": "Amazon Cisco Samsung Microsoft Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 293,
+    "topic": "Graphs",
+    "title": "Travelling Salesman",
+    "url": "https://www.geeksforgeeks.org/travelling-salesman-problem-set-1/",
+    "difficulty": "Hard",
+    "companies": "Google + Microsoft + Opera",
+    "remarks": "Important"
+  },
+  {
+    "index": 294,
+    "topic": "Graphs",
+    "title": "Find longest path directed acyclic graph",
+    "url": "https://www.geeksforgeeks.org/find-longest-path-directed-acyclic-graph/",
+    "difficulty": "Hard",
+    "companies": "Google",
+    "remarks": ""
+  },
+  {
+    "index": 295,
+    "topic": "Graphs",
+    "title": "Two Clique Problem",
+    "url": "https://www.geeksforgeeks.org/two-clique-problem-check-graph-can-divided-two-cliques/",
+    "difficulty": "Hard",
+    "companies": "Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 296,
+    "topic": "Graphs",
+    "title": "Minimise the cash flow",
+    "url": "https://www.geeksforgeeks.org/minimize-cash-flow-among-given-set-friends-borrowed-money/",
+    "difficulty": "Hard",
+    "companies": "Intuit + Uber",
+    "remarks": ""
+  },
+  {
+    "index": 297,
+    "topic": "Graphs",
+    "title": "Chinese postman",
+    "url": "https://www.geeksforgeeks.org/chinese-postman-route-inspection-set-1-introduction/",
+    "difficulty": "Hard",
+    "companies": "Intuit",
+    "remarks": ""
+  },
+  {
+    "index": 298,
+    "topic": "Graphs",
+    "title": "Water Jug",
+    "url": "https://www.geeksforgeeks.org/water-jug-problem-using-bfs/",
+    "difficulty": "Hard",
+    "companies": "Intuit + Uber",
+    "remarks": ""
+  },
+  {
+    "index": 299,
+    "topic": "Graphs",
+    "title": "Water Jug 2",
+    "url": "https://www.geeksforgeeks.org/water-jug-problem-using-bfs/",
+    "difficulty": "Hard",
+    "companies": "MakeMyTrip MAQ Software",
+    "remarks": ""
+  },
+  {
+    "index": 300,
+    "topic": "Tries",
+    "title": "Construct a trie from scratch",
+    "url": "https://www.geeksforgeeks.org/trie-insert-and-search/",
+    "difficulty": "Medium",
+    "companies": "Accolite Amazon D-E-Shaw FactSet Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 301,
+    "topic": "Tries",
+    "title": "Print unique rows in a given boolean matrix",
+    "url": "https://practice.geeksforgeeks.org/problems/unique-rows-in-boolean-matrix/1",
+    "difficulty": "Medium",
+    "companies": "Amazon Zoho",
+    "remarks": ""
+  },
+  {
+    "index": 302,
+    "topic": "Tries",
+    "title": "Word Break Problem | (Trie solution)",
+    "url": "https://www.geeksforgeeks.org/word-break-problem-trie-solution/",
+    "difficulty": "Medium",
+    "companies": "Amazon Google Hike IBM MAQ Software Microsoft Walmart Zoho",
+    "remarks": ""
+  },
+  {
+    "index": 303,
+    "topic": "Tries",
+    "title": "Given a sequence of words, print all anagrams together",
+    "url": "https://practice.geeksforgeeks.org/problems/k-anagrams-1/0",
+    "difficulty": "Medium",
+    "companies": "Amazon D-E-Shaw Goldman Sachs Morgan Stanley Snapdeal Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 304,
+    "topic": "Tries",
+    "title": "Find shortest unique prefix for every word in a given list",
+    "url": "https://www.geeksforgeeks.org/find-all-shortest-unique-prefixes-to-represent-each-word-in-a-given-list/",
+    "difficulty": "Hard",
+    "companies": "Microsoft Google",
+    "remarks": ""
+  },
+  {
+    "index": 305,
+    "topic": "Tries",
+    "title": "Implement a Phone Directory",
+    "url": "https://practice.geeksforgeeks.org/problems/phone-directory/0",
+    "difficulty": "Hard",
+    "companies": "Amazon + Microsoft + Snapdeal",
+    "remarks": ""
+  },
+  {
+    "index": 306,
+    "topic": "DP",
+    "title": "Knapsack with Duplicate Items",
+    "url": "https://practice.geeksforgeeks.org/problems/knapsack-with-duplicate-items4201/1",
+    "difficulty": "Easy",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 307,
+    "topic": "DP",
+    "title": "BBT counter",
+    "url": "https://practice.geeksforgeeks.org/problems/bbt-counter4914/1",
+    "difficulty": "Easy",
+    "companies": "Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 308,
+    "topic": "DP",
+    "title": "Reach a given score",
+    "url": "https://practice.geeksforgeeks.org/problems/reach-a-given-score-1587115621/1",
+    "difficulty": "Easy",
+    "companies": "Samsung",
+    "remarks": ""
+  },
+  {
+    "index": 309,
+    "topic": "DP",
+    "title": "Maximum difference of zeros and ones in binary string",
+    "url": "https://practice.geeksforgeeks.org/problems/maximum-difference-of-zeros-and-ones-in-binary-string4111/1",
+    "difficulty": "Easy",
+    "companies": "Ola",
+    "remarks": ""
+  },
+  {
+    "index": 310,
+    "topic": "DP",
+    "title": "Climbing Stairs",
+    "url": "https://leetcode.com/problems/climbing-stairs/",
+    "difficulty": "Easy",
+    "companies": "Intuit",
+    "remarks": ""
+  },
+  {
+    "index": 311,
+    "topic": "DP",
+    "title": "Permutation Coefficient",
+    "url": "https://www.geeksforgeeks.org/permutation-coefficient/",
+    "difficulty": "Easy",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 312,
+    "topic": "DP",
+    "title": "Longest Repeating Subsequence",
+    "url": "https://practice.geeksforgeeks.org/problems/longest-repeating-subsequence2004/1",
+    "difficulty": "Easy",
+    "companies": "Google + Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 313,
+    "topic": "DP",
+    "title": "Pairs with specific difference",
+    "url": "https://practice.geeksforgeeks.org/problems/pairs-with-specific-difference1533/1",
+    "difficulty": "Easy",
+    "companies": "Ola",
+    "remarks": ""
+  },
+  {
+    "index": 314,
+    "topic": "DP",
+    "title": "Longest subsequence-1",
+    "url": "https://practice.geeksforgeeks.org/problems/longest-subsequence-such-that-difference-between-adjacents-is-one4724/1",
+    "difficulty": "Easy",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 315,
+    "topic": "DP",
+    "title": "Coin Change",
+    "url": "https://leetcode.com/problems/coin-change/",
+    "difficulty": "Medium",
+    "companies": "Microsoft+ Samsung + Barclays + Apple + Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 316,
+    "topic": "DP",
+    "title": "LIS",
+    "url": "https://leetcode.com/problems/longest-increasing-subsequence/",
+    "difficulty": "Medium",
+    "companies": "Amazon + Google + Facebook + Fidelity International",
+    "remarks": ""
+  },
+  {
+    "index": 317,
+    "topic": "DP",
+    "title": "Longest Common Subsequence",
+    "url": "https://leetcode.com/problems/longest-common-subsequence/",
+    "difficulty": "Medium",
+    "companies": "Siemens + Amazon + Google",
+    "remarks": ""
+  },
+  {
+    "index": 318,
+    "topic": "DP",
+    "title": "Word Break",
+    "url": "https://leetcode.com/problems/word-break/",
+    "difficulty": "Medium",
+    "companies": "Amazon + Google + Microsoft + Walmart + Apple + IBM",
+    "remarks": ""
+  },
+  {
+    "index": 319,
+    "topic": "DP",
+    "title": "Combination Sum IV",
+    "url": "https://leetcode.com/problems/combination-sum-iv/",
+    "difficulty": "Medium",
+    "companies": "Adobe Amazon Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 320,
+    "topic": "DP",
+    "title": "House Robber",
+    "url": "https://leetcode.com/problems/house-robber/",
+    "difficulty": "Medium",
+    "companies": "Apple + Uber",
+    "remarks": ""
+  },
+  {
+    "index": 321,
+    "topic": "DP",
+    "title": "Houe Robber 2",
+    "url": "https://leetcode.com/problems/house-robber-ii/",
+    "difficulty": "Medium",
+    "companies": "Arrays Dynamic Programming",
+    "remarks": ""
+  },
+  {
+    "index": 322,
+    "topic": "DP",
+    "title": "Decode Ways",
+    "url": "https://leetcode.com/problems/decode-ways/",
+    "difficulty": "Medium",
+    "companies": "Adobe + Uber",
+    "remarks": ""
+  },
+  {
+    "index": 323,
+    "topic": "DP",
+    "title": "Unique Paths",
+    "url": "https://leetcode.com/problems/unique-paths/",
+    "difficulty": "Medium",
+    "companies": "Google + Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 324,
+    "topic": "DP",
+    "title": "Jumps Game",
+    "url": "https://leetcode.com/problems/jump-game/",
+    "difficulty": "Medium",
+    "companies": "Facebook Amazon Microsoft Google",
+    "remarks": ""
+  },
+  {
+    "index": 325,
+    "topic": "DP",
+    "title": "Knapsack Problem",
+    "url": "https://practice.geeksforgeeks.org/problems/0-1-knapsack-problem0945/1",
+    "difficulty": "Medium",
+    "companies": "Amazon Directi Flipkart GreyOrange Microsoft Mobicip Morgan Stanley Oracle Payu Snapdeal Visa",
+    "remarks": ""
+  },
+  {
+    "index": 326,
+    "topic": "DP",
+    "title": "nCr",
+    "url": "https://practice.geeksforgeeks.org/problems/ncr1019/1",
+    "difficulty": "Medium",
+    "companies": "Google",
+    "remarks": ""
+  },
+  {
+    "index": 327,
+    "topic": "DP",
+    "title": "Catalan Number",
+    "url": "https://www.geeksforgeeks.org/program-nth-catalan-number/",
+    "difficulty": "Medium",
+    "companies": "Amazon + Google",
+    "remarks": ""
+  },
+  {
+    "index": 328,
+    "topic": "DP",
+    "title": "Edit Distance",
+    "url": "https://practice.geeksforgeeks.org/problems/edit-distance3702/1",
+    "difficulty": "Medium",
+    "companies": "Google + Goldman Sachs + Citrix",
+    "remarks": ""
+  },
+  {
+    "index": 329,
+    "topic": "DP",
+    "title": "Subset Sum",
+    "url": "https://practice.geeksforgeeks.org/problems/subset-sum-problem2014/1",
+    "difficulty": "Medium",
+    "companies": "Amazon + Google",
+    "remarks": ""
+  },
+  {
+    "index": 330,
+    "topic": "DP",
+    "title": "Gold mine",
+    "url": "https://www.geeksforgeeks.org/gold-mine-problem/",
+    "difficulty": "Medium",
+    "companies": "Samsung",
+    "remarks": ""
+  },
+  {
+    "index": 331,
+    "topic": "DP",
+    "title": "Assembly Line Scheduling",
+    "url": "https://www.geeksforgeeks.org/assembly-line-scheduling-dp-34/",
+    "difficulty": "Medium",
+    "companies": "Goldman Sachs",
+    "remarks": ""
+  },
+  {
+    "index": 332,
+    "topic": "DP",
+    "title": "Maximize The Cut Segments",
+    "url": "https://practice.geeksforgeeks.org/problems/cutted-segments1642/1",
+    "difficulty": "Medium",
+    "companies": "Amazon OYO Rooms Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 333,
+    "topic": "DP",
+    "title": "Maximum sum increasing subsequence",
+    "url": "https://practice.geeksforgeeks.org/problems/maximum-sum-increasing-subsequence4749/1",
+    "difficulty": "Medium",
+    "companies": "Amazon Morgan Stanley Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 334,
+    "topic": "DP",
+    "title": "Count all subsequences having product less than K",
+    "url": "https://www.geeksforgeeks.org/count-subsequences-product-less-k/",
+    "difficulty": "Medium",
+    "companies": "Goldman Sachs",
+    "remarks": ""
+  },
+  {
+    "index": 335,
+    "topic": "DP",
+    "title": "Maximum sum increasing subsequence",
+    "url": "https://www.geeksforgeeks.org/maximum-subsequence-sum-such-that-no-three-are-consecutive/",
+    "difficulty": "Medium",
+    "companies": "Amazon Morgan Stanley Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 336,
+    "topic": "DP",
+    "title": "Egg dropping puzzle",
+    "url": "https://practice.geeksforgeeks.org/problems/egg-dropping-puzzle-1587115620/1",
+    "difficulty": "Medium",
+    "companies": "Amazon D-E-Shaw Goldman Sachs Google Hike MakeMyTrip MAQ Software Myntra Nearbuy Opera Oracle Philips Samsung Service Now Unisys VMWare Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 337,
+    "topic": "DP",
+    "title": "Max length chain",
+    "url": "https://practice.geeksforgeeks.org/problems/max-length-chain/1",
+    "difficulty": "Medium",
+    "companies": "Amazon Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 338,
+    "topic": "DP",
+    "title": "Largest Square in Matrix",
+    "url": "https://practice.geeksforgeeks.org/problems/largest-square-formed-in-a-matrix0806/1",
+    "difficulty": "Medium",
+    "companies": "Amazon Samsung",
+    "remarks": ""
+  },
+  {
+    "index": 339,
+    "topic": "DP",
+    "title": "Maximum Path Sum",
+    "url": "https://practice.geeksforgeeks.org/problems/path-in-matrix3805/1",
+    "difficulty": "Medium",
+    "companies": "Amazon + Microsoft + Oyo + Directi",
+    "remarks": ""
+  },
+  {
+    "index": 340,
+    "topic": "DP",
+    "title": "Minimum Number of Jumps",
+    "url": "https://practice.geeksforgeeks.org/problems/minimum-number-of-jumps-1587115620/1",
+    "difficulty": "Medium",
+    "companies": "Adobe Amazon Housing.com Moonfrog Labs Walmart Microsoft Google Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 341,
+    "topic": "DP",
+    "title": "Minimum removals from array to make max – min <= K",
+    "url": "http://geeksforgeeks.org/minimum-removals-array-make-max-min-k/",
+    "difficulty": "Medium",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 342,
+    "topic": "DP",
+    "title": "Longest Common Substring",
+    "url": "https://practice.geeksforgeeks.org/problems/longest-common-substring1452/1",
+    "difficulty": "Medium",
+    "companies": "Webarch Club",
+    "remarks": ""
+  },
+  {
+    "index": 343,
+    "topic": "DP",
+    "title": "Partition Equal Subset Sum",
+    "url": "https://practice.geeksforgeeks.org/problems/subset-sum-problem2014/1",
+    "difficulty": "Medium",
+    "companies": "Amazon + Accolite + Traveloca + Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 344,
+    "topic": "DP",
+    "title": "Longest Palindromic Subsequnce",
+    "url": "https://www.geeksforgeeks.org/longest-palindromic-subsequence-dp-12/",
+    "difficulty": "Medium",
+    "companies": "Amazon Google",
+    "remarks": ""
+  },
+  {
+    "index": 345,
+    "topic": "DP",
+    "title": "Count Palindromic Subsequences",
+    "url": "https://practice.geeksforgeeks.org/problems/count-palindromic-subsequences/1",
+    "difficulty": "Medium",
+    "companies": "Myntra",
+    "remarks": ""
+  },
+  {
+    "index": 346,
+    "topic": "DP",
+    "title": "Longest Palindromic Substring",
+    "url": "https://leetcode.com/problems/longest-palindromic-substring/",
+    "difficulty": "Medium",
+    "companies": "Amazon + Microsoft + Samsung + Visa",
+    "remarks": ""
+  },
+  {
+    "index": 347,
+    "topic": "DP",
+    "title": "Longest Alternating Sequence",
+    "url": "https://practice.geeksforgeeks.org/problems/longest-alternating-subsequence5951/1",
+    "difficulty": "Medium",
+    "companies": "Ola",
+    "remarks": ""
+  },
+  {
+    "index": 348,
+    "topic": "DP",
+    "title": "Weighted Job Scheduling",
+    "url": "https://www.geeksforgeeks.org/weighted-job-scheduling/",
+    "difficulty": "Medium",
+    "companies": "Intuit",
+    "remarks": ""
+  },
+  {
+    "index": 349,
+    "topic": "DP",
+    "title": "Coin Game",
+    "url": "https://www.geeksforgeeks.org/coin-game-winner-every-player-three-choices/",
+    "difficulty": "Medium",
+    "companies": "Salesforce",
+    "remarks": ""
+  },
+  {
+    "index": 350,
+    "topic": "DP",
+    "title": "Coin Game Winner",
+    "url": "https://www.geeksforgeeks.org/count-derangements-permutation-such-that-no-element-appears-in-its-original-position/",
+    "difficulty": "Medium",
+    "companies": "Ola",
+    "remarks": ""
+  },
+  {
+    "index": 351,
+    "topic": "DP",
+    "title": "Optimal Strategy for a game",
+    "url": "https://practice.geeksforgeeks.org/problems/optimal-strategy-for-a-game-1587115620/1",
+    "difficulty": "Medium",
+    "companies": "Google + IBM",
+    "remarks": ""
+  },
+  {
+    "index": 352,
+    "topic": "DP",
+    "title": "Word Wrap",
+    "url": "https://practice.geeksforgeeks.org/problems/word-wrap1646/1",
+    "difficulty": "Medium",
+    "companies": "Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 353,
+    "topic": "DP",
+    "title": "Mobile numeric keypad",
+    "url": "https://practice.geeksforgeeks.org/problems/mobile-numeric-keypad5456/1",
+    "difficulty": "Medium",
+    "companies": "Amazon Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 354,
+    "topic": "DP",
+    "title": "Maximum Length of Pair Chain",
+    "url": "https://leetcode.com/problems/maximum-length-of-pair-chain/",
+    "difficulty": "Medium",
+    "companies": "Amazon Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 355,
+    "topic": "DP",
+    "title": "Matrix Chain Multiplication",
+    "url": "https://www.geeksforgeeks.org/matrix-chain-multiplication-dp-8/",
+    "difficulty": "Hard",
+    "companies": "Walmart + Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 356,
+    "topic": "DP",
+    "title": "Maximum profit by buying and selling a share at most twice",
+    "url": "https://www.geeksforgeeks.org/maximum-profit-by-buying-and-selling-a-share-at-most-twice/",
+    "difficulty": "Hard",
+    "companies": "Accolite Amazon Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 357,
+    "topic": "DP",
+    "title": "Optimal BST",
+    "url": "https://www.geeksforgeeks.org/optimal-binary-search-tree-dp-24/",
+    "difficulty": "Hard",
+    "companies": "Google",
+    "remarks": ""
+  },
+  {
+    "index": 358,
+    "topic": "DP",
+    "title": "Largest Submatrix with sum 0",
+    "url": "https://www.geeksforgeeks.org/largest-rectangular-sub-matrix-whose-sum-0/",
+    "difficulty": "Hard",
+    "companies": "Amazon MakeMyTrip Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 359,
+    "topic": "DP",
+    "title": "Largest area rectangular sub-matrix with equal number of 1’s and 0’s",
+    "url": "https://www.geeksforgeeks.org/largest-area-rectangular-sub-matrix-equal-number-1s-0s/",
+    "difficulty": "Hard",
+    "companies": "Amazon Directi Intuit MakeMyTrip Microsoft Samsung Google Flipkart",
+    "remarks": ""
+  },
+  {
+    "index": 360,
+    "topic": "Bit Manipulation",
+    "title": "Count set bits in an integer",
+    "url": "https://practice.geeksforgeeks.org/problems/set-bits0143/1",
+    "difficulty": "Easy",
+    "companies": "Adobe Apple",
+    "remarks": ""
+  },
+  {
+    "index": 361,
+    "topic": "Bit Manipulation",
+    "title": "Find the two non-repeating elements in an array of repeating elements",
+    "url": "https://practice.geeksforgeeks.org/problems/finding-the-numbers0215/1",
+    "difficulty": "Easy",
+    "companies": "Accolite Amazon FactSet Google MakeMyTrip Microsoft Qualcomm Samsung",
+    "remarks": ""
+  },
+  {
+    "index": 362,
+    "topic": "Bit Manipulation",
+    "title": "Program to find whether a no is power of two",
+    "url": "https://practice.geeksforgeeks.org/problems/power-of-2/0",
+    "difficulty": "Easy",
+    "companies": "Adobe",
+    "remarks": ""
+  },
+  {
+    "index": 363,
+    "topic": "Bit Manipulation",
+    "title": "Find position of the only set bit",
+    "url": "https://practice.geeksforgeeks.org/problems/find-position-of-set-bit3706/1",
+    "difficulty": "Easy",
+    "companies": "Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 364,
+    "topic": "Bit Manipulation",
+    "title": "Count number of bits to be flipped to convert A to B",
+    "url": "https://practice.geeksforgeeks.org/problems/bit-difference/0",
+    "difficulty": "Easy",
+    "companies": "Maq Software",
+    "remarks": ""
+  },
+  {
+    "index": 365,
+    "topic": "Bit Manipulation",
+    "title": "Count total set bits in all numbers from 1 to n",
+    "url": "https://practice.geeksforgeeks.org/problems/count-total-set-bits/0",
+    "difficulty": "Medium",
+    "companies": "Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 366,
+    "topic": "Bit Manipulation",
+    "title": "Copy set bits in a range",
+    "url": "https://www.geeksforgeeks.org/copy-set-bits-in-a-range/",
+    "difficulty": "Medium",
+    "companies": "Facebook",
+    "remarks": ""
+  },
+  {
+    "index": 367,
+    "topic": "Bit Manipulation",
+    "title": "Calculate square of a number without using *, / and pow()",
+    "url": "https://www.geeksforgeeks.org/calculate-square-of-a-number-without-using-and-pow/",
+    "difficulty": "Medium",
+    "companies": "Amazon",
+    "remarks": ""
+  },
+  {
+    "index": 368,
+    "topic": "Bit Manipulation",
+    "title": "Divide two integers without using multiplication, division and mod operator",
+    "url": "https://www.geeksforgeeks.org/divide-two-integers-without-using-multiplication-division-mod-operator/",
+    "difficulty": "Medium",
+    "companies": "Microsoft",
+    "remarks": ""
+  },
+  {
+    "index": 369,
+    "topic": "Bit Manipulation",
+    "title": "Power Set",
+    "url": "https://practice.geeksforgeeks.org/problems/power-set4302/1",
+    "difficulty": "Medium",
+    "companies": "Google + Adobe + Paytm",
+    "remarks": ""
+  },
+  {
+    "index": 370,
+    "topic": "Segment Trees",
+    "title": "Range Sum Query - Immutable",
+    "url": "https://leetcode.com/problems/range-sum-query-immutable/",
+    "difficulty": "Medium",
+    "companies": "",
+    "remarks": ""
+  },
+  {
+    "index": 371,
+    "topic": "Segment Trees",
+    "title": "Range Minimum Query",
+    "url": "https://cp-algorithms.com/sequences/rmq.html",
+    "difficulty": "Medium",
+    "companies": "Google Interview Qs",
+    "remarks": ""
+  },
+  {
+    "index": 372,
+    "topic": "Segment Trees",
+    "title": "Range Sum Query - Mutable",
+    "url": "https://leetcode.com/problems/range-sum-query-mutable/",
+    "difficulty": "Medium",
+    "companies": "Alibaba",
+    "remarks": ""
+  },
+  {
+    "index": 373,
+    "topic": "Segment Trees",
+    "title": "Create Sorted Array through Instructions",
+    "url": "https://leetcode.com/problems/create-sorted-array-through-instructions/",
+    "difficulty": "Hard",
+    "companies": "Samsung + Accolite",
+    "remarks": ""
+  },
+  {
+    "index": 374,
+    "topic": "Segment Trees",
+    "title": "Count of Range Sum",
+    "url": "https://leetcode.com/problems/count-of-range-sum/",
+    "difficulty": "Hard",
+    "companies": "Walmart",
+    "remarks": ""
+  },
+  {
+    "index": 375,
+    "topic": "Segment Trees",
+    "title": "Count of Smaller Numbers After Self",
+    "url": "https://leetcode.com/problems/count-of-smaller-numbers-after-self/",
+    "difficulty": "Hard",
+    "companies": "Codenation Google",
+    "remarks": ""
+  }
+]

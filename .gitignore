@@ -7,8 +7,19 @@ __pycache__/
 .mypy_cache/
 .venv/
 .env
+.env.local
+.env*.local
 .DS_Store
 leetcode-striver/
+
+# Node / Vite / Vercel
+node_modules/
+dist/
+.vercel/
+*.tsbuildinfo
+
+# Source sheets (extracted into scripts/*.json, which IS committed)
+*.xlsx
 
 # One-time import sources (provide your own locally)
 *_ref*.html
